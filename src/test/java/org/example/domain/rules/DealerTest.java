@@ -18,17 +18,6 @@ class DealerTest {
     }
     @Test
     void testCalculateCorrectly() {
-        cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(2, Suit.CLUBS),
-                new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(1, Suit.CLUBS)));
-        assertEquals(HandRanking.ONE_PAIR, Dealer.calculateCards(cards));
-
-        cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(2, Suit.CLUBS),
-                new Card(3, Suit.CLUBS), new Card(2, Suit.CLUBS), new Card(1, Suit.CLUBS)));
-        assertEquals(HandRanking.TWO_PAIR, Dealer.calculateCards(cards));
-
-        cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(1, Suit.CLUBS),
-                new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(1, Suit.CLUBS)));
-        assertEquals(HandRanking.TRIPLE, Dealer.calculateCards(cards));
 
         cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(2, Suit.CLUBS),
                 new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(5, Suit.CLUBS)));
@@ -57,4 +46,19 @@ class DealerTest {
                 new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(1, Suit.CLUBS)));
         assertEquals(HandRanking.ONE_PAIR, Dealer.calculateCards(cards));
     }
+
+    @Test
+    void testTwoPair() {
+        cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(2, Suit.CLUBS),
+                new Card(3, Suit.CLUBS), new Card(2, Suit.CLUBS), new Card(1, Suit.CLUBS)));
+        assertEquals(HandRanking.TWO_PAIR, Dealer.calculateCards(cards));
+    }
+
+    @Test
+    void testTriple() {
+        cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(1, Suit.CLUBS),
+                new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(1, Suit.CLUBS)));
+        assertEquals(HandRanking.TRIPLE, Dealer.calculateCards(cards));
+    }
+
 }
