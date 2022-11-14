@@ -4,11 +4,11 @@ import org.example.domain.card.Card;
 import org.example.domain.card.Suit;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Dealer {
+public class RankingSeperator {
     public static HandRanking calculateHands(List<Card> hands) {
         if (hands.get(0).isSameAs(hands.get(1)))
             return HandRanking.ONE_PAIR;
@@ -18,6 +18,8 @@ public class Dealer {
     public static HandRanking calculateCards(List<Card> cards) {
         List<Integer> numbersOfCards = convertToNumber(cards);
         List<Suit> suitsOfCards = convertToSuit(cards);
+        if (isFullHouse(numbersOfCards))
+            return HandRanking.FULL_HOUSE;
         if (isFlush(suitsOfCards))
             return HandRanking.FLUSH;
         else if (isMountain(numbersOfCards))
@@ -45,6 +47,29 @@ public class Dealer {
         List<Suit> result = new ArrayList<>();
         for (Card card : cards) {
             result.add(card.getSuit());
+        }
+        return result;
+    }
+
+    private static boolean isFullHouse(List<Integer> cardNumbers) {
+        List<Integer> leftWithoutTriple = getListWithoutTriple(cardNumbers);
+        if (leftWithoutTriple.isEmpty())
+            return false;
+        if (!isOnePair(leftWithoutTriple))
+            return false;
+        return true;
+    }
+
+    private static List<Integer> getListWithoutTriple(List<Integer> numbers) {
+        List<Integer> result = Collections.emptyList();
+        for (int number : numbers) {
+            int count = (int) numbers.stream()
+                    .filter(cardNumber -> cardNumber == number)
+                    .count();
+            if (count == 3)
+                result = numbers.stream()
+                        .filter(cardNumber -> cardNumber != number)
+                        .collect(Collectors.toList());
         }
         return result;
     }

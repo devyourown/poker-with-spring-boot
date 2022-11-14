@@ -1,7 +1,7 @@
 package org.example.domain.player;
 
 import org.example.domain.card.Card;
-import org.example.domain.rules.Dealer;
+import org.example.domain.rules.RankingSeperator;
 import org.example.domain.rules.HandRanking;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class Player {
 
     public void setHands(List<Card> cards) {
         hands = cards;
-        handRanking = Dealer.calculateHands(cards);
+        handRanking = RankingSeperator.calculateHands(cards);
     }
 
     public List<Card> getHands() {

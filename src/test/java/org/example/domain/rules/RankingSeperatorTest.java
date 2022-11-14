@@ -7,11 +7,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DealerTest {
+class RankingSeperatorTest {
     private List<Card> cards;
     @BeforeEach
     void createCards() {
@@ -21,37 +20,33 @@ class DealerTest {
     void testCalculateCorrectly() {
 
         cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(1, Suit.CLUBS),
-                new Card(1, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(4, Suit.CLUBS)));
-        assertEquals(HandRanking.FULL_HOUSE, Dealer.calculateCards(cards));
-
-        cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(1, Suit.CLUBS),
                 new Card(1, Suit.CLUBS), new Card(1, Suit.CLUBS), new Card(4, Suit.CLUBS)));
-        assertEquals(HandRanking.FOUR_CARDS, Dealer.calculateCards(cards));
+        assertEquals(HandRanking.FOUR_CARDS, RankingSeperator.calculateCards(cards));
 
         cards.addAll(List.of(new Card(1, Suit.CLUBS), new Card(2, Suit.CLUBS),
                 new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(5, Suit.CLUBS)));
-        assertEquals(HandRanking.STRAIGHT_FLUSH, Dealer.calculateCards(cards));
+        assertEquals(HandRanking.STRAIGHT_FLUSH, RankingSeperator.calculateCards(cards));
     }
 
     @Test
     void testOnePair() {
         cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(2, Suit.CLUBS),
                 new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(1, Suit.CLUBS)));
-        assertEquals(HandRanking.ONE_PAIR, Dealer.calculateCards(cards));
+        assertEquals(HandRanking.ONE_PAIR, RankingSeperator.calculateCards(cards));
     }
 
     @Test
     void testTwoPair() {
         cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(2, Suit.CLUBS),
                 new Card(3, Suit.CLUBS), new Card(2, Suit.CLUBS), new Card(1, Suit.CLUBS)));
-        assertEquals(HandRanking.TWO_PAIR, Dealer.calculateCards(cards));
+        assertEquals(HandRanking.TWO_PAIR, RankingSeperator.calculateCards(cards));
     }
 
     @Test
     void testTriple() {
         cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(1, Suit.CLUBS),
                 new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(1, Suit.CLUBS)));
-        assertEquals(HandRanking.TRIPLE, Dealer.calculateCards(cards));
+        assertEquals(HandRanking.TRIPLE, RankingSeperator.calculateCards(cards));
     }
 
     @Test
@@ -59,30 +54,37 @@ class DealerTest {
         cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(2, Suit.CLUBS),
                 new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(5, Suit.CLUBS),
                 new Card(3, Suit.DIAMONDS), new Card(3, Suit.HEARTS)));
-        assertEquals(HandRanking.STRAIGHT, Dealer.calculateCards(cards));
+        assertEquals(HandRanking.STRAIGHT, RankingSeperator.calculateCards(cards));
 
         cards = new ArrayList<>();
 
         cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(2, Suit.CLUBS),
                 new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(5, Suit.CLUBS)));
-        assertEquals(HandRanking.STRAIGHT, Dealer.calculateCards(cards));
+        assertEquals(HandRanking.STRAIGHT, RankingSeperator.calculateCards(cards));
     }
 
     @Test
     void testMountain() {
         cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(10, Suit.CLUBS),
                 new Card(11, Suit.CLUBS), new Card(12, Suit.CLUBS), new Card(13, Suit.CLUBS)));
-        assertEquals(HandRanking.MOUNTAIN, Dealer.calculateCards(cards));
+        assertEquals(HandRanking.MOUNTAIN, RankingSeperator.calculateCards(cards));
     }
 
     @Test
     void testFlush() {
         cards.addAll(List.of(new Card(1, Suit.CLUBS), new Card(2, Suit.CLUBS),
                 new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(5, Suit.CLUBS)));
-        assertEquals(HandRanking.FLUSH, Dealer.calculateCards(cards));
+        assertEquals(HandRanking.FLUSH, RankingSeperator.calculateCards(cards));
 
         cards.addAll(List.of(new Card(10, Suit.CLUBS), new Card(11, Suit.CLUBS)));
-        assertEquals(HandRanking.FLUSH, Dealer.calculateCards(cards));
+        assertEquals(HandRanking.FLUSH, RankingSeperator.calculateCards(cards));
+    }
+
+    @Test
+    void testFullHouse() {
+        cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(1, Suit.CLUBS),
+                new Card(1, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(4, Suit.CLUBS)));
+        assertEquals(HandRanking.FULL_HOUSE, RankingSeperator.calculateCards(cards));
     }
 
 }
