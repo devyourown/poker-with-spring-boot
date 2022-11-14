@@ -18,9 +18,11 @@ public class RankingSeperator {
     public static HandRanking calculateCards(List<Card> cards) {
         List<Integer> numbersOfCards = convertToNumber(cards);
         List<Suit> suitsOfCards = convertToSuit(cards);
+        if (isFourCards(numbersOfCards))
+            return HandRanking.FOUR_CARDS;
         if (isFullHouse(numbersOfCards))
             return HandRanking.FULL_HOUSE;
-        if (isFlush(suitsOfCards))
+        else if (isFlush(suitsOfCards))
             return HandRanking.FLUSH;
         else if (isMountain(numbersOfCards))
             return HandRanking.MOUNTAIN;
@@ -49,6 +51,23 @@ public class RankingSeperator {
             result.add(card.getSuit());
         }
         return result;
+    }
+
+    private static boolean isFourCards(List<Integer> cardNumbers) {
+        if (sameCountAsExpected(cardNumbers, 4))
+            return true;
+        return false;
+    }
+
+    private static boolean sameCountAsExpected(List<Integer> cardNumbers, int expected) {
+        for (int number : cardNumbers) {
+            int count = (int) cardNumbers.stream()
+                    .filter(cardNumber -> cardNumber == number)
+                    .count();
+            if (count == expected)
+                return true;
+        }
+        return false;
     }
 
     private static boolean isFullHouse(List<Integer> cardNumbers) {
@@ -116,13 +135,8 @@ public class RankingSeperator {
     }
 
     private static boolean isTriple(List<Integer> cardNumbers) {
-        for (int number : cardNumbers) {
-            int count = (int) cardNumbers.stream()
-                    .filter(cardNumber -> cardNumber == number)
-                    .count();
-            if (count == 3)
-                return true;
-        }
+        if (sameCountAsExpected(cardNumbers, 3))
+            return true;
         return false;
     }
 
