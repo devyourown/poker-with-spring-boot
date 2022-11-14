@@ -16,10 +16,6 @@ class RankingSeperatorTest {
     void createCards() {
         cards = new ArrayList<>();
     }
-    @Test
-    void testCalculateCorrectly() {
-
-    }
 
     @Test
     void testOnePair() {
@@ -105,5 +101,17 @@ class RankingSeperatorTest {
         cards.addAll(List.of(new Card(1, Suit.CLUBS), new Card(11, Suit.CLUBS),
                 new Card(10, Suit.CLUBS), new Card(12, Suit.CLUBS), new Card(13, Suit.CLUBS)));
         assertEquals(HandRanking.ROYAL_STRAIGHT_FLUSH, RankingSeperator.calculateCards(cards));
+
+        cards.clear();
+        cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(11, Suit.CLUBS),
+                new Card(10, Suit.CLUBS), new Card(12, Suit.CLUBS), new Card(13, Suit.CLUBS),
+                new Card(9, Suit.CLUBS)));
+        assertEquals(HandRanking.STRAIGHT_FLUSH, RankingSeperator.calculateCards(cards));
+
+        cards.clear();
+        cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(11, Suit.CLUBS),
+                new Card(10, Suit.CLUBS), new Card(12, Suit.CLUBS), new Card(13, Suit.CLUBS),
+                new Card(8, Suit.CLUBS), new Card(9, Suit.DIAMONDS)));
+        assertEquals(HandRanking.FLUSH, RankingSeperator.calculateCards(cards));
     }
 }

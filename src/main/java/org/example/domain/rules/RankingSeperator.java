@@ -6,6 +6,7 @@ import org.example.domain.card.Suit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Vector;
 import java.util.stream.Collectors;
 
 public class RankingSeperator {
@@ -58,10 +59,24 @@ public class RankingSeperator {
     }
 
     private static boolean isRoyalStraightFlush(List<Card> cards) {
+        List<Card> copied = new ArrayList<>(cards);
         for (Card card : cards) {
-            return false;
+            if (card.isAce()) {
+                copied.add(new Card(14, card.getSuit()));
+                copied.remove(card);
+            }
         }
-        return false ;
+        for (Suit suit : Suit.values()) {
+            int count = (int) copied.stream()
+                    .filter(card -> card.getSuit() == suit)
+                    .count();
+            if (count >= 5)
+                return copied.stream()
+                        .filter(card -> card.getValue() >= 10)
+                        .filter(card -> card.getSuit() == suit)
+                        .count() == 5;
+        }
+        return false;
     }
 
     private static boolean isStraightFlush(List<Card> cards) {
