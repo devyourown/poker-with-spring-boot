@@ -19,9 +19,6 @@ class RankingSeperatorTest {
     @Test
     void testCalculateCorrectly() {
 
-        cards.addAll(List.of(new Card(1, Suit.CLUBS), new Card(2, Suit.CLUBS),
-                new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(5, Suit.CLUBS)));
-        assertEquals(HandRanking.STRAIGHT_FLUSH, RankingSeperator.calculateCards(cards));
     }
 
     @Test
@@ -90,4 +87,12 @@ class RankingSeperatorTest {
         assertEquals(HandRanking.FOUR_CARDS, RankingSeperator.calculateCards(cards));
     }
 
+    @Test
+    void testStraightFlush() {
+        cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(2, Suit.DIAMONDS),
+                new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(5, Suit.CLUBS)));
+        cards.add(new Card(6, Suit.CLUBS));
+        cards.add(new Card(7, Suit.CLUBS));
+        assertEquals(HandRanking.STRAIGHT_FLUSH, RankingSeperator.calculateCards(cards));
+    }
 }

@@ -18,6 +18,8 @@ public class RankingSeperator {
     public static HandRanking calculateCards(List<Card> cards) {
         List<Integer> numbersOfCards = convertToNumber(cards);
         List<Suit> suitsOfCards = convertToSuit(cards);
+        if (isStraightFlush(cards))
+            return HandRanking.STRAIGHT_FLUSH;
         if (isFourCards(numbersOfCards))
             return HandRanking.FOUR_CARDS;
         if (isFullHouse(numbersOfCards))
@@ -53,6 +55,21 @@ public class RankingSeperator {
         return result;
     }
 
+    private static boolean isStraightFlush(List<Card> cards) {
+        List<Card> sorted = cards.stream()
+                .sorted((a, b) -> a.getValue() - b.getValue())
+                .collect(Collectors.toList());
+        for (int i=1; i<sorted.size(); i++) {
+            if (sorted.get(i-1).getValue() != sorted.get(i).getValue() - 1)
+                if (i >= cards.size() - 4)
+                    return false;
+            if (sorted.get(i-1).getSuit() != sorted.get(i).getSuit())
+                if (i >= cards.size() - 4)
+                    return false;
+        }
+        return true;
+    }
+
     private static boolean isFourCards(List<Integer> cardNumbers) {
         if (sameCountAsExpected(cardNumbers, 4))
             return true;
@@ -74,7 +91,7 @@ public class RankingSeperator {
         List<Integer> leftWithoutTriple = getListWithoutTriple(cardNumbers);
         if (leftWithoutTriple.isEmpty())
             return false;
-        if (!isOnePair(leftWithoutTriple))
+        if (!isOnePair(leftWithoutTriple) && !isTriple(leftWithoutTriple))
             return false;
         return true;
     }
