@@ -6,6 +6,7 @@ public enum HandRanking {
     TWO_PAIR,
     TRIPLE,
     STRAIGHT,
+    MOUNTAIN,
     FLUSH,
     FULL_HOUSE,
     FOUR_CARDS,

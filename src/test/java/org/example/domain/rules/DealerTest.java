@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,10 +19,6 @@ class DealerTest {
     }
     @Test
     void testCalculateCorrectly() {
-
-        cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(2, Suit.CLUBS),
-                new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(5, Suit.CLUBS)));
-        assertEquals(HandRanking.STRAIGHT, Dealer.calculateCards(cards));
 
         cards.addAll(List.of(new Card(1, Suit.CLUBS), new Card(2, Suit.CLUBS),
                 new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(5, Suit.CLUBS)));
@@ -59,6 +56,27 @@ class DealerTest {
         cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(1, Suit.CLUBS),
                 new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(1, Suit.CLUBS)));
         assertEquals(HandRanking.TRIPLE, Dealer.calculateCards(cards));
+    }
+
+    @Test
+    void testStraight() {
+        cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(2, Suit.CLUBS),
+                new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(5, Suit.CLUBS),
+                new Card(3, Suit.DIAMONDS), new Card(3, Suit.HEARTS)));
+        assertEquals(HandRanking.STRAIGHT, Dealer.calculateCards(cards));
+
+        cards = new ArrayList<>();
+
+        cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(2, Suit.CLUBS),
+                new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(5, Suit.CLUBS)));
+        assertEquals(HandRanking.STRAIGHT, Dealer.calculateCards(cards));
+    }
+
+    @Test
+    void testMountain() {
+        cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(10, Suit.CLUBS),
+                new Card(11, Suit.CLUBS), new Card(12, Suit.CLUBS), new Card(13, Suit.CLUBS)));
+        assertEquals(HandRanking.MOUNTAIN, Dealer.calculateCards(cards));
     }
 
 }
