@@ -20,10 +20,6 @@ class DealerTest {
     @Test
     void testCalculateCorrectly() {
 
-        cards.addAll(List.of(new Card(1, Suit.CLUBS), new Card(2, Suit.CLUBS),
-                new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(5, Suit.CLUBS)));
-        assertEquals(HandRanking.FLUSH, Dealer.calculateCards(cards));
-
         cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(1, Suit.CLUBS),
                 new Card(1, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(4, Suit.CLUBS)));
         assertEquals(HandRanking.FULL_HOUSE, Dealer.calculateCards(cards));
@@ -77,6 +73,16 @@ class DealerTest {
         cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(10, Suit.CLUBS),
                 new Card(11, Suit.CLUBS), new Card(12, Suit.CLUBS), new Card(13, Suit.CLUBS)));
         assertEquals(HandRanking.MOUNTAIN, Dealer.calculateCards(cards));
+    }
+
+    @Test
+    void testFlush() {
+        cards.addAll(List.of(new Card(1, Suit.CLUBS), new Card(2, Suit.CLUBS),
+                new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(5, Suit.CLUBS)));
+        assertEquals(HandRanking.FLUSH, Dealer.calculateCards(cards));
+
+        cards.addAll(List.of(new Card(10, Suit.CLUBS), new Card(11, Suit.CLUBS)));
+        assertEquals(HandRanking.FLUSH, Dealer.calculateCards(cards));
     }
 
 }

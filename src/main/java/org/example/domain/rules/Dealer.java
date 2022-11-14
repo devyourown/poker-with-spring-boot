@@ -1,6 +1,7 @@
 package org.example.domain.rules;
 
 import org.example.domain.card.Card;
+import org.example.domain.card.Suit;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -8,18 +9,26 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Dealer {
+    public static HandRanking calculateHands(List<Card> hands) {
+        if (hands.get(0).isSameAs(hands.get(1)))
+            return HandRanking.ONE_PAIR;
+        return HandRanking.HIGH_CARD;
+    }
 
     public static HandRanking calculateCards(List<Card> cards) {
         List<Integer> numbersOfCards = convertToNumber(cards);
-        if (isMountain(numbersOfCards))
+        List<Suit> suitsOfCards = convertToSuit(cards);
+        if (isFlush(suitsOfCards))
+            return HandRanking.FLUSH;
+        else if (isMountain(numbersOfCards))
             return HandRanking.MOUNTAIN;
-        if (isStraight(numbersOfCards))
+        else if (isStraight(numbersOfCards))
             return HandRanking.STRAIGHT;
-        if (isTriple(numbersOfCards))
+        else if (isTriple(numbersOfCards))
             return HandRanking.TRIPLE;
-        if (isTwoPair(numbersOfCards))
+        else if (isTwoPair(numbersOfCards))
             return HandRanking.TWO_PAIR;
-        if (isOnePair(numbersOfCards))
+        else if (isOnePair(numbersOfCards))
             return HandRanking.ONE_PAIR;
         return HandRanking.HIGH_CARD;
     }
@@ -32,10 +41,23 @@ public class Dealer {
         return result;
     }
 
-    public static HandRanking calculateHands(List<Card> hands) {
-        if (hands.get(0).isSameAs(hands.get(1)))
-            return HandRanking.ONE_PAIR;
-        return HandRanking.HIGH_CARD;
+    private static List<Suit> convertToSuit(List<Card> cards) {
+        List<Suit> result = new ArrayList<>();
+        for (Card card : cards) {
+            result.add(card.getSuit());
+        }
+        return result;
+    }
+
+    private static boolean isFlush(List<Suit> cardSuits) {
+        for (Suit suit : Suit.values()) {
+            int count = (int) cardSuits.stream()
+                    .filter(cardSuit -> cardSuit == suit)
+                    .count();
+            if (count >= 5)
+                return true;
+        }
+        return false;
     }
 
     private static boolean isMountain(List<Integer> cardNumbers) {
