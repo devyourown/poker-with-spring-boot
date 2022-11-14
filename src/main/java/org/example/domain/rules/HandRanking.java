@@ -11,4 +11,5 @@ public enum HandRanking {
     FULL_HOUSE,
     FOUR_CARDS,
     STRAIGHT_FLUSH,
+    ROYAL_STRAIGHT_FLUSH
 }

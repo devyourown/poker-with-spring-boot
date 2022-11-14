@@ -18,11 +18,13 @@ public class RankingSeperator {
     public static HandRanking calculateCards(List<Card> cards) {
         List<Integer> numbersOfCards = convertToNumber(cards);
         List<Suit> suitsOfCards = convertToSuit(cards);
+        if (isRoyalStraightFlush(cards))
+            return HandRanking.ROYAL_STRAIGHT_FLUSH;
         if (isStraightFlush(cards))
             return HandRanking.STRAIGHT_FLUSH;
-        if (isFourCards(numbersOfCards))
+        else if (isFourCards(numbersOfCards))
             return HandRanking.FOUR_CARDS;
-        if (isFullHouse(numbersOfCards))
+        else if (isFullHouse(numbersOfCards))
             return HandRanking.FULL_HOUSE;
         else if (isFlush(suitsOfCards))
             return HandRanking.FLUSH;
@@ -53,6 +55,13 @@ public class RankingSeperator {
             result.add(card.getSuit());
         }
         return result;
+    }
+
+    private static boolean isRoyalStraightFlush(List<Card> cards) {
+        for (Card card : cards) {
+            return false;
+        }
+        return false ;
     }
 
     private static boolean isStraightFlush(List<Card> cards) {
@@ -131,11 +140,8 @@ public class RankingSeperator {
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
-        for (int i=1; i<sorted.size(); i++) {
-            if (sorted.get(i - 1) != sorted.get(i) - 1)
-                if (i >= cardNumbers.size() - 4)
-                    return false;
-        }
+        if (sorted.size() - sorted.indexOf(10) != 5)
+            return false;
         return true;
     }
 
