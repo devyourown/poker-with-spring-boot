@@ -15,4 +15,19 @@ public class Card {
     public Suit getSuit() {
         return suit;
     }
+
+    public boolean isSameAs(Card another) {
+        return value == another.getValue();
+    }
+    public boolean isHigherThan(Card another) {
+        if (isSameAs(another))
+            return false;
+        if (isAce())
+            return true;
+        return value > another.getValue();
+    }
+
+    public boolean isAce() {
+        return value == 1;
+    }
 }
