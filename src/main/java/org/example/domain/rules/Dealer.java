@@ -5,8 +5,11 @@ import org.example.domain.card.Card;
 import java.util.List;
 
 public class Dealer {
+
     public static HandRanking calculateCards(List<Card> cards) {
-        return HandRanking.ONE_PAIR;
+        if (isOnePair(cards))
+            return HandRanking.ONE_PAIR;
+        return HandRanking.HIGH_CARD;
     }
 
     public static HandRanking calculateHands(List<Card> hands) {
@@ -14,4 +17,9 @@ public class Dealer {
             return HandRanking.ONE_PAIR;
         return HandRanking.HIGH_CARD;
     }
+
+    public static boolean isOnePair(List<Card> cards) {
+        return cards.stream().distinct().count() == cards.size();
+    }
+
 }
