@@ -27,7 +27,7 @@ class RankingSeperatorTest {
     @Test
     void testTwoPair() {
         cards.addAll(List.of(new Card(1, Suit.HEARTS), new Card(2, Suit.CLUBS),
-                new Card(3, Suit.CLUBS), new Card(2, Suit.CLUBS), new Card(1, Suit.CLUBS)));
+                new Card(3, Suit.CLUBS), new Card(2, Suit.DIAMONDS), new Card(1, Suit.CLUBS)));
         assertEquals(HandRanking.TWO_PAIR, RankingSeperator.calculateCards(cards));
     }
 
@@ -66,7 +66,7 @@ class RankingSeperatorTest {
     @Test
     void testFlush() {
         cards.addAll(List.of(new Card(1, Suit.CLUBS), new Card(2, Suit.CLUBS),
-                new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(5, Suit.CLUBS)));
+                new Card(3, Suit.CLUBS), new Card(4, Suit.CLUBS), new Card(6, Suit.CLUBS)));
         assertEquals(HandRanking.FLUSH, RankingSeperator.calculateCards(cards));
 
         cards.addAll(List.of(new Card(10, Suit.CLUBS), new Card(11, Suit.CLUBS)));

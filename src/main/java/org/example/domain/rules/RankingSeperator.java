@@ -164,6 +164,8 @@ public class RankingSeperator {
         List<Integer> sorted = cardNumbers.stream()
                 .distinct().sorted()
                 .collect(Collectors.toList());
+        if (sorted.size() < 5)
+            return false;
         for (int i=1; i<sorted.size(); i++) {
             if (sorted.get(i-1) != sorted.get(i) - 1)
                 if (i >= cardNumbers.size() - 4)
