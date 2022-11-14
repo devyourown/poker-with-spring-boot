@@ -155,6 +155,8 @@ public class RankingSeperator {
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
+        if (sorted.indexOf(10) == -1)
+            return false;
         if (sorted.size() - sorted.indexOf(10) != 5)
             return false;
         return true;
