@@ -1,2 +1,4 @@
-package org.example.console;public class ConsoleInput {
+package org.example.console;
+
+public class ConsoleInput {
 }

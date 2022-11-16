@@ -28,6 +28,10 @@ public class Player {
         return handRanking;
     }
 
+    public void setHandRanking(HandRanking handRanking) {
+        this.handRanking = handRanking;
+    }
+
     public void bet(int betAmount) throws Exception {
         validateEnoughToBet(betAmount);
         this.money -= betAmount;

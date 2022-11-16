@@ -16,11 +16,16 @@ public class Card {
         return suit;
     }
 
-    public boolean isSameAs(Card another) {
+    public boolean isSameValue(Card another) {
         return value == another.getValue();
     }
+
+    public boolean isSameSuit(Card another) {
+        return suit == another.getSuit();
+    }
+
     public boolean isHigherThan(Card another) {
-        if (isSameAs(another))
+        if (isSameValue(another))
             return false;
         if (isAce())
             return true;

@@ -15,8 +15,8 @@ class CardTest {
 
     @Test
     void testCardCanBeCompared() {
-        assertTrue(new Card(1, Suit.HEARTS).isSameAs(new Card(1, Suit.HEARTS)));
-        assertTrue(new Card(1, Suit.HEARTS).isSameAs(new Card(1, Suit.CLUBS)));
+        assertTrue(new Card(1, Suit.HEARTS).isSameValue(new Card(1, Suit.HEARTS)));
+        assertTrue(new Card(1, Suit.HEARTS).isSameValue(new Card(1, Suit.CLUBS)));
         assertTrue(new Card(3, Suit.HEARTS).isHigherThan(new Card(2, Suit.CLUBS)));
         assertTrue(new Card(1, Suit.HEARTS).isHigherThan(new Card(2, Suit.HEARTS)));
     }

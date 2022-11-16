@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class RankingSeperator {
     public static HandRanking calculateHands(List<Card> hands) {
-        if (hands.get(0).isSameAs(hands.get(1)))
+        if (hands.get(0).isSameValue(hands.get(1)))
             return HandRanking.ONE_PAIR;
         return HandRanking.HIGH_CARD;
     }
@@ -21,7 +21,7 @@ public class RankingSeperator {
         List<Suit> suitsOfCards = convertToSuit(cards);
         if (isRoyalStraightFlush(cards))
             return HandRanking.ROYAL_STRAIGHT_FLUSH;
-        if (isStraightFlush(cards))
+        else if (isStraightFlush(cards))
             return HandRanking.STRAIGHT_FLUSH;
         else if (isFourCards(numbersOfCards))
             return HandRanking.FOUR_CARDS;

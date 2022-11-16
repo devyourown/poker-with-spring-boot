@@ -1,14 +1,13 @@
 package org.example.domain.game;
 
+import org.example.domain.player.Player;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
 
-class GameTest {
+class DealerTest {
     @Test
-    void testGame() {
-        Game game = new Game(3);
-        game.getPlayers();
-        game.handOut();
+    void testDealer() {
+        Dealer dealer = new Dealer();
     }
 }

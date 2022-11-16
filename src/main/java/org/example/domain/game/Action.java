@@ -1,2 +1,9 @@
-package org.example.domain.game;public enum Action {
+package org.example.domain.game;
+
+public enum Action {
+    FOLD,
+    CALL,
+    RAISE,
+    CHECK,
+    BET;
 }
