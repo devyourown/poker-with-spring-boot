@@ -36,17 +36,14 @@ public class Game {
     }
 
     public void setFlop() {
-        status = GameStatus.FLOP;
         board.addAll(dealer.getFlopCards());
     }
 
     public void setTurn() {
-        status = GameStatus.TURN;
         board.addAll(dealer.getTurnCard());
     }
 
     public void setRiver() {
-        status = GameStatus.RIVER;
         board.addAll(dealer.getRiverCard());
     }
 
@@ -76,8 +73,10 @@ public class Game {
     private void actCall(Player player, int playerIndex) throws Exception {
         player.bet(pot.amountToCall(player));
         raisePotMoney(pot.amountToCall(player));
-        if (isLastAction(playerIndex))
+        if (isLastAction(playerIndex)) {
             setNextStatus();
+            initLastTurnIndex();
+        }
     }
 
 
@@ -88,8 +87,10 @@ public class Game {
     }
 
     private void actCheck(int playerIndex) {
-        if (isLastAction(playerIndex))
+        if (isLastAction(playerIndex)) {
             setNextStatus();
+            initLastTurnIndex();
+        }
     }
 
     private void actBet(Player player, int betSize) throws Exception {

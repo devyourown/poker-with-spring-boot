@@ -55,7 +55,7 @@ class GameTest {
     }
 
     @Test
-    void testStatusFlop() throws Exception {
+    void testStatus() throws Exception {
         game.playAction(0, Action.BET, 300);
         game.playAction(1, Action.CALL, 0);
         game.playAction(2, Action.CALL, 0);
@@ -63,5 +63,24 @@ class GameTest {
 
         game.playAction(0, Action.CHECK, 0);
         assertEquals(game.getStatus(), GameStatus.FLOP);
+
+        game.playAction(0, Action.CHECK, 300);
+        assertEquals(game.getStatus(), GameStatus.FLOP);
+        game.playAction(1, Action.CHECK, 0);
+        assertEquals(game.getStatus(), GameStatus.FLOP);
+        game.playAction(2, Action.CHECK, 0);
+        assertEquals(game.getStatus(), GameStatus.TURN);
+
+        game.playAction(0, Action.CHECK, 300);
+        game.playAction(1, Action.CHECK, 0);
+        assertEquals(game.getStatus(), GameStatus.TURN);
+        game.playAction(2, Action.CHECK, 0);
+        assertEquals(game.getStatus(), GameStatus.RIVER);
+
+        game.playAction(0, Action.CHECK, 300);
+        game.playAction(1, Action.CHECK, 0);
+        assertEquals(game.getStatus(), GameStatus.RIVER);
+        game.playAction(2, Action.CHECK, 0);
+        assertEquals(game.getStatus(), GameStatus.END);
     }
 }
