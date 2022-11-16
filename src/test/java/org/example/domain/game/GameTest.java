@@ -32,8 +32,15 @@ class GameTest {
     @Test
     void testFold() throws Exception {
         game.playAction(0, Action.FOLD, 0);
-        assertEquals(game.getNumOfPlayers(), 2);
         game.playAction(1, Action.FOLD, 0);
-        assertEquals(game.getNumOfPlayers(), 1);
+        assertEquals(game.isEnd(), true);
+    }
+
+    @Test
+    void testCheck() throws Exception {
+        game.playAction(0, Action.CALL, 0);
+        game.playAction(1, Action.CALL, 0);
+        game.playAction(2, Action.CHECK, 0);
+        assertEquals(game.getPot(), 600);
     }
 }

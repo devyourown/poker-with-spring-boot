@@ -13,19 +13,19 @@ public class Dealer {
         deck = new Deck();
     }
 
-    public List<Card> handout() {
+    public List<Card> handoutCards() {
         return List.of(deck.draw(), deck.draw());
     }
 
-    public List<Card> flop() {
+    public List<Card> getFlopCards() {
         return List.of(deck.draw(), deck.draw(), deck.draw());
     }
 
-    public List<Card> turn() {
+    public List<Card> getTurnCard() {
         return List.of(deck.draw());
     }
 
-    public List<Card> river() {
+    public List<Card> getRiverCard() {
         return List.of(deck.draw());
     }
 }

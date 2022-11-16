@@ -10,56 +10,39 @@ public class Game {
     private List<Player> players;
     private List<Integer> bettingLog;
     private List<Card> board;
-    private int pot;
     private Dealer dealer;
-    private int smallAmount;
-    private int bigAmount;
-    private int currentBet;
     private GameStatus status;
+    private Pot pot;
 
-    public Game(List<Player> players, int smallAmount, int bigAmount) {
+    public Game(List<Player> players, int smallBlind, int bigBlind) {
         board = new ArrayList<>();
         this.players = new ArrayList<>(players);
-        this.smallAmount = smallAmount;
-        this.bigAmount = bigAmount;
-
-        this.currentBet = bigAmount;
-        this.pot = smallAmount + bigAmount;
+        this.pot = new Pot(players, smallBlind, bigBlind);
 
         status = GameStatus.PRE_FLOP;
-
         this.dealer = new Dealer();
         distributeHands();
-        initBettingLog();
     }
 
     private void distributeHands() {
         for (Player player : players) {
-            player.setHands(dealer.handout());
+            player.setHands(dealer.handoutCards());
         }
-    }
-
-    private void initBettingLog() {
-        bettingLog = new ArrayList<>();
-        for (int i=0; i<players.size()-2; i++)
-            bettingLog.add(0);
-        bettingLog.add(smallAmount);
-        bettingLog.add(bigAmount);
     }
 
     public void setFlop() {
         status = GameStatus.FLOP;
-        board.addAll(dealer.flop());
+        board.addAll(dealer.getFlopCards());
     }
 
     public void setTurn() {
         status = GameStatus.TURN;
-        board.addAll(dealer.turn());
+        board.addAll(dealer.getTurnCard());
     }
 
     public void setRiver() {
         status = GameStatus.RIVER;
-        board.addAll(dealer.river());
+        board.addAll(dealer.getRiverCard());
     }
 
     public void playAction(int playerIndex, Action action, int betSize) throws Exception {
@@ -82,8 +65,8 @@ public class Game {
     }
 
     private void actCall(Player player, int playerIndex) throws Exception {
-        player.bet(amountToCall(player));
-        raisePotMoney(amountToCall(player));
+        player.bet(pot.amountToCall(player));
+        raisePotMoney(pot.amountToCall(player));
         if (isLastAction(playerIndex))
             setEnd();
     }
@@ -92,10 +75,6 @@ public class Game {
         if (status == GameStatus.RIVER && playerIndex == players.size() - 1)
             return true;
         return false;
-    }
-
-    private int amountToCall(Player player) {
-        return currentBet - bettingLog.get(players.indexOf(player));
     }
 
     private void actCheck(int playerIndex) {
@@ -108,35 +87,25 @@ public class Game {
     }
 
     private void actBet(Player player, int betSize) throws Exception {
-        setCurrentBet(betSize);
+        pot.setCurrentBet(betSize);
         player.bet(betSize);
         raisePotMoney(betSize);
         bettingLog.set(players.indexOf(player), betSize);
     }
 
     private void raisePotMoney(int betSize) {
-        this.pot += betSize;
-    }
-
-    private void setCurrentBet(int betSize) {
-        validateBetSize(betSize);
-        this.currentBet = betSize;
-    }
-
-    private void validateBetSize(int betSize) {
-        if (currentBet > betSize)
-            throw new IllegalArgumentException("[ERROR] betSize is small than prevBet");
+        pot.raiseMoney(betSize);
     }
 
     private void setEnd() {
         status = GameStatus.END;
     }
 
-    public int getPot() {
-        return this.pot;
+    public boolean isEnd() {
+        return status == GameStatus.END;
     }
 
-    public int getNumOfPlayers() {
-        return players.size();
+    public int getPot() {
+        return pot.getTotalAmount();
     }
 }
