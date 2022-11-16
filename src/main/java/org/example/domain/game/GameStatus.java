@@ -5,5 +5,9 @@ public enum GameStatus {
     FLOP,
     TURN,
     RIVER,
-    END
+    END;
+
+    public GameStatus nextStatus() {
+        return GameStatus.values()[this.ordinal() + 1];
+    }
 }

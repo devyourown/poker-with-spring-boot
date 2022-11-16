@@ -43,4 +43,25 @@ class GameTest {
         game.playAction(2, Action.CHECK, 0);
         assertEquals(game.getPot(), 600);
     }
+
+    @Test
+    void testBet() throws Exception {
+        game.playAction(0, Action.BET, 300);
+        game.playAction(1, Action.CALL, 0);
+        game.playAction(2, Action.CALL, 0);
+        assertEquals(game.getPot(), 900);
+        game.playAction(0, Action.CHECK, 0);
+        assertEquals(game.getPot(), 900);
+    }
+
+    @Test
+    void testStatusFlop() throws Exception {
+        game.playAction(0, Action.BET, 300);
+        game.playAction(1, Action.CALL, 0);
+        game.playAction(2, Action.CALL, 0);
+        assertEquals(game.getStatus(), GameStatus.PRE_FLOP);
+
+        game.playAction(0, Action.CHECK, 0);
+        assertEquals(game.getStatus(), GameStatus.FLOP);
+    }
 }

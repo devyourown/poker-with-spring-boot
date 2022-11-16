@@ -56,4 +56,8 @@ public class Pot {
     public int getTotalAmount() {
         return totalAmount;
     }
+
+    public void putPlayerBetLog(Player player, int betSize) {
+        playerBetLog.put(player, betSize);
+    }
 }

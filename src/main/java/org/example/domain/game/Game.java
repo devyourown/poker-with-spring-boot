@@ -8,11 +8,11 @@ import java.util.List;
 
 public class Game {
     private List<Player> players;
-    private List<Integer> bettingLog;
     private List<Card> board;
     private Dealer dealer;
     private GameStatus status;
     private Pot pot;
+    private int lastTurnIndex;
 
     public Game(List<Player> players, int smallBlind, int bigBlind) {
         board = new ArrayList<>();
@@ -20,8 +20,13 @@ public class Game {
         this.pot = new Pot(players, smallBlind, bigBlind);
 
         status = GameStatus.PRE_FLOP;
+        initLastTurnIndex();
         this.dealer = new Dealer();
         distributeHands();
+    }
+
+    private void initLastTurnIndex() {
+        lastTurnIndex = players.size() - 1;
     }
 
     private void distributeHands() {
@@ -64,37 +69,43 @@ public class Game {
             setEnd();
     }
 
+    private void removePlayer(Player player) {
+        players.remove(player);
+    }
+
     private void actCall(Player player, int playerIndex) throws Exception {
         player.bet(pot.amountToCall(player));
         raisePotMoney(pot.amountToCall(player));
         if (isLastAction(playerIndex))
-            setEnd();
+            setNextStatus();
     }
 
+
     private boolean isLastAction(int playerIndex) {
-        if (status == GameStatus.RIVER && playerIndex == players.size() - 1)
+        if (playerIndex == lastTurnIndex)
             return true;
         return false;
     }
 
     private void actCheck(int playerIndex) {
         if (isLastAction(playerIndex))
-            setEnd();
-    }
-
-    private void removePlayer(Player player) {
-        players.remove(player);
+            setNextStatus();
     }
 
     private void actBet(Player player, int betSize) throws Exception {
         pot.setCurrentBet(betSize);
         player.bet(betSize);
         raisePotMoney(betSize);
-        bettingLog.set(players.indexOf(player), betSize);
+        pot.putPlayerBetLog(player, betSize);
+        lastTurnIndex = players.indexOf(player);
     }
 
     private void raisePotMoney(int betSize) {
         pot.raiseMoney(betSize);
+    }
+
+    private void setNextStatus() {
+        status = status.nextStatus();
     }
 
     private void setEnd() {
@@ -107,5 +118,9 @@ public class Game {
 
     public int getPot() {
         return pot.getTotalAmount();
+    }
+
+    public GameStatus getStatus() {
+        return status;
     }
 }
