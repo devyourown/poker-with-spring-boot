@@ -83,4 +83,9 @@ class GameTest {
         game.playAction(2, Action.CHECK, 0);
         assertEquals(game.getStatus(), GameStatus.END);
     }
+
+    @Test
+    void testGameResult() {
+
+    }
 }

@@ -2,8 +2,12 @@ package org.example.domain.game;
 
 import org.example.domain.card.Card;
 import org.example.domain.player.Player;
+import org.example.domain.rules.HandRanking;
+import org.example.domain.rules.RankingSeperator;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class Game {
@@ -21,6 +25,7 @@ public class Game {
 
         status = GameStatus.PRE_FLOP;
         initLastTurnIndex();
+
         this.dealer = new Dealer();
         distributeHands();
     }
@@ -33,18 +38,6 @@ public class Game {
         for (Player player : players) {
             player.setHands(dealer.handoutCards());
         }
-    }
-
-    public void setFlop() {
-        board.addAll(dealer.getFlopCards());
-    }
-
-    public void setTurn() {
-        board.addAll(dealer.getTurnCard());
-    }
-
-    public void setRiver() {
-        board.addAll(dealer.getRiverCard());
     }
 
     public void playAction(int playerIndex, Action action, int betSize) throws Exception {
@@ -73,24 +66,91 @@ public class Game {
     private void actCall(Player player, int playerIndex) throws Exception {
         player.bet(pot.amountToCall(player));
         raisePotMoney(pot.amountToCall(player));
+        setNextStatusWhenLastAction(playerIndex);
+    }
+
+    private void actCheck(int playerIndex) {
+        setNextStatusWhenLastAction(playerIndex);
+    }
+
+    private void setNextStatusWhenLastAction(int playerIndex) {
         if (isLastAction(playerIndex)) {
             setNextStatus();
             initLastTurnIndex();
+            setBoardAsStatus();
         }
     }
 
+    private void setBoardAsStatus() {
+        if (getStatus() == GameStatus.FLOP)
+            setFlop();
+        else if (getStatus() == GameStatus.TURN)
+            setTurn();
+        else if (getStatus() == GameStatus.RIVER)
+            setRiver();
+        else if (getStatus() == GameStatus.END)
+            makeWinner();
+    }
+
+    public void setFlop() {
+        board.addAll(dealer.getFlopCards());
+    }
+
+    public void setTurn() {
+        board.addAll(dealer.getTurnCard());
+    }
+
+    public void setRiver() {
+        board.addAll(dealer.getRiverCard());
+    }
+
+    public void makeWinner() {
+        HandRanking winnerRanking = HandRanking.HIGH_CARD;
+        Player winner = null;
+        calculatePlayerRanking();
+        for (Player player : players) {
+            if (winnerRanking.ordinal() > player.getRanking().ordinal()) {
+                winnerRanking = player.getRanking();
+                winner = player;
+            }
+        }
+        if (isTiedGame(winnerRanking))
+            splitMoney();
+        else
+            winner.raiseMoney(pot.getTotalAmount());
+    }
+
+    private void calculatePlayerRanking() {
+        for (Player player : players) {
+            List<Card> totalCards = new ArrayList<>(board);
+            totalCards.addAll(player.getHands());
+            player.setHandRanking(RankingSeperator.calculateCards(totalCards));
+        }
+    }
+
+    private boolean isTiedGame(HandRanking winnerRanking) {
+        for (Player player : players) {
+            if (player.getRanking() != winnerRanking)
+                removePlayer(player);
+        }
+        if (players.size() > 1)
+            return true;
+        return false;
+    }
+
+    private void splitMoney() {
+        int winnerPrize = pot.getTotalAmount() / players.size();
+        if (pot.getTotalAmount() % players.size() != 0)
+            winnerPrize += pot.getTotalAmount() / players.size();
+        for (Player player : players) {
+            player.raiseMoney(winnerPrize);
+        }
+    }
 
     private boolean isLastAction(int playerIndex) {
         if (playerIndex == lastTurnIndex)
             return true;
         return false;
-    }
-
-    private void actCheck(int playerIndex) {
-        if (isLastAction(playerIndex)) {
-            setNextStatus();
-            initLastTurnIndex();
-        }
     }
 
     private void actBet(Player player, int betSize) throws Exception {

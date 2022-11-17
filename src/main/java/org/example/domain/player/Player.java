@@ -15,6 +15,24 @@ public class Player {
         this.money = money;
     }
 
+    public void bet(int betAmount) throws Exception {
+        validateEnoughToBet(betAmount);
+        this.money -= betAmount;
+    }
+
+    private void validateEnoughToBet(int amount) throws Exception {
+        if (money < amount)
+            throw new IllegalArgumentException("[ERROR] 베팅할 돈이 부족합니다.");
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public void raiseMoney(int pot) {
+        this.money += pot;
+    }
+
     public void setHands(List<Card> cards) {
         hands = cards;
         handRanking = RankingSeperator.calculateHands(cards);
@@ -30,19 +48,5 @@ public class Player {
 
     public void setHandRanking(HandRanking handRanking) {
         this.handRanking = handRanking;
-    }
-
-    public void bet(int betAmount) throws Exception {
-        validateEnoughToBet(betAmount);
-        this.money -= betAmount;
-    }
-
-    private void validateEnoughToBet(int amount) throws Exception {
-        if (money < amount)
-            throw new IllegalArgumentException("[ERROR] 베팅할 돈이 부족합니다.");
-    }
-
-    public int getMoney() {
-        return money;
     }
 }

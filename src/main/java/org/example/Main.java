@@ -19,23 +19,23 @@ public class Main {
     }
 
     public void startGame(Game game) throws Exception {
-        int index = 0;
         while (!game.isEnd()) {
-            while (game.getStatus() == GameStatus.PRE_FLOP) {
-                UserAction userAction = ConsoleInput.getUserAction();
-                game.playAction(index % players.size(),
-                        userAction.action, userAction.betSize);
-            }
+            playUntilStatus(game, GameStatus.PRE_FLOP);
             game.setFlop();
-            while (game.getStatus() == GameStatus.FLOP) {
-            }
+            playUntilStatus(game, GameStatus.FLOP);
             game.setTurn();
-            while (game.getStatus() == GameStatus.TURN) {
-            }
+            playUntilStatus(game, GameStatus.TURN);
             game.setRiver();
-            while (game.getStatus() == GameStatus.RIVER) {
+            playUntilStatus(game, GameStatus.RIVER);
+        }
+    }
 
-            }
+    private void playUntilStatus(Game game, GameStatus status) throws Exception {
+        int index = 0;
+        while (game.getStatus() == status) {
+            UserAction userAction = ConsoleInput.getUserAction();
+            game.playAction(index % players.size(),
+                    userAction.action, userAction.betSize);
         }
     }
 }
