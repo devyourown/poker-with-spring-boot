@@ -21,11 +21,8 @@ public class Main {
     public void startGame(Game game) throws Exception {
         while (!game.isEnd()) {
             playUntilStatus(game, GameStatus.PRE_FLOP);
-            game.setFlop();
             playUntilStatus(game, GameStatus.FLOP);
-            game.setTurn();
             playUntilStatus(game, GameStatus.TURN);
-            game.setRiver();
             playUntilStatus(game, GameStatus.RIVER);
         }
     }

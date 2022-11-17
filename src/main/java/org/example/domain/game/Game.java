@@ -92,19 +92,19 @@ public class Game {
             makeWinner();
     }
 
-    public void setFlop() {
+    private void setFlop() {
         board.addAll(dealer.getFlopCards());
     }
 
-    public void setTurn() {
+    private void setTurn() {
         board.addAll(dealer.getTurnCard());
     }
 
-    public void setRiver() {
+    private void setRiver() {
         board.addAll(dealer.getRiverCard());
     }
 
-    public void makeWinner() {
+    private void makeWinner() {
         HandRanking winnerRanking = HandRanking.HIGH_CARD;
         Player winner = null;
         calculatePlayerRanking();
