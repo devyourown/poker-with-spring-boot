@@ -78,6 +78,10 @@ public class Game {
             setBoardAsStatus();
         }
     }
+    
+    private void setNextStatus() {
+        status = status.nextStatus();
+    }
 
     private void setBoardAsStatus() {
         if (getStatus() == GameStatus.FLOP)
@@ -161,10 +165,6 @@ public class Game {
 
     private void raisePotMoney(int betSize) {
         pot.raiseMoney(betSize);
-    }
-
-    private void setNextStatus() {
-        status = status.nextStatus();
     }
 
     private void setEnd() {

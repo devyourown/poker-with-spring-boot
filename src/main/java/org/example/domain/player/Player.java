@@ -1,6 +1,7 @@
 package org.example.domain.player;
 
 import org.example.domain.card.Card;
+import org.example.domain.error.BetException;
 import org.example.domain.rules.RankingSeperator;
 import org.example.domain.rules.HandRanking;
 
@@ -22,7 +23,7 @@ public class Player {
 
     private void validateEnoughToBet(int amount) throws Exception {
         if (money < amount)
-            throw new IllegalArgumentException("[ERROR] 베팅할 돈이 부족합니다.");
+            throw new BetException(BetException.ErrorCode.MONEY_NOT_ENOUGH);
     }
 
     public int getMoney() {
