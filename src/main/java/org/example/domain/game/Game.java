@@ -78,7 +78,7 @@ public class Game {
             setBoardAsStatus();
         }
     }
-    
+
     private void setNextStatus() {
         status = status.nextStatus();
     }
@@ -111,7 +111,7 @@ public class Game {
         Player winner = null;
         calculatePlayerRanking();
         for (Player player : players) {
-            if (winnerRanking.ordinal() > player.getRanking().ordinal()) {
+            if (winnerRanking.ordinal() <= player.getRanking().ordinal()) {
                 winnerRanking = player.getRanking();
                 winner = player;
             }
@@ -131,7 +131,8 @@ public class Game {
     }
 
     private boolean isTiedGame(HandRanking winnerRanking) {
-        for (Player player : players) {
+        List<Player> copiedPlayer = players.stream().toList();
+        for (Player player : copiedPlayer) {
             if (player.getRanking() != winnerRanking)
                 removePlayer(player);
         }

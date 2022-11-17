@@ -2,6 +2,7 @@ package org.example.domain.player;
 
 import org.example.domain.card.Card;
 import org.example.domain.card.Suit;
+import org.example.domain.error.BetException;
 import org.example.domain.rules.HandRanking;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ class PlayerTest {
     void testPlayerCanBet() throws Exception {
         player.bet(500);
         assertEquals(500, player.getMoney());
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(BetException.class, () -> {
             player.bet(1000);
         });
     }
