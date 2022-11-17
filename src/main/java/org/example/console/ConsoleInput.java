@@ -7,16 +7,34 @@ import java.util.Scanner;
 public class ConsoleInput {
     private static Scanner scanner = new Scanner(System.in);
     public static UserAction getUserAction() {
-        Action action = getAction();
-        int betSize = getBetSize();
-        return new UserAction(action, betSize);
+        return new UserAction(getAction(), getBetSize());
     }
 
     private static Action getAction() {
-        return Action.valueOf("check");
+        String action = scanner.next();
+        validateActionInput(action);
+        return Action.valueOf(action);
+    }
+
+    private static void validateActionInput(String action) {
+        try {
+            Action.valueOf(action);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("[ERROR] 액션을 제대로 입력 해주세요.");
+        }
     }
 
     private static int getBetSize() {
-        return 1;
+        String betSize = scanner.next();
+        validateBetInput(betSize);
+        return Integer.parseInt(betSize);
+    }
+
+    private static void validateBetInput(String betSize) {
+        try {
+            Integer.parseInt(betSize);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("[ERROR] 값을 제대로 입력해 주세요.");
+        }
     }
 }

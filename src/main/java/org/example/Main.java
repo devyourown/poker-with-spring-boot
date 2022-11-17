@@ -16,6 +16,7 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("---------게임 시작----------");
         System.out.println();
+        System.out.println(Action.valueOf("BET"));
     }
 
     public void startGame(Game game) throws Exception {
