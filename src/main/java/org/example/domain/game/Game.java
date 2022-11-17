@@ -76,6 +76,7 @@ public class Game {
             setNextStatus();
             initLastTurnIndex();
             setBoardAsStatus();
+            calculatePlayerRanking();
         }
     }
 
