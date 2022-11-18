@@ -92,7 +92,7 @@ public class Game {
             setNextStatus();
             initLastTurnIndex();
             dealer.setBoardAsStatus(status);
-            GameResult.setPlayersRanking(players, dealer.getBoard());
+            setPlayersRanking(players, dealer.getBoard());
             pot.putZeroInBetLog(players);
             pot.resetCurrentBet();
         }
@@ -106,6 +106,14 @@ public class Game {
 
     private void setNextStatus() {
         status = status.nextStatus();
+    }
+
+    private void setPlayersRanking(List<Player> players, List<Card> cards) {
+        for (Player player : players) {
+            List<Card> totalCards = new ArrayList<>(cards);
+            totalCards.addAll(player.getHands());
+            player.setHandRanking(RankingCalculator.calculateCards(totalCards));
+        }
     }
 
     private void setEnd() {

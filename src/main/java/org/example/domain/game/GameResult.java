@@ -6,7 +6,6 @@ import org.example.domain.rules.HandRanking;
 import org.example.domain.rules.RankingCalculator;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class GameResult {
@@ -19,14 +18,10 @@ public class GameResult {
         presenter = new Presenter(pot);
         winner = makeWinner(players);
         if (isAllInPlayerWin(players)) {
-            presenter.giveMoneyToAllInWinner(winner,
-                    makePeopleWhoGetPaidButLose(players));
-            List<Player> losers = makePeopleWhoGetPaidButLose(players);
-            if (!losers.isEmpty())
-                presenter.giveMoney(makeWinner(losers));
-        } else {
-            presenter.giveMoney(winner);
+            giveMoneyWhenAllIn(players);
+            return ;
         }
+        presenter.giveMoney(winner);
     }
 
     private boolean isAllInPlayerWin(List<Player> players) {
@@ -41,6 +36,13 @@ public class GameResult {
                 result.add(player);
         }
         return result;
+    }
+
+    private void giveMoneyWhenAllIn(List<Player> players) {
+        List<Player> losers = makePeopleWhoGetPaidButLose(players);
+        presenter.giveMoneyToAllInWinner(winner, losers);
+        if (!losers.isEmpty())
+            presenter.giveMoney(makeWinner(losers));
     }
 
     private List<Player> makePeopleWhoGetPaidButLose(List<Player> players) {
@@ -74,13 +76,5 @@ public class GameResult {
                 result.add(player);
         }
         return result;
-    }
-
-    public static void setPlayersRanking(List<Player> players, List<Card> cards) {
-        for (Player player : players) {
-            List<Card> totalCards = new ArrayList<>(cards);
-            totalCards.addAll(player.getHands());
-            player.setHandRanking(RankingCalculator.calculateCards(totalCards));
-        }
     }
 }

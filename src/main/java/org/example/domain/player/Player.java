@@ -13,11 +13,9 @@ public class Player {
     private int money;
     private List<Card> hands;
     private HandRanking handRanking;
-    private boolean allIn;
 
     public Player(int money) {
         this.money = money;
-        this.allIn = false;
     }
 
     public void bet(int betAmount) {
@@ -49,12 +47,8 @@ public class Player {
         this.handRanking = handRanking;
     }
 
-    public void setAllIn() {
-        allIn = true;
-    }
-
     public boolean isAllIn() {
-        return allIn;
+        return money == 0;
     }
 
 }
