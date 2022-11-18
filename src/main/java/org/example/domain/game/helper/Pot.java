@@ -1,4 +1,4 @@
-package org.example.domain.game;
+package org.example.domain.game.helper;
 
 import org.example.domain.player.Player;
 
@@ -38,16 +38,15 @@ public class Pot {
         }
     }
 
-
-    int amountToCall(Player player) {
+    public int amountToCall(Player player) {
         return currentBet - playerBetLog.get(player);
     }
 
-    void raiseMoney(int money) {
+    public void raiseMoney(int money) {
         this.totalAmount += money;
     }
 
-    void setCurrentBet(int betSize) {
+    public void setCurrentBet(int betSize) {
         this.currentBet = betSize;
     }
 

@@ -28,9 +28,6 @@ class PlayerTest {
     void testPlayerCanBet() throws Exception {
         player.bet(500);
         assertEquals(500, player.getMoney());
-        assertThrows(BetException.class, () -> {
-            player.bet(1000);
-        });
     }
 
     @Test

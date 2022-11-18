@@ -1,9 +1,8 @@
-package org.example.domain.game;
+package org.example.domain.game.helper;
 
+import org.example.domain.game.helper.Pot;
 import org.example.domain.player.Player;
-import org.example.domain.rules.HandRanking;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Presenter {

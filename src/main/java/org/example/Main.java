@@ -4,14 +4,12 @@ import org.example.console.ConsoleInput;
 import org.example.console.ConsoleOutput;
 import org.example.console.UserAction;
 import org.example.domain.game.Action;
-import org.example.domain.game.Dealer;
 import org.example.domain.game.Game;
 import org.example.domain.game.GameStatus;
 import org.example.domain.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class Main {
     private static List<Player> players;

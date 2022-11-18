@@ -1,12 +1,9 @@
-package org.example.domain.game;
+package org.example.domain.game.helper;
 
-import org.example.domain.card.Card;
 import org.example.domain.player.Player;
 import org.example.domain.rules.HandRanking;
-import org.example.domain.rules.RankingCalculator;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class GameResult {

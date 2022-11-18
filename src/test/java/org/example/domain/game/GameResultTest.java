@@ -1,5 +1,7 @@
 package org.example.domain.game;
 
+import org.example.domain.game.helper.GameResult;
+import org.example.domain.game.helper.Pot;
 import org.example.domain.player.Player;
 import org.example.domain.rules.HandRanking;
 import org.junit.jupiter.api.Test;
