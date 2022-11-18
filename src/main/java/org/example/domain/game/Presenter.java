@@ -13,12 +13,11 @@ public class Presenter {
         this.pot = pot;
     }
 
-    public void giveMoneyToAllInWinner(List<Player> winner, List<Player> loser) {
+    public void giveMoneyToAllInWinner(List<Player> winner, List<Player> players) {
         winner.sort((a, b) -> pot.getPlayerBetLog(a) - pot.getPlayerBetLog(b));
         for (int i=0; i<winner.size();) {
             giveWinnerMoney(winner,
-                    makeAllInPrizeMoney(loser, pot.getPlayerBetLog(winner.get(i))));
-            pot.takeOutMoney(pot.getPlayerBetLog(winner.get(i)));
+                    makeAllInPrizeMoney(players, pot.getPlayerBetLog(winner.get(i))));
             winner.remove(i);
         }
     }
@@ -30,9 +29,9 @@ public class Presenter {
         }
     }
 
-    private int makeAllInPrizeMoney(List<Player> loser, int winnerBetSize) {
+    private int makeAllInPrizeMoney(List<Player> players, int winnerBetSize) {
         int result = 0;
-        for (Player player : loser) {
+        for (Player player : players) {
             result += getMoneyFromPot(player, winnerBetSize);
         }
         return result;
@@ -40,6 +39,8 @@ public class Presenter {
 
     private int getMoneyFromPot(Player player, int winnerBetSize) {
         int playerBet = pot.getPlayerBetLog(player);
+        if (playerBet <= 0)
+            return 0;
         if (playerBet > winnerBetSize) {
             getMoneyAndLogLeft(player, winnerBetSize, playerBet - winnerBetSize);
             return winnerBetSize;

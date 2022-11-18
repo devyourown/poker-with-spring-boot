@@ -36,17 +36,14 @@ class GameResultTest {
 
         pot.putPlayerBetLog(player, 1000);
         player.bet(1000);
-        player.setAllIn();
         pot.raiseMoney(1000);
 
         pot.putPlayerBetLog(player2, 1000);
         player2.bet(900);
-        player2.setAllIn();
         pot.raiseMoney(900);
 
         pot.putPlayerBetLog(player3, 1000);
         player3.bet(800);
-        player3.setAllIn();
         pot.raiseMoney(800);
 
         gameResult = new GameResult(players, pot);
@@ -74,17 +71,14 @@ class GameResultTest {
 
         pot.putPlayerBetLog(player, 1000);
         player.bet(1000);
-        player.setAllIn();
         pot.raiseMoney(1000);
 
         pot.putPlayerBetLog(player2, 500);
         player2.bet(400);
-        player2.setAllIn();
         pot.raiseMoney(400);
 
         pot.putPlayerBetLog(player3, 1000);
         player3.bet(800);
-        player3.setAllIn();
         pot.raiseMoney(800);
 
         gameResult = new GameResult(players, pot);
@@ -112,17 +106,14 @@ class GameResultTest {
 
         pot.putPlayerBetLog(player, 1000);
         player.bet(1000);
-        player.setAllIn();
         pot.raiseMoney(1000);
 
         pot.putPlayerBetLog(player2, 500);
         player2.bet(400);
-        player2.setAllIn();
         pot.raiseMoney(400);
 
         pot.putPlayerBetLog(player3, 1000);
         player3.bet(800);
-        player3.setAllIn();
         pot.raiseMoney(800);
 
         gameResult = new GameResult(players, pot);
@@ -149,16 +140,16 @@ class GameResultTest {
         Pot pot = new Pot(players, 100, 200);
         pot.putPlayerBetLog(player, 1000);
         player.bet(1000);
-        player.setAllIn();
         pot.raiseMoney(1000);
+
         pot.putPlayerBetLog(player2, 500);
         player2.bet(400);
-        player2.setAllIn();
         pot.raiseMoney(400);
+
         pot.putPlayerBetLog(player3, 1000);
         player3.bet(800);
-        player3.setAllIn();
         pot.raiseMoney(800);
+
         gameResult = new GameResult(players, pot);
         assertEquals(1000, player.getMoney());
         assertEquals(1500, player2.getMoney());

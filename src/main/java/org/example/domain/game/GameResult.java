@@ -39,8 +39,8 @@ public class GameResult {
     }
 
     private void giveMoneyWhenAllIn(List<Player> players) {
+        presenter.giveMoneyToAllInWinner(winner, players);
         List<Player> losers = makePeopleWhoGetPaidButLose(players);
-        presenter.giveMoneyToAllInWinner(winner, losers);
         if (!losers.isEmpty())
             presenter.giveMoney(makeWinner(losers));
     }
