@@ -7,7 +7,14 @@ import java.util.Scanner;
 public class ConsoleInput {
     private static Scanner scanner = new Scanner(System.in);
     public static UserAction getUserAction() {
-        return new UserAction(getAction(), getBetSize());
+        Action action = getAction();
+        if (shouldGetMoney(action))
+            return new UserAction(action, getBetSize());
+        return new UserAction(action, 0);
+    }
+
+    private static boolean shouldGetMoney(Action action) {
+        return Action.RAISE == action || Action.BET == action;
     }
 
     private static Action getAction() {

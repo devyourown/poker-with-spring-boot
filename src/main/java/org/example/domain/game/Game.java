@@ -54,19 +54,26 @@ public class Game {
         setNextStatusWhenLastAction(playerIndex);
         if (lastTurnIndex == players.size() - 1)
             lastTurnIndex--;
-        removePlayer(player);
+        players.remove(player);
         if (players.size() < 2)
             setEnd();
-    }
-
-    private void removePlayer(Player player) {
-        players.remove(player);
     }
 
     private void actCall(Player player, int playerIndex) throws Exception {
         player.bet(pot.amountToCall(player));
         raisePotMoney(pot.amountToCall(player));
         setNextStatusWhenLastAction(playerIndex);
+    }
+    private void actCheck(int playerIndex) {
+        setNextStatusWhenLastAction(playerIndex);
+    }
+
+    private void actBet(Player player, int betSize) throws Exception {
+        pot.setCurrentBet(betSize);
+        player.bet(betSize);
+        raisePotMoney(betSize);
+        pot.putPlayerBetLog(player, betSize);
+        lastTurnIndex = players.indexOf(player);
     }
 
     private void raisePotMoney(int betSize) {
@@ -91,18 +98,6 @@ public class Game {
 
     private void setNextStatus() {
         status = status.nextStatus();
-    }
-
-    private void actCheck(int playerIndex) {
-        setNextStatusWhenLastAction(playerIndex);
-    }
-
-    private void actBet(Player player, int betSize) throws Exception {
-        pot.setCurrentBet(betSize);
-        player.bet(betSize);
-        raisePotMoney(betSize);
-        pot.putPlayerBetLog(player, betSize);
-        lastTurnIndex = players.indexOf(player);
     }
 
     private void setEnd() {

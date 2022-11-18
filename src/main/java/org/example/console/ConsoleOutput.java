@@ -1,6 +1,7 @@
 package org.example.console;
 
 import org.example.domain.card.Card;
+import org.example.domain.game.Action;
 
 import java.util.List;
 
@@ -26,5 +27,15 @@ public class ConsoleOutput {
             System.out.print("  ");
         }
         System.out.println();
+    }
+
+    public static void printAvailableAction(int betSize, int gameOrder) {
+        System.out.print("선택할 수 있는 액션 : ");
+        if (betSize > 0)
+            System.out.println(Action.FOLD.toString() + " " + Action.CALL + " " + Action.RAISE);
+        else if (gameOrder == 0)
+            System.out.println(Action.FOLD.toString() + " " + Action.BET + " " + Action.CHECK);
+        else
+            System.out.println(Action.FOLD.toString() + " " + Action.BET + " " + Action.CHECK);
     }
 }

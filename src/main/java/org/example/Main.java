@@ -54,6 +54,7 @@ public class Main {
             ConsoleOutput.printHands(game
                     .getPlayerOf(index % game.getSizeOfPlayers())
                     .getHands());
+            ConsoleOutput.printAvailableAction(game.getBettingSize(), index);
             UserAction userAction = ConsoleInput.getUserAction();
             game.playAction(index % game.getSizeOfPlayers(),
                     userAction.action, userAction.betSize);
