@@ -18,14 +18,8 @@ public class Player {
         this.money = money;
     }
 
-    public void bet(int betAmount) throws Exception {
-        validateEnoughToBet(betAmount);
+    public void bet(int betAmount) {
         this.money -= betAmount;
-    }
-
-    private void validateEnoughToBet(int amount) throws Exception {
-        if (money < amount)
-            throw new BetException(BetException.ErrorCode.MONEY_NOT_ENOUGH);
     }
 
     public int getMoney() {

@@ -20,12 +20,13 @@ public class BetException extends Exception {
                 return "Bet size should upper than 100.";
             case MONEY_NOT_ENOUGH:
                 return "Money is not enough to bet.";
-
+            case NOT_INTEGER:
+                return "Money should be number.";
         }
         return "";
     }
     public enum ErrorCode {
         OK, INVALID_BET_SIZE, TOO_SMALL_BET_SIZE,
-        MONEY_NOT_ENOUGH;
+        MONEY_NOT_ENOUGH, NOT_INTEGER;
     }
 }

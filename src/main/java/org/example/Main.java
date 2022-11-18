@@ -55,7 +55,7 @@ public class Main {
                     .getPlayerOf(index % game.getSizeOfPlayers())
                     .getHands());
             ConsoleOutput.printAvailableAction(game.getBettingSize(), index);
-            UserAction userAction = ConsoleInput.getUserAction();
+            UserAction userAction = ConsoleInput.getUserAction(game.getBettingSize(), index);
             game.playAction(index % game.getSizeOfPlayers(),
                     userAction.action, userAction.betSize);
             if (userAction.action == Action.FOLD)
