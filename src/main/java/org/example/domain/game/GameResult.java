@@ -39,8 +39,8 @@ public class GameResult {
     }
 
     private void giveMoneyWhenAllIn(List<Player> players) {
-        presenter.giveMoneyToAllInWinner(winner, players);
         List<Player> losers = makePeopleWhoGetPaidButLose(players);
+        presenter.giveMoneyToAllInWinner(winner, losers);
         if (!losers.isEmpty())
             presenter.giveMoney(makeWinner(losers));
     }
@@ -48,7 +48,7 @@ public class GameResult {
     private List<Player> makePeopleWhoGetPaidButLose(List<Player> players) {
         List<Player> result = new ArrayList<>();
         for (Player player : players) {
-            if (pot.getPlayerBetLog(player) > 0)
+            if (!winner.contains(player))
                 result.add(player);
         }
         return result;

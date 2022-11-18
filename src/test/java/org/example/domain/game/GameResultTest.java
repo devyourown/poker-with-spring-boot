@@ -18,6 +18,61 @@ class GameResultTest {
     private GameResult gameResult;
 
     @Test
+    void testBigAllIn() {
+        players = new ArrayList<>();
+        player = new Player(3000);
+        player.setHandRanking(HandRanking.FLUSH);
+        players.add(player);
+
+        player2 = new Player(4000);
+        player2.setHandRanking(HandRanking.FLUSH);
+        players.add(player2);
+
+        player3 = new Player(7000);
+        player3.setHandRanking(HandRanking.ONE_PAIR);
+        players.add(player3);
+
+        Player player4 = new Player(8000);
+        player4.setHandRanking(HandRanking.STRAIGHT);
+        players.add(player4);
+
+        Player player5 = new Player(1500);
+        player5.setHandRanking(HandRanking.HIGH_CARD);
+        players.add(player5);
+
+        Pot pot = new Pot(players, 100, 200);
+
+        pot.putPlayerBetLog(player, 3000);
+        player.bet(3000);
+        pot.raiseMoney(3000);
+
+        pot.putPlayerBetLog(player2, 4000);
+        player2.bet(4000);
+        pot.raiseMoney(4000);
+
+        pot.putPlayerBetLog(player3, 7000);
+        player3.bet(7000);
+        pot.raiseMoney(7000);
+
+        pot.putPlayerBetLog(player4, 8000);
+        player4.bet(7900);
+        pot.raiseMoney(7900);
+
+        pot.putPlayerBetLog(player5, 1500);
+        player5.bet(1300);
+        pot.raiseMoney(1300);
+
+        gameResult = new GameResult(players, pot);
+
+        assertEquals(6750, player.getMoney());
+        assertEquals(9750, player2.getMoney());
+        assertEquals(0, player3.getMoney());
+        assertEquals(7000, player4.getMoney());
+        assertEquals(0, player5.getMoney());
+        assertEquals(0, pot.getTotalAmount());
+    }
+
+    @Test
     void testAllInTieWin() {
         List<Player> players = new ArrayList<>();
         Player player = new Player(1000);
