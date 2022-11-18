@@ -3,7 +3,7 @@ package org.example.domain.game;
 import org.example.domain.card.Card;
 import org.example.domain.player.Player;
 import org.example.domain.rules.HandRanking;
-import org.example.domain.rules.RankingSeperator;
+import org.example.domain.rules.RankingSeparator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -132,7 +132,7 @@ public class Game {
         for (Player player : players) {
             List<Card> totalCards = new ArrayList<>(board);
             totalCards.addAll(player.getHands());
-            player.setHandRanking(RankingSeperator.calculateCards(totalCards));
+            player.setHandRanking(RankingSeparator.calculateCards(totalCards));
         }
     }
 

@@ -6,10 +6,9 @@ import org.example.domain.card.Suit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 import java.util.stream.Collectors;
 
-public class RankingSeperator {
+public class RankingSeparator {
     public static HandRanking calculateHands(List<Card> hands) {
         if (hands.get(0).isSameValue(hands.get(1)))
             return HandRanking.ONE_PAIR;
