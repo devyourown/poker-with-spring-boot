@@ -60,4 +60,8 @@ public class Pot {
     public int getCurrentBet() {
         return currentBet;
     }
+
+    public void resetCurrentBet() {
+        currentBet = 0;
+    }
 }

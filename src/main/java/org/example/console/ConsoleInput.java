@@ -64,14 +64,14 @@ public class ConsoleInput {
         String betSize = scanner.next();
         try {
             validateBetInput(betSize, prevBetSize);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (BetException e) {
+            System.out.println(e.errorMessage());
             return getBetSize(prevBetSize);
         }
         return Integer.parseInt(betSize);
     }
 
-    private static void validateBetInput(String input, int prevBetSize) throws Exception {
+    private static void validateBetInput(String input, int prevBetSize) throws BetException {
         int betSize;
         try {
             betSize = Integer.parseInt(input);
