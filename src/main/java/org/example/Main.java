@@ -51,6 +51,7 @@ public class Main {
         int index = 0;
         while (game.getStatus() == status) {
             ConsoleOutput.printPotSize(game.getBettingSize(), game.getPot());
+            ConsoleOutput.printMoney(game.getPlayerMoneyOf(index % game.getSizeOfPlayers()));
             ConsoleOutput.printHands(game
                     .getPlayerHandsOf(index % game.getSizeOfPlayers()));
             ConsoleOutput.printAvailableAction(game.getBettingSize(), index);

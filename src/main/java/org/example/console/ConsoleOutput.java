@@ -41,6 +41,10 @@ public class ConsoleOutput {
             System.out.println(Action.FOLD.toString() + " " + Action.BET + " " + Action.CHECK);
     }
 
+    public static void printMoney(int money) {
+        System.out.println("현재 갖고 있는 돈 : " + money);
+    }
+
     public static void printGameResult(Game game) {
         System.out.println("결과 : ");
         for (Player player : game.getPlayers()) {

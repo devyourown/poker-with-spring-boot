@@ -155,4 +155,8 @@ public class Game {
     public List<Player> getPlayers() {
         return Collections.unmodifiableList(players);
     }
+
+    public int getPlayerMoneyOf(int index) {
+        return players.get(index).getMoney();
+    }
 }
