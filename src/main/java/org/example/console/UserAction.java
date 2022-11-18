@@ -7,7 +7,7 @@ public class UserAction {
     public int betSize;
 
     public UserAction(Action action, int betSize) {
-        action = action;
-        betSize = betSize;
+        this.action = action;
+        this.betSize = betSize;
     }
 }

@@ -11,8 +11,14 @@ public class ConsoleInput {
     }
 
     private static Action getAction() {
+        System.out.print("ACTION : ");
         String action = scanner.next();
-        validateActionInput(action);
+        try {
+            validateActionInput(action);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return getAction();
+        }
         return Action.valueOf(action);
     }
 
@@ -25,8 +31,14 @@ public class ConsoleInput {
     }
 
     private static int getBetSize() {
+        System.out.print("Betting : ");
         String betSize = scanner.next();
-        validateBetInput(betSize);
+        try {
+            validateBetInput(betSize);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return getBetSize();
+        }
         return Integer.parseInt(betSize);
     }
 

@@ -6,6 +6,7 @@ import org.example.domain.rules.HandRanking;
 import org.example.domain.rules.RankingSeperator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Game {
@@ -41,7 +42,7 @@ public class Game {
     public void playAction(int playerIndex, Action action, int betSize) throws Exception {
         Player player = players.get(playerIndex);
         if (action == Action.FOLD)
-            actFold(player);
+            actFold(player, playerIndex);
         else if (action == Action.CALL)
             actCall(player, playerIndex);
         else if (action == Action.CHECK)
@@ -51,8 +52,11 @@ public class Game {
         }
     }
 
-    private void actFold(Player player) {
+    private void actFold(Player player, int playerIndex) {
         removePlayer(player);
+        setNextStatusWhenLastAction(playerIndex);
+        if (lastTurnIndex == players.size() - 1)
+            lastTurnIndex--;
         if (players.size() < 2)
             setEnd();
     }
@@ -183,5 +187,21 @@ public class Game {
 
     public GameStatus getStatus() {
         return status;
+    }
+
+    public List<Card> getBoard() {
+        return Collections.unmodifiableList(this.board);
+    }
+
+    public int getBettingSize() {
+        return pot.getCurrentBet();
+    }
+
+    public Player getPlayerOf(int index) {
+        return players.get(index);
+    }
+
+    public int getSizeOfPlayers() {
+        return players.size();
     }
 }
