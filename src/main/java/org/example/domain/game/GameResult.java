@@ -6,6 +6,7 @@ import org.example.domain.rules.HandRanking;
 import org.example.domain.rules.RankingCalculator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GameResult {

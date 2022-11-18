@@ -46,6 +46,7 @@ public class Main {
             ConsoleOutput.printBoard(game.getBoard());
             playUntilStatus(game, GameStatus.RIVER);
         }
+        ConsoleOutput.printGameResult(game);
     }
 
     private static void playUntilStatus(Game game, GameStatus status) throws Exception {
@@ -53,8 +54,7 @@ public class Main {
         while (game.getStatus() == status) {
             ConsoleOutput.printPotSize(game.getBettingSize(), game.getPot());
             ConsoleOutput.printHands(game
-                    .getPlayerOf(index % game.getSizeOfPlayers())
-                    .getHands());
+                    .getPlayerHandsOf(index % game.getSizeOfPlayers()));
             ConsoleOutput.printAvailableAction(game.getBettingSize(), index);
             UserAction userAction = ConsoleInput.getUserAction(game.getBettingSize(), index);
             game.playAction(index % game.getSizeOfPlayers(),

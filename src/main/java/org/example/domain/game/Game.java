@@ -141,11 +141,15 @@ public class Game {
         return pot.getCurrentBet();
     }
 
-    public Player getPlayerOf(int index) {
-        return players.get(index);
+    public List<Card> getPlayerHandsOf(int index) {
+        return players.get(index).getHands();
     }
 
     public int getSizeOfPlayers() {
         return players.size();
+    }
+
+    public List<Player> getPlayers() {
+        return Collections.unmodifiableList(players);
     }
 }

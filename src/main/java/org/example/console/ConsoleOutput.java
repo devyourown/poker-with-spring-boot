@@ -2,6 +2,9 @@ package org.example.console;
 
 import org.example.domain.card.Card;
 import org.example.domain.game.Action;
+import org.example.domain.game.Game;
+import org.example.domain.game.GameResult;
+import org.example.domain.player.Player;
 
 import java.util.List;
 
@@ -37,5 +40,13 @@ public class ConsoleOutput {
             System.out.println(Action.FOLD.toString() + " " + Action.BET + " " + Action.CHECK);
         else
             System.out.println(Action.FOLD.toString() + " " + Action.BET + " " + Action.CHECK);
+    }
+
+    public static void printGameResult(Game game) {
+        System.out.println("결과 : ");
+        for (Player player : game.getPlayers()) {
+            System.out.print("패 : " + player.getHands() + " ");
+            System.out.println("돈 : " + player.getMoney() + " ");
+        }
     }
 }
