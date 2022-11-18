@@ -2,8 +2,7 @@ package org.example.domain.game;
 
 import org.example.domain.card.Card;
 import org.example.domain.player.Player;
-import org.example.domain.rules.HandRanking;
-import org.example.domain.rules.RankingSeparator;
+import org.example.domain.rules.RankingCalculator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,7 +10,6 @@ import java.util.List;
 
 public class Game {
     private List<Player> players;
-    private List<Card> board;
     private Dealer dealer;
     private GameStatus status;
     private Pot pot;
@@ -19,7 +17,6 @@ public class Game {
     private GameResult result;
 
     public Game(List<Player> players, int smallBlind, int bigBlind) {
-        board = new ArrayList<>();
         this.players = new ArrayList<>(players);
         this.pot = new Pot(players, smallBlind, bigBlind);
 
@@ -80,8 +77,8 @@ public class Game {
         if (isLastAction(playerIndex)) {
             setNextStatus();
             initLastTurnIndex();
-            setBoardAsStatus();
-            calculatePlayerRanking();
+            dealer.setBoardAsStatus(status);
+            GameResult.setPlayersRanking(players, dealer.getBoard());
             pot.putZeroInBetLog(players);
         }
     }
@@ -96,39 +93,8 @@ public class Game {
         status = status.nextStatus();
     }
 
-    private void setBoardAsStatus() {
-        if (getStatus() == GameStatus.FLOP)
-            setFlop();
-        else if (getStatus() == GameStatus.TURN)
-            setTurn();
-        else if (getStatus() == GameStatus.RIVER)
-            setRiver();
-        else if (getStatus() == GameStatus.END)
-            result = new GameResult(players, pot);
-    }
-
-    private void calculatePlayerRanking() {
-        for (Player player : players) {
-            List<Card> totalCards = new ArrayList<>(board);
-            totalCards.addAll(player.getHands());
-            player.setHandRanking(RankingSeparator.calculateCards(totalCards));
-        }
-    }
-
     private void actCheck(int playerIndex) {
         setNextStatusWhenLastAction(playerIndex);
-    }
-
-    private void setFlop() {
-        board.addAll(dealer.getFlopCards());
-    }
-
-    private void setTurn() {
-        board.addAll(dealer.getTurnCard());
-    }
-
-    private void setRiver() {
-        board.addAll(dealer.getRiverCard());
     }
 
     private void actBet(Player player, int betSize) throws Exception {
@@ -140,8 +106,8 @@ public class Game {
     }
 
     private void setEnd() {
+        result = new GameResult(players, pot);
         status = GameStatus.END;
-        setBoardAsStatus();
     }
 
     public boolean isEnd() {
@@ -157,7 +123,7 @@ public class Game {
     }
 
     public List<Card> getBoard() {
-        return Collections.unmodifiableList(this.board);
+        return dealer.getBoard();
     }
 
     public int getBettingSize() {
@@ -173,8 +139,6 @@ public class Game {
     }
 
     public boolean isWinner(Player player) {
-        if (result.getWinner().contains(player))
-            return true;
-        return false;
+        return result.hasWinner(player);
     }
 }

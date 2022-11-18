@@ -1,7 +1,9 @@
 package org.example.domain.game;
 
+import org.example.domain.card.Card;
 import org.example.domain.player.Player;
 import org.example.domain.rules.HandRanking;
+import org.example.domain.rules.RankingCalculator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,7 +67,15 @@ public class GameResult {
         return winnerPrize;
     }
 
-    public List<Player> getWinner() {
-        return Collections.unmodifiableList(winner);
+    public boolean hasWinner(Player player) {
+        return winner.contains(player);
+    }
+
+    public static void setPlayersRanking(List<Player> players, List<Card> cards) {
+        for (Player player : players) {
+            List<Card> totalCards = new ArrayList<>(cards);
+            totalCards.addAll(player.getHands());
+            player.setHandRanking(RankingCalculator.calculateCards(totalCards));
+        }
     }
 }

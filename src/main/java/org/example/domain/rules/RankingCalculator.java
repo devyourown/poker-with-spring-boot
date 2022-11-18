@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RankingSeparator {
+public class RankingCalculator {
     public static HandRanking calculateHands(List<Card> hands) {
         if (hands.get(0).isSameValue(hands.get(1)))
             return HandRanking.ONE_PAIR;

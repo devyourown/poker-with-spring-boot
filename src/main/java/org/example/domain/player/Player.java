@@ -2,9 +2,11 @@ package org.example.domain.player;
 
 import org.example.domain.card.Card;
 import org.example.domain.error.BetException;
-import org.example.domain.rules.RankingSeparator;
+import org.example.domain.rules.RankingCalculator;
 import org.example.domain.rules.HandRanking;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Player {
@@ -36,11 +38,11 @@ public class Player {
 
     public void setHands(List<Card> cards) {
         hands = cards;
-        handRanking = RankingSeparator.calculateHands(cards);
+        handRanking = RankingCalculator.calculateHands(cards);
     }
 
     public List<Card> getHands() {
-        return hands;
+        return Collections.unmodifiableList(hands);
     }
 
     public HandRanking getRanking() {
@@ -50,4 +52,5 @@ public class Player {
     public void setHandRanking(HandRanking handRanking) {
         this.handRanking = handRanking;
     }
+
 }
