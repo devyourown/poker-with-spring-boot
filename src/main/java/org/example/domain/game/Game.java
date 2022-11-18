@@ -53,10 +53,10 @@ public class Game {
     }
 
     private void actFold(Player player, int playerIndex) {
-        removePlayer(player);
         setNextStatusWhenLastAction(playerIndex);
         if (lastTurnIndex == players.size() - 1)
             lastTurnIndex--;
+        removePlayer(player);
         if (players.size() < 2)
             setEnd();
     }
@@ -81,6 +81,7 @@ public class Game {
             initLastTurnIndex();
             setBoardAsStatus();
             calculatePlayerRanking();
+            pot.putZeroInBetLog(players);
         }
     }
 

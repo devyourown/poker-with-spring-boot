@@ -30,6 +30,12 @@ public class Pot {
         playerBetLog.put(players.get(players.size() - 1), bigBlind);
     }
 
+    public void putZeroInBetLog(List<Player> players) {
+        for (int i=0; i<players.size(); i++) {
+            playerBetLog.put(players.get(i), 0);
+        }
+    }
+
 
     int amountToCall(Player player) {
         return currentBet - playerBetLog.get(player);
