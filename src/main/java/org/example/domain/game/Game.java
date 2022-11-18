@@ -140,8 +140,4 @@ public class Game {
     public int getSizeOfPlayers() {
         return players.size();
     }
-
-    public boolean isWinner(Player player) {
-        return result.hasWinner(player);
-    }
 }

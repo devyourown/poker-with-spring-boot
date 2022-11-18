@@ -89,7 +89,6 @@ class GameTest {
         game.playAction(1, Action.FOLD, 0);
 
         assertTrue(game.isEnd());
-        assertTrue(game.isWinner(players.get(0)));
         assertEquals(1300, players.get(0).getMoney());
     }
 }

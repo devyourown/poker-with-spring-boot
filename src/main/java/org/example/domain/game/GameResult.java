@@ -12,80 +12,25 @@ import java.util.List;
 public class GameResult {
     private List<Player> winner;
     private Pot pot;
+    private Presenter presenter;
 
     public GameResult(List<Player> players, Pot pot) {
         this.pot = pot;
+        presenter = new Presenter(pot);
+        winner = makeWinner(players);
         if (isAllInPlayerWin(players)) {
-            giveMoneyToAllInWinner(players);
-            giveMoneyToLosers(makePeopleWhoGetPaidButLose(players));
+            presenter.giveMoneyToAllInWinner(winner,
+                    makePeopleWhoGetPaidButLose(players));
+            List<Player> losers = makePeopleWhoGetPaidButLose(players);
+            if (!losers.isEmpty())
+                presenter.giveMoney(makeWinner(losers));
         } else {
-            winner = makeWinner(players);
-            giveMoney(winner);
+            presenter.giveMoney(winner);
         }
-    }
-
-    private void giveMoneyToAllInWinner(List<Player> players) {
-        List<Player> winner = getAllInWinners(players);
-        List<Player> loser = makePeopleWhoGetPaidButLose(players);
-        winner.sort((a, b) -> pot.getPlayerBetLog(a) - pot.getPlayerBetLog(b));
-        for (int i=0; i<winner.size();) {
-            giveWinnerMoney(winner, makeAllInPrizeMoney(loser,
-                    pot.getPlayerBetLog(winner.get(i))));
-            pot.takeOutMoney(pot.getPlayerBetLog(winner.get(i)));
-            winner.remove(i);
-        }
-    }
-
-    private void giveWinnerMoney(List<Player> winner, int prizeMoney) {
-        for (Player player : winner) {
-            player.raiseMoney(prizeMoney/winner.size()
-                    + prizeMoney % winner.size());
-        }
-    }
-
-    private int makeAllInPrizeMoney(List<Player> loser, int betSize) {
-        int result = 0;
-        for (Player player : loser) {
-            int playerBet = pot.getPlayerBetLog(player);
-            if (playerBet > betSize) {
-                pot.putPlayerBetLog(player, playerBet - betSize);
-                pot.takeOutMoney(betSize);
-                result += betSize;
-            } else {
-                result += playerBet;
-                pot.takeOutMoney(playerBet);
-                pot.putPlayerBetLog(player, 0);
-            }
-        }
-        return result;
-    }
-
-    private void giveMoneyToLosers(List<Player> losers) {
-        if (losers.isEmpty())
-            return ;
-        giveMoney(makeWinner(losers));
     }
 
     private boolean isAllInPlayerWin(List<Player> players) {
         return !getAllInWinners(players).isEmpty();
-    }
-
-    private List<Player> makePeopleWhoGetPaidButLose(List<Player> players) {
-        List<Player> result = new ArrayList<>();
-        for (Player player : players) {
-            if (pot.getPlayerBetLog(player) > 0)
-                result.add(player);
-        }
-        return result;
-    }
-
-    private int getHighestAllIn(List<Player> players) {
-        int result = 0;
-        for (Player player : getAllInWinners(players)) {
-            if (result < pot.getPlayerBetLog(player))
-                result = pot.getPlayerBetLog(player);
-        }
-        return result;
     }
 
     private List<Player> getAllInWinners(List<Player> players) {
@@ -93,6 +38,15 @@ public class GameResult {
         HandRanking winnerRanking = getWinnerRanking(players);
         for (Player player : players) {
             if (player.isAllIn() && player.getRanking() == winnerRanking)
+                result.add(player);
+        }
+        return result;
+    }
+
+    private List<Player> makePeopleWhoGetPaidButLose(List<Player> players) {
+        List<Player> result = new ArrayList<>();
+        for (Player player : players) {
+            if (pot.getPlayerBetLog(player) > 0)
                 result.add(player);
         }
         return result;
@@ -120,32 +74,6 @@ public class GameResult {
                 result.add(player);
         }
         return result;
-    }
-
-    private void giveMoney(List<Player> winners) {
-        if (isTiedGame(winners)) {
-            for (Player player : winners)
-                player.raiseMoney(getWinnerPrize(winners));
-        }
-        else
-            winners.get(0).raiseMoney(pot.getTotalAmount());
-    }
-
-    private boolean isTiedGame(List<Player> winners) {
-        if (winners.size() > 1)
-            return true;
-        return false;
-    }
-
-    private int getWinnerPrize(List<Player> winners) {
-        int winnerPrize = pot.getTotalAmount() / winners.size();
-        if (pot.getTotalAmount() % winners.size() != 0)
-            winnerPrize += pot.getTotalAmount() % winners.size();
-        return winnerPrize;
-    }
-
-    public boolean hasWinner(Player player) {
-        return winner.contains(player);
     }
 
     public static void setPlayersRanking(List<Player> players, List<Card> cards) {
