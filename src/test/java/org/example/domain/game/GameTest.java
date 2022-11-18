@@ -56,14 +56,12 @@ class GameTest {
 
     @Test
     void testStatus() throws Exception {
+        assertEquals(game.getStatus(), GameStatus.PRE_FLOP);
         game.playAction(0, Action.BET, 300);
         game.playAction(1, Action.CALL, 0);
         game.playAction(2, Action.CALL, 0);
-        assertEquals(game.getStatus(), GameStatus.PRE_FLOP);
 
-        game.playAction(0, Action.CHECK, 0);
         assertEquals(game.getStatus(), GameStatus.FLOP);
-
         game.playAction(0, Action.CHECK, 300);
         assertEquals(game.getStatus(), GameStatus.FLOP);
         game.playAction(1, Action.CHECK, 0);

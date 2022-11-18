@@ -26,15 +26,15 @@ public class Dealer {
             setRiver();
     }
 
-    public void setFlop() {
+    private void setFlop() {
         board.addAll(getFlopCards());
     }
 
-    public void setTurn() {
+    private void setTurn() {
         board.add(getTurnCard());
     }
 
-    public void setRiver() {
+    private void setRiver() {
         board.add(getRiverCard());
     }
 

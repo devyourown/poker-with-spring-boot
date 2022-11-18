@@ -13,9 +13,11 @@ public class Player {
     private int money;
     private List<Card> hands;
     private HandRanking handRanking;
+    private boolean allIn;
 
     public Player(int money) {
         this.money = money;
+        this.allIn = false;
     }
 
     public void bet(int betAmount) {
@@ -45,6 +47,10 @@ public class Player {
 
     public void setHandRanking(HandRanking handRanking) {
         this.handRanking = handRanking;
+    }
+
+    public void setAllIn() {
+        allIn = true;
     }
 
 }

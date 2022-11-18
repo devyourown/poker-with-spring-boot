@@ -12,6 +12,7 @@ import java.util.List;
 public class GameResult {
     private List<Player> winner;
     private List<Player> players;
+    private List<Player> allInPlayers;
     private Pot pot;
 
     public GameResult(List<Player> players, Pot pot) {
@@ -19,6 +20,10 @@ public class GameResult {
         this.pot = pot;
         winner = makeWinner();
         giveMoney(winner);
+    }
+
+    private boolean hasAllInPlayer(List<Player> players) {
+        return true;
     }
 
     private List<Player> makeWinner() {
