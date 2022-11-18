@@ -13,6 +13,7 @@ public class Pot {
     private int bigBlind;
     private int currentBet;
     private int totalAmount;
+    private Map<Player, Integer> allInLog;
 
     public Pot(List<Player> players, int smallBlind, int bigBlind) {
         this.smallBlind = smallBlind;
@@ -57,11 +58,23 @@ public class Pot {
         playerBetLog.put(player, betSize);
     }
 
+    public int getPlayerBetLog(Player player) {
+        return playerBetLog.get(player);
+    }
+
     public int getCurrentBet() {
         return currentBet;
     }
 
     public void resetCurrentBet() {
         currentBet = 0;
+    }
+
+    public void putPlayerAllInLog(Player player, int betSize) {
+        allInLog.put(player, betSize);
+    }
+
+    public int getAllInSize(Player player) {
+        return allInLog.get(player);
     }
 }

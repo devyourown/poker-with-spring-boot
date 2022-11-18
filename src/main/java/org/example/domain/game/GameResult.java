@@ -11,27 +11,64 @@ import java.util.List;
 
 public class GameResult {
     private List<Player> winner;
-    private List<Player> players;
-    private List<Player> allInPlayers;
     private Pot pot;
 
     public GameResult(List<Player> players, Pot pot) {
-        this.players = players;
         this.pot = pot;
-        winner = makeWinner();
-        giveMoney(winner);
+        if (isAllInPlayerWin(players)) {
+            giveMoneyToLosers(makePeopleWhoGetPaidButLose(players));
+            
+        } else {
+            winner = makeWinner(players);
+            giveMoney(winner);
+        }
     }
 
-    private boolean hasAllInPlayer(List<Player> players) {
-        return true;
+    private void giveMoneyToLosers(List<Player> losers) {
+        if (losers.isEmpty())
+            return ;
+        giveMoney(makeWinner(losers));
     }
 
-    private List<Player> makeWinner() {
-        HandRanking winnerRanking = getWinnerRanking();
-        return getPlayersWithSameRank(winnerRanking);
+    private boolean isAllInPlayerWin(List<Player> players) {
+        return !getAllInWinners(players).isEmpty();
     }
 
-    private HandRanking getWinnerRanking() {
+    private List<Player> makePeopleWhoGetPaidButLose(List<Player> players) {
+        List<Player> result = new ArrayList<>();
+        int highestBetInAllIn = getHighestAllIn(players);
+        for (Player player : players) {
+            if (pot.getPlayerBetLog(player) > highestBetInAllIn)
+                result.add(player);
+        }
+        return result;
+    }
+
+    private int getHighestAllIn(List<Player> players) {
+        int result = 0;
+        for (Player player : getAllInWinners(players)) {
+            if (result < pot.getPlayerBetLog(player))
+                result = pot.getPlayerBetLog(player);
+        }
+        return result;
+    }
+
+    private List<Player> getAllInWinners(List<Player> players) {
+        List<Player> result = new ArrayList<>();
+        HandRanking winnerRanking = getWinnerRanking(players);
+        for (Player player : players) {
+            if (player.isAllIn() && player.getRanking() == winnerRanking)
+                result.add(player);
+        }
+        return result;
+    }
+
+    private List<Player> makeWinner(List<Player> players) {
+        HandRanking winnerRanking = getWinnerRanking(players);
+        return getPlayersWithSameRank(players, winnerRanking);
+    }
+
+    private HandRanking getWinnerRanking(List<Player> players) {
         HandRanking result = HandRanking.HIGH_CARD;
         for (Player player : players) {
             if (result.ordinal() <= player.getRanking().ordinal()) {
@@ -41,7 +78,7 @@ public class GameResult {
         return result;
     }
 
-    private List<Player> getPlayersWithSameRank(HandRanking rank) {
+    private List<Player> getPlayersWithSameRank(List<Player> players, HandRanking rank) {
         List<Player> result = new ArrayList<>();
         for (Player player : players) {
             if (player.getRanking() == rank)

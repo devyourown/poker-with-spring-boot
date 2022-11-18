@@ -53,4 +53,8 @@ public class Player {
         allIn = true;
     }
 
+    public boolean isAllIn() {
+        return allIn;
+    }
+
 }
