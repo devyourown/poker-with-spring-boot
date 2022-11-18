@@ -13,7 +13,6 @@ public class Pot {
     private int bigBlind;
     private int currentBet;
     private int totalAmount;
-    private Map<Player, Integer> allInLog;
 
     public Pot(List<Player> players, int smallBlind, int bigBlind) {
         this.smallBlind = smallBlind;
@@ -25,14 +24,16 @@ public class Pot {
 
     private void initPlayerBetLog(List<Player> players) {
         playerBetLog = new HashMap<>();
-        for (int i=0; i<players.size()-2; i++)
+        for (int i = 0; i < players.size() - 2; i++)
             playerBetLog.put(players.get(i), 0);
+        players.get(players.size() - 2).bet(smallBlind);
+        players.get(players.size() - 1).bet(bigBlind);
         playerBetLog.put(players.get(players.size() - 2), smallBlind);
         playerBetLog.put(players.get(players.size() - 1), bigBlind);
     }
 
     public void putZeroInBetLog(List<Player> players) {
-        for (int i=0; i<players.size(); i++) {
+        for (int i = 0; i < players.size(); i++) {
             playerBetLog.put(players.get(i), 0);
         }
     }
@@ -70,11 +71,7 @@ public class Pot {
         currentBet = 0;
     }
 
-    public void putPlayerAllInLog(Player player, int betSize) {
-        allInLog.put(player, betSize);
-    }
-
-    public int getAllInSize(Player player) {
-        return allInLog.get(player);
+    public void takeOutMoney(int money) {
+        this.totalAmount -= money;
     }
 }

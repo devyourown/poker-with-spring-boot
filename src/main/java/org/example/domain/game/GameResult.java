@@ -16,12 +16,48 @@ public class GameResult {
     public GameResult(List<Player> players, Pot pot) {
         this.pot = pot;
         if (isAllInPlayerWin(players)) {
+            giveMoneyToAllInWinner(players);
             giveMoneyToLosers(makePeopleWhoGetPaidButLose(players));
-            
         } else {
             winner = makeWinner(players);
             giveMoney(winner);
         }
+    }
+
+    private void giveMoneyToAllInWinner(List<Player> players) {
+        List<Player> winner = getAllInWinners(players);
+        List<Player> loser = makePeopleWhoGetPaidButLose(players);
+        winner.sort((a, b) -> pot.getPlayerBetLog(a) - pot.getPlayerBetLog(b));
+        for (int i=0; i<winner.size();) {
+            giveWinnerMoney(winner, makeAllInPrizeMoney(loser,
+                    pot.getPlayerBetLog(winner.get(i))));
+            pot.takeOutMoney(pot.getPlayerBetLog(winner.get(i)));
+            winner.remove(i);
+        }
+    }
+
+    private void giveWinnerMoney(List<Player> winner, int prizeMoney) {
+        for (Player player : winner) {
+            player.raiseMoney(prizeMoney/winner.size()
+                    + prizeMoney % winner.size());
+        }
+    }
+
+    private int makeAllInPrizeMoney(List<Player> loser, int betSize) {
+        int result = 0;
+        for (Player player : loser) {
+            int playerBet = pot.getPlayerBetLog(player);
+            if (playerBet > betSize) {
+                pot.putPlayerBetLog(player, playerBet - betSize);
+                pot.takeOutMoney(betSize);
+                result += betSize;
+            } else {
+                result += playerBet;
+                pot.takeOutMoney(playerBet);
+                pot.putPlayerBetLog(player, 0);
+            }
+        }
+        return result;
     }
 
     private void giveMoneyToLosers(List<Player> losers) {
@@ -36,9 +72,8 @@ public class GameResult {
 
     private List<Player> makePeopleWhoGetPaidButLose(List<Player> players) {
         List<Player> result = new ArrayList<>();
-        int highestBetInAllIn = getHighestAllIn(players);
         for (Player player : players) {
-            if (pot.getPlayerBetLog(player) > highestBetInAllIn)
+            if (pot.getPlayerBetLog(player) > 0)
                 result.add(player);
         }
         return result;
@@ -105,7 +140,7 @@ public class GameResult {
     private int getWinnerPrize(List<Player> winners) {
         int winnerPrize = pot.getTotalAmount() / winners.size();
         if (pot.getTotalAmount() % winners.size() != 0)
-            winnerPrize += pot.getTotalAmount() / winners.size();
+            winnerPrize += pot.getTotalAmount() % winners.size();
         return winnerPrize;
     }
 
