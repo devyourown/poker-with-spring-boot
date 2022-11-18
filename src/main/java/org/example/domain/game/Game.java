@@ -16,6 +16,7 @@ public class Game {
     private GameStatus status;
     private Pot pot;
     private int lastTurnIndex;
+    private GameResult result;
 
     public Game(List<Player> players, int smallBlind, int bigBlind) {
         board = new ArrayList<>();
@@ -71,8 +72,8 @@ public class Game {
         setNextStatusWhenLastAction(playerIndex);
     }
 
-    private void actCheck(int playerIndex) {
-        setNextStatusWhenLastAction(playerIndex);
+    private void raisePotMoney(int betSize) {
+        pot.raiseMoney(betSize);
     }
 
     private void setNextStatusWhenLastAction(int playerIndex) {
@@ -83,6 +84,12 @@ public class Game {
             calculatePlayerRanking();
             pot.putZeroInBetLog(players);
         }
+    }
+
+    private boolean isLastAction(int playerIndex) {
+        if (playerIndex == lastTurnIndex)
+            return true;
+        return false;
     }
 
     private void setNextStatus() {
@@ -97,7 +104,19 @@ public class Game {
         else if (getStatus() == GameStatus.RIVER)
             setRiver();
         else if (getStatus() == GameStatus.END)
-            makeWinner();
+            result = new GameResult(players, pot);
+    }
+
+    private void calculatePlayerRanking() {
+        for (Player player : players) {
+            List<Card> totalCards = new ArrayList<>(board);
+            totalCards.addAll(player.getHands());
+            player.setHandRanking(RankingSeparator.calculateCards(totalCards));
+        }
+    }
+
+    private void actCheck(int playerIndex) {
+        setNextStatusWhenLastAction(playerIndex);
     }
 
     private void setFlop() {
@@ -112,56 +131,6 @@ public class Game {
         board.addAll(dealer.getRiverCard());
     }
 
-    private void makeWinner() {
-        HandRanking winnerRanking = HandRanking.HIGH_CARD;
-        Player winner = null;
-        calculatePlayerRanking();
-        for (Player player : players) {
-            if (winnerRanking.ordinal() <= player.getRanking().ordinal()) {
-                winnerRanking = player.getRanking();
-                winner = player;
-            }
-        }
-        if (isTiedGame(winnerRanking))
-            splitMoney();
-        else
-            winner.raiseMoney(pot.getTotalAmount());
-    }
-
-    private void calculatePlayerRanking() {
-        for (Player player : players) {
-            List<Card> totalCards = new ArrayList<>(board);
-            totalCards.addAll(player.getHands());
-            player.setHandRanking(RankingSeparator.calculateCards(totalCards));
-        }
-    }
-
-    private boolean isTiedGame(HandRanking winnerRanking) {
-        List<Player> copiedPlayer = players.stream().toList();
-        for (Player player : copiedPlayer) {
-            if (player.getRanking() != winnerRanking)
-                removePlayer(player);
-        }
-        if (players.size() > 1)
-            return true;
-        return false;
-    }
-
-    private void splitMoney() {
-        int winnerPrize = pot.getTotalAmount() / players.size();
-        if (pot.getTotalAmount() % players.size() != 0)
-            winnerPrize += pot.getTotalAmount() / players.size();
-        for (Player player : players) {
-            player.raiseMoney(winnerPrize);
-        }
-    }
-
-    private boolean isLastAction(int playerIndex) {
-        if (playerIndex == lastTurnIndex)
-            return true;
-        return false;
-    }
-
     private void actBet(Player player, int betSize) throws Exception {
         pot.setCurrentBet(betSize);
         player.bet(betSize);
@@ -170,12 +139,9 @@ public class Game {
         lastTurnIndex = players.indexOf(player);
     }
 
-    private void raisePotMoney(int betSize) {
-        pot.raiseMoney(betSize);
-    }
-
     private void setEnd() {
         status = GameStatus.END;
+        setBoardAsStatus();
     }
 
     public boolean isEnd() {
@@ -204,5 +170,11 @@ public class Game {
 
     public int getSizeOfPlayers() {
         return players.size();
+    }
+
+    public boolean isWinner(Player player) {
+        if (result.getWinner().contains(player))
+            return true;
+        return false;
     }
 }

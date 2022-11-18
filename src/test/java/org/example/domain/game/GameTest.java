@@ -85,7 +85,13 @@ class GameTest {
     }
 
     @Test
-    void testGameResult() {
+    void testGameResult() throws Exception {
+        game.playAction(0, Action.BET, 300);
+        game.playAction(1, Action.FOLD, 0);
+        game.playAction(1, Action.FOLD, 0);
 
+        assertTrue(game.isEnd());
+        assertTrue(game.isWinner(players.get(0)));
+        assertEquals(1300, players.get(0).getMoney());
     }
 }
