@@ -46,17 +46,7 @@ public class Pot {
     }
 
     void setCurrentBet(int betSize) {
-        validateBetSize(betSize);
         this.currentBet = betSize;
-    }
-
-    private void validateBetSize(int betSize) {
-        if (!isBetSizeEnough(betSize))
-            throw new IllegalArgumentException("[ERROR] betSize is small than prevBet");
-    }
-
-    private boolean isBetSizeEnough(int betSize) {
-        return betSize > currentBet;
     }
 
     public int getTotalAmount() {

@@ -51,6 +51,7 @@ public class Main {
     private static void playUntilStatus(Game game, GameStatus status) throws Exception {
         int index = 0;
         while (game.getStatus() == status) {
+            ConsoleOutput.printPotSize(game.getBettingSize(), game.getPot());
             ConsoleOutput.printHands(game
                     .getPlayerOf(index % game.getSizeOfPlayers())
                     .getHands());
@@ -61,7 +62,6 @@ public class Main {
             if (userAction.action == Action.FOLD)
                 index--;
             index++;
-            ConsoleOutput.printPotSize(game.getBettingSize(), game.getPot());
         }
     }
 }

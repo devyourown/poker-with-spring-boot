@@ -78,7 +78,7 @@ public class ConsoleInput {
         } catch (Exception e) {
             throw new BetException(BetException.ErrorCode.NOT_INTEGER);
         }
-        if (betSize < prevBetSize)
+        if (betSize <= prevBetSize)
             throw new BetException(BetException.ErrorCode.MONEY_NOT_ENOUGH);
         if (betSize % 100 != 0)
             throw new BetException(BetException.ErrorCode.INVALID_BET_SIZE);
