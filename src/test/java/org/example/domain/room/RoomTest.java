@@ -37,7 +37,13 @@ class RoomTest {
 
     @Test
     void testChangeOrder() throws RoomException {
-
+        Player player1 = new Player(1000);
+        Player player2 = new Player(2000);
+        room.addPlayer(player1);
+        room.addPlayer(player2);
+        assertTrue(room.getPlayersToPlay().get(0).equals(player1));
+        room.changeOrder();
+        assertTrue(room.getPlayersToPlay().get(1).equals(player1));
     }
 
     @Test

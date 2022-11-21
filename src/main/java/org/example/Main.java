@@ -20,15 +20,12 @@ public class Main {
         players.add(new Player(10000));
         players.add(new Player(5000));
         players.add(new Player(6000));
-        try {
-            Game game = new Game(players, 100, 200);
-            startGame(game);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+
+        Game game = new Game(players, 100, 200);
+        startGame(game);
     }
 
-    private static void startGame(Game game) throws Exception {
+    private static void startGame(Game game) {
         while (!game.isEnd()) {
             playUntilStatus(game, GameStatus.PRE_FLOP);
             if (game.isEnd())
@@ -44,16 +41,10 @@ public class Main {
         ConsoleOutput.printGameResult(game);
     }
 
-    private static void playUntilStatus(Game game, GameStatus status) throws Exception {
+    private static void playUntilStatus(Game game, GameStatus status) {
         int index = 0;
         while (game.getStatus() == status) {
-            if (!game.getBoard().isEmpty())
-                ConsoleOutput.printBoard(game.getBoard());
-            ConsoleOutput.printPotSize(game.getBettingSize(), game.getPot());
-            ConsoleOutput.printMoney(game.getPlayerMoneyOf(index % game.getSizeOfPlayers()));
-            ConsoleOutput.printHands(game
-                    .getPlayerHandsOf(index % game.getSizeOfPlayers()));
-            ConsoleOutput.printAvailableAction(game.getBettingSize(), index);
+            printForAction(game, index);
             UserAction userAction = ConsoleInput.getUserAction(game.getBettingSize(), index);
             game.playAction(index % game.getSizeOfPlayers(),
                     userAction.action, userAction.betSize);
@@ -61,5 +52,14 @@ public class Main {
                 index--;
             index++;
         }
+    }
+
+    private static void printForAction(Game game, int index) {
+        if (!game.getBoard().isEmpty())
+            ConsoleOutput.printBoard(game.getBoard());
+        ConsoleOutput.printPotSize(game.getBettingSize(), game.getPot());
+        ConsoleOutput.printMoney(game.getPlayerMoneyOf(index % game.getSizeOfPlayers()));
+        ConsoleOutput.printHands(game.getPlayerHandsOf(index % game.getSizeOfPlayers()));
+        ConsoleOutput.printAvailableAction(game.getBettingSize(), index);
     }
 }

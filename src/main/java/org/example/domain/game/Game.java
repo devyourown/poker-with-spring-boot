@@ -17,7 +17,6 @@ public class Game {
     private GameStatus status;
     private Pot pot;
     private int lastTurnIndex;
-    private GameResult result;
 
     public Game(List<Player> players, int smallBlind, int bigBlind) {
         this.players = new ArrayList<>(players);
@@ -40,7 +39,7 @@ public class Game {
         }
     }
 
-    public void playAction(int playerIndex, Action action, int betSize) throws Exception {
+    public void playAction(int playerIndex, Action action, int betSize) {
         Player player = players.get(playerIndex);
         if (action == Action.FOLD)
             actFold(player, playerIndex);
@@ -61,7 +60,7 @@ public class Game {
             setEnd();
     }
 
-    private void actCall(Player player, int playerIndex) throws Exception {
+    private void actCall(Player player, int playerIndex) {
         player.bet(pot.amountToCall(player));
         raisePotMoney(pot.amountToCall(player));
         setNextStatusWhenLastAction(playerIndex);
@@ -100,7 +99,7 @@ public class Game {
         }
     }
 
-    public boolean isLastAction(int playerIndex) {
+    private boolean isLastAction(int playerIndex) {
         if (playerIndex == lastTurnIndex)
             return true;
         return false;
@@ -119,7 +118,7 @@ public class Game {
     }
 
     private void setEnd() {
-        result = new GameResult(players, pot);
+        new GameResult(players, pot);
         status = GameStatus.END;
     }
 
