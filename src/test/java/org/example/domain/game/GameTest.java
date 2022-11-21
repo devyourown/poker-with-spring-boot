@@ -58,6 +58,15 @@ class GameTest {
     }
 
     @Test
+    void testBetFold() throws Exception {
+        game.playAction(0, Action.BET, 0);
+        game.playAction(1, Action.FOLD, 300);
+        assertEquals(GameStatus.PRE_FLOP, game.getStatus());
+        game.playAction(2, Action.CALL, 0);
+        assertEquals(GameStatus.FLOP, game.getStatus());
+    }
+
+    @Test
     void testCheck() throws Exception {
         game.playAction(0, Action.CALL, 0);
         game.playAction(1, Action.CALL, 0);

@@ -38,7 +38,7 @@ public class ConsoleInput {
             throw new IllegalArgumentException("[ERROR] 액션을 제대로 입력해 주세요.");
         }
         if (betSize > 0) {
-            if (isCheckOrBet(action))
+            if (isCheck(action))
                 throw new IllegalArgumentException("[ERROR] 가능한 액션만 입력해 주세요.");
         }
         else if (gameOrder == 0) {
@@ -51,7 +51,7 @@ public class ConsoleInput {
         }
     }
 
-    private static boolean isCheckOrBet(Action action) {
+    private static boolean isCheck(Action action) {
         return action == Action.CHECK || action == Action.BET;
     }
 
