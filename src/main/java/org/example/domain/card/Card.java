@@ -20,10 +20,6 @@ public class Card {
         return value == another.getValue();
     }
 
-    public boolean isSameSuit(Card another) {
-        return suit == another.getSuit();
-    }
-
     public boolean isHigherThan(Card another) {
         if (isSameValue(another))
             return false;
@@ -34,5 +30,9 @@ public class Card {
 
     public boolean isAce() {
         return value == 1;
+    }
+
+    public String toString() {
+        return suit.toString() + " " + value;
     }
 }

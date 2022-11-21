@@ -34,7 +34,7 @@ public class ConsoleOutput {
     public static void printAvailableAction(int betSize, int gameOrder) {
         System.out.print("선택할 수 있는 액션 : ");
         if (betSize > 0)
-            System.out.println(Action.FOLD.toString() + " " + Action.CALL + " " + Action.BET);
+            System.out.println(Action.FOLD.toString() + " " + Action.BET + " " + Action.CALL);
         else if (gameOrder == 0)
             System.out.println(Action.FOLD.toString() + " " + Action.BET + " " + Action.CHECK);
         else
@@ -48,7 +48,8 @@ public class ConsoleOutput {
     public static void printGameResult(Game game) {
         System.out.println("결과 : ");
         for (Player player : game.getPlayers()) {
-            System.out.print("패 : " + player.getHands() + " ");
+            System.out.println("패 : " + player.getHands().get(0).toString() + ", "
+                            + player.getHands().get(1).toString());
             System.out.println("돈 : " + player.getMoney() + " ");
         }
     }

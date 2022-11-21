@@ -52,7 +52,7 @@ public class ConsoleInput {
     }
 
     private static boolean isCheck(Action action) {
-        return action == Action.CHECK || action == Action.BET;
+        return action == Action.CHECK;
     }
 
     private static boolean isCall(Action action) {
