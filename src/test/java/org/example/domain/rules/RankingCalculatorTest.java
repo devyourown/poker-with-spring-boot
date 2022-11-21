@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RankingCalculatorTest {
     private List<Card> cards;
-    private Player player;
     @BeforeEach
     void createCards() {
         cards = new ArrayList<>();
