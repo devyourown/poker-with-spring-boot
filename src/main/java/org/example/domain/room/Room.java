@@ -1,23 +1,49 @@
 package org.example.domain.room;
 
+import org.example.domain.error.RoomException;
 import org.example.domain.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Room {
+    private static final int HEAD_COUNT_LIMIT = 10;
     private List<Player> players;
-    private long roomId;
+    private int id;
+    private Status status;
 
     public Room() {
         players = new ArrayList<>();
+        status = Status.WAITING;
+        id = RoomIdMaker.makeRoomId();
     }
 
-    public void addPlayer(Player player) {
+    public void addPlayer(Player player) throws RoomException {
+        if (!canAddPlayer())
+            throw new RoomException();
         players.add(player);
+    }
+
+    private boolean canAddPlayer() {
+        if (getNumOfPlayer() < HEAD_COUNT_LIMIT)
+            return true;
+        return false;
     }
 
     public int getNumOfPlayer() {
         return players.size();
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public enum Status {
+        WAITING,
+        PLAYING;
     }
 }
