@@ -48,9 +48,8 @@ public class Game {
             actCall(player, playerIndex);
         else if (action == Action.CHECK)
             actCheck(playerIndex);
-        else if (action == Action.BET) {
+        else if (action == Action.BET)
             actBet(player, betSize);
-        }
     }
 
     private void actFold(Player player, int playerIndex) {

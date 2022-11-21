@@ -18,11 +18,21 @@ class RoomTest {
 
     @Test
     void testRoom() throws RoomException {
-        Player player = new Player(1000);
-        room.addPlayer(player);
+        room.addPlayer(new Player(1000));
         assertEquals(1, room.getNumOfPlayer());
         assertEquals(Room.Status.WAITING, room.getStatus());
         assertEquals(1, room.getId());
+    }
+
+    @Test
+    void testPlayGameInRoom() throws RoomException {
+        room.addPlayer(new Player(1000));
+        assertThrows(RoomException.class, () -> {
+            room.play();
+        });
+        room.addPlayer(new Player(1000));
+        room.play();
+        assertEquals(Room.Status.PLAYING, room.getStatus());
     }
 
     @Test
