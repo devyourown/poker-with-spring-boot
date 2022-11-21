@@ -1,25 +1,38 @@
 package org.example.domain.room;
 
 import org.example.domain.error.RoomException;
+import org.example.domain.game.Game;
 import org.example.domain.player.Player;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Room {
     private static final int HEAD_COUNT_LIMIT = 10;
     private static final int PLAY_COUNT_LIMIT = 2;
-    private List<Player> players;
+    private Deque<Player> players;
     private int id;
     private Status status;
 
     public Room() {
-        players = new ArrayList<>();
+        players = new ArrayDeque<>();
         status = Status.WAITING;
         id = RoomIdMaker.makeRoomId();
     }
 
-    public void play() throws RoomException {
+    public void changeOrder() {
+        players.addFirst(players.getLast());
+    }
+
+    public List<Player> getPlayersToPlay() throws RoomException {
+        play();
+        return getPlayers();
+    }
+
+    private List<Player> getPlayers() {
+        return players.stream().toList();
+    }
+
+    private void play() throws RoomException {
         validateToPlay();
         status = Status.PLAYING;
     }

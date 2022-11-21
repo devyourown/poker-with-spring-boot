@@ -28,11 +28,16 @@ class RoomTest {
     void testPlayGameInRoom() throws RoomException {
         room.addPlayer(new Player(1000));
         assertThrows(RoomException.class, () -> {
-            room.play();
+            room.getPlayersToPlay();
         });
         room.addPlayer(new Player(1000));
-        room.play();
+        room.getPlayersToPlay();
         assertEquals(Room.Status.PLAYING, room.getStatus());
+    }
+
+    @Test
+    void testChangeOrder() throws RoomException {
+        
     }
 
     @Test
