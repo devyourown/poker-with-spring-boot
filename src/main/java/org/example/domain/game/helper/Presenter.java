@@ -1,6 +1,5 @@
 package org.example.domain.game.helper;
 
-import org.example.domain.game.helper.Pot;
 import org.example.domain.player.Player;
 
 import java.util.List;

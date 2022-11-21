@@ -2,7 +2,6 @@ package org.example.domain.player;
 
 import org.example.domain.card.Card;
 import org.example.domain.card.Suit;
-import org.example.domain.error.BetException;
 import org.example.domain.rules.HandRanking;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

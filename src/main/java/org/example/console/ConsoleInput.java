@@ -15,7 +15,7 @@ public class ConsoleInput {
     }
 
     private static boolean shouldGetMoney(Action action) {
-        return Action.RAISE == action || Action.BET == action;
+        return action == Action.BET;
     }
 
     private static Action getAction(int betSize, int gameOrder) {
@@ -42,11 +42,11 @@ public class ConsoleInput {
                 throw new IllegalArgumentException("[ERROR] 가능한 액션만 입력해 주세요.");
         }
         else if (gameOrder == 0) {
-            if (isRaiseOrCall(action))
+            if (isCall(action))
                 throw new IllegalArgumentException("[ERROR] 가능한 액션만 입력해 주세요.");
         }
         else {
-            if (isRaiseOrCall(action))
+            if (isCall(action))
                 throw new IllegalArgumentException("[ERROR] 가능한 액션만 입력해 주세요.");
         }
     }
@@ -55,8 +55,8 @@ public class ConsoleInput {
         return action == Action.CHECK || action == Action.BET;
     }
 
-    private static boolean isRaiseOrCall(Action action) {
-        return action == Action.CALL || action == Action.RAISE;
+    private static boolean isCall(Action action) {
+        return action == Action.CALL;
     }
 
     private static int getBetSize(int prevBetSize) {
@@ -79,7 +79,7 @@ public class ConsoleInput {
             throw new BetException(BetException.ErrorCode.NOT_INTEGER);
         }
         if (betSize <= prevBetSize)
-            throw new BetException(BetException.ErrorCode.MONEY_NOT_ENOUGH);
+            throw new BetException(BetException.ErrorCode.TOO_SMALL_BET_SIZE);
         if (betSize % 100 != 0)
             throw new BetException(BetException.ErrorCode.INVALID_BET_SIZE);
     }

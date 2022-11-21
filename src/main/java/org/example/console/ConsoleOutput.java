@@ -34,7 +34,7 @@ public class ConsoleOutput {
     public static void printAvailableAction(int betSize, int gameOrder) {
         System.out.print("선택할 수 있는 액션 : ");
         if (betSize > 0)
-            System.out.println(Action.FOLD.toString() + " " + Action.CALL + " " + Action.RAISE);
+            System.out.println(Action.FOLD.toString() + " " + Action.CALL);
         else if (gameOrder == 0)
             System.out.println(Action.FOLD.toString() + " " + Action.BET + " " + Action.CHECK);
         else
