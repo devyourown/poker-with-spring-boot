@@ -4,6 +4,7 @@ import org.example.domain.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,9 +32,29 @@ class GameTest {
 
     @Test
     void testFold() throws Exception {
+        List<Player> players1 = new ArrayList<>();
+        for (int i=0; i<4; i++) {
+            players1.add(new Player(1000));
+        }
+
+        Game game = new Game(players1, 100, 200);
+        assertEquals(GameStatus.PRE_FLOP, game.getStatus());
+        game.playAction(0, Action.CALL, 0);
+        game.playAction(1, Action.CALL, 0);
+        game.playAction(2, Action.BET, 300);
+        game.playAction(3, Action.CALL, 0);
         game.playAction(0, Action.FOLD, 0);
-        game.playAction(1, Action.FOLD, 0);
-        assertEquals(game.isEnd(), true);
+        game.playAction(0, Action.CALL, 0);
+        assertEquals(GameStatus.FLOP, game.getStatus());
+
+        game.playAction(0, Action.CHECK, 0);
+        game.playAction(1, Action.BET, 300);
+        game.playAction(2, Action.CALL, 0);
+        game.playAction(0, Action.FOLD, 0);
+        assertEquals(GameStatus.TURN, game.getStatus());
+
+        game.playAction(0, Action.FOLD, 0);
+        assertEquals(GameStatus.END, game.getStatus());
     }
 
     @Test

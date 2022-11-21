@@ -37,7 +37,7 @@ class RoomTest {
 
     @Test
     void testChangeOrder() throws RoomException {
-        
+
     }
 
     @Test

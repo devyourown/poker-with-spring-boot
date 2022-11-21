@@ -33,15 +33,12 @@ public class Main {
             playUntilStatus(game, GameStatus.PRE_FLOP);
             if (game.isEnd())
                 break ;
-            ConsoleOutput.printBoard(game.getBoard());
             playUntilStatus(game, GameStatus.FLOP);
             if (game.isEnd())
                 break ;
-            ConsoleOutput.printBoard(game.getBoard());
             playUntilStatus(game, GameStatus.TURN);
             if (game.isEnd())
                 break ;
-            ConsoleOutput.printBoard(game.getBoard());
             playUntilStatus(game, GameStatus.RIVER);
         }
         ConsoleOutput.printGameResult(game);
@@ -50,6 +47,8 @@ public class Main {
     private static void playUntilStatus(Game game, GameStatus status) throws Exception {
         int index = 0;
         while (game.getStatus() == status) {
+            if (!game.getBoard().isEmpty())
+                ConsoleOutput.printBoard(game.getBoard());
             ConsoleOutput.printPotSize(game.getBettingSize(), game.getPot());
             ConsoleOutput.printMoney(game.getPlayerMoneyOf(index % game.getSizeOfPlayers()));
             ConsoleOutput.printHands(game

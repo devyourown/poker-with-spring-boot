@@ -53,9 +53,9 @@ public class Game {
     }
 
     private void actFold(Player player, int playerIndex) {
-        setNextStatusWhenLastAction(playerIndex);
-        if (lastTurnIndex == players.size() - 1)
+        if (lastTurnIndex != 0)
             lastTurnIndex--;
+        setNextStatusWhenLastAction(playerIndex);
         players.remove(player);
         if (players.size() < 2)
             setEnd();
