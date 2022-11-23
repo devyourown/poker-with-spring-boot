@@ -4,6 +4,7 @@ import org.example.backend.dto.GameDTO;
 import org.example.domain.card.Card;
 import org.example.domain.game.Game;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +19,14 @@ public class GameController {
     public GameDTO getGame(@RequestParam(value = "gameId") Long id) {
         Game game = gameHashMap.get(id);
         return new GameDTO(game);
+    }
+
+    @PostMapping("/action")
+    public void postBet(@RequestParam(value = "gameId") Long id,
+                        @RequestParam(value = "playerId") Long playerId,
+                        @RequestParam(value = "action") String action,
+                        @RequestParam(value = "betSize") int betSize) {
+
     }
 
     @GetMapping("/flop")
