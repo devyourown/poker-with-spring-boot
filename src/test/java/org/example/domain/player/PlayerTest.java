@@ -10,12 +10,12 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PlayerTest {
+public class PlayerTest {
     private Player player;
 
     @BeforeEach
     void createPlayer() {
-        player = new Player(1000);
+        player = new Player(1l, 1000);
     }
 
     @Test
@@ -24,7 +24,7 @@ class PlayerTest {
     }
 
     @Test
-    void testPlayerCanBet() throws Exception {
+    void testPlayerCanBet() {
         player.bet(500);
         assertEquals(500, player.getMoney());
     }

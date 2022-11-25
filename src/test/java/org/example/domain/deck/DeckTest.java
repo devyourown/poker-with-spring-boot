@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DeckTest {
+public class DeckTest {
+
     @Test
     void testDeckHasCard() {
         Deck deck = new Deck();

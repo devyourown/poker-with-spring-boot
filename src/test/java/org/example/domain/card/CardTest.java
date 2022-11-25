@@ -1,4 +1,4 @@
-package org.example.domain;
+package org.example.domain.card;
 
 import org.example.domain.card.Card;
 import org.example.domain.card.Suit;
@@ -6,7 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CardTest {
+public class CardTest {
+
     @Test
     void testCardHasValue() {
         assertEquals(1, new Card(1, Suit.HEARTS).getValue());

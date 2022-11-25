@@ -11,8 +11,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RankingCalculatorTest {
+public class RankingCalculatorTest {
     private List<Card> cards;
+
     @BeforeEach
     void createCards() {
         cards = new ArrayList<>();

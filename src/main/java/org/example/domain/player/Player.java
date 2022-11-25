@@ -8,11 +8,13 @@ import java.util.Collections;
 import java.util.List;
 
 public class Player {
+    private Long id;
     private int money;
     private List<Card> hands;
     private HandRanking handRanking;
 
-    public Player(int money) {
+    public Player(Long id, int money) {
+        this.id = id;
         this.money = money;
     }
 
