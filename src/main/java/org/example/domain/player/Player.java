@@ -51,4 +51,8 @@ public class Player {
         return money == 0;
     }
 
+    public Long getId() {
+        return id;
+    }
+
 }

@@ -26,6 +26,7 @@ public class GameController {
 
     @PostMapping("/game")
     public Long makeGame(@RequestParam(value = "arr[]") List<Player> players) {
+        //ID를 받고 DB에서 매치한 결과를 가져와야 될듯함.
         Game game = new Game(players, 100, 200);
         Long id = Long.parseLong(UUID.randomUUID().toString());
         gameHashMap.put(id, game);
@@ -37,7 +38,8 @@ public class GameController {
                                @RequestParam(value = "playerId") Long playerId) {
         Game game = gameHashMap.get(id);
         for (Player player : game.getPlayers()) {
-            //playerID가 같으면 핸즈를 반환한다.
+            if (player.getId() == playerId)
+                return player.getHands();
         }
         return Collections.emptyList();
     }
