@@ -23,13 +23,12 @@ public class Room {
         players.addFirst(players.getLast());
     }
 
-    public List<Player> getPlayersToPlay() throws RoomException {
+    public void setPlayersToPlay() throws RoomException {
         play();
-        return getPlayers();
     }
 
-    private List<Player> getPlayers() {
-        return players.stream().toList();
+    public List<Player> getPlayers() {
+        return Collections.unmodifiableList(players.stream().toList());
     }
 
     private void play() throws RoomException {

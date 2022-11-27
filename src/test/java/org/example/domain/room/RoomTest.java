@@ -28,10 +28,10 @@ public class RoomTest {
     void testPlayGameInRoom() throws RoomException {
         room.addPlayer(new Player(1l, 1000));
         assertThrows(RoomException.class, () -> {
-            room.getPlayersToPlay();
+            room.setPlayersToPlay();
         });
         room.addPlayer(new Player(2l, 1000));
-        room.getPlayersToPlay();
+        room.setPlayersToPlay();
         assertEquals(Room.Status.PLAYING, room.getStatus());
     }
 
@@ -41,9 +41,10 @@ public class RoomTest {
         Player player2 = new Player(2l, 2000);
         room.addPlayer(player1);
         room.addPlayer(player2);
-        assertTrue(room.getPlayersToPlay().get(0).equals(player1));
+        room.setPlayersToPlay();
+        assertTrue(room.getPlayers().get(0).equals(player1));
         room.changeOrder();
-        assertTrue(room.getPlayersToPlay().get(1).equals(player1));
+        assertTrue(room.getPlayers().get(1).equals(player1));
     }
 
     @Test
