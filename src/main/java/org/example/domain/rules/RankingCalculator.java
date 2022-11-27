@@ -61,7 +61,7 @@ public class RankingCalculator {
         List<Card> copied = new ArrayList<>(cards);
         for (Card card : cards) {
             if (card.isAce()) {
-                copied.add(new Card(14, card.getSuit()));
+                copied.add(Card.of(14, card.getSuit()));
                 copied.remove(card);
             }
         }

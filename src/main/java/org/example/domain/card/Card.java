@@ -1,11 +1,23 @@
 package org.example.domain.card;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Card {
+    private static final Map<String, Card> cache = new HashMap<>();
     private final int value;
     private final Suit suit;
-    public Card(int value, Suit suit) {
+
+    private Card(int value, Suit suit) {
         this.value = value;
         this.suit = suit;
+    }
+
+    public static Card of(int value, Suit suit) {
+        String key = suit.toString() + value;
+        if (!cache.containsKey(key))
+            cache.put(key, new Card(value, suit));
+        return cache.get(key);
     }
 
     public int getValue() {

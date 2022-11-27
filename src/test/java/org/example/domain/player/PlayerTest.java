@@ -31,11 +31,11 @@ public class PlayerTest {
 
     @Test
     void testPlayerHasCards() {
-        player.setHands(List.of(new Card(1, Suit.CLUBS), new Card(2, Suit.CLUBS)));
+        player.setHands(List.of(Card.of(1, Suit.CLUBS), Card.of(2, Suit.CLUBS)));
         assertEquals(2, player.getHands().size());
         assertEquals(Suit.CLUBS, player.getHands().get(0).getSuit());
         assertEquals(HandRanking.HIGH_CARD, player.getRanking());
-        player.setHands(List.of(new Card(1, Suit.CLUBS), new Card(1, Suit.CLUBS)));
+        player.setHands(List.of(Card.of(1, Suit.CLUBS), Card.of(1, Suit.CLUBS)));
         assertEquals(HandRanking.ONE_PAIR, player.getRanking());
     }
 }

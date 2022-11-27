@@ -27,7 +27,7 @@ public class Deck {
     private List<Card> makeCardsWith(Suit suit) {
         List<Card> result = new ArrayList<>();
         for (int i=1; i<=13; i++) {
-            result.add(new Card(i, suit));
+            result.add(Card.of(i, suit));
         }
         return result;
     }
