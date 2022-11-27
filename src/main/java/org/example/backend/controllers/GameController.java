@@ -2,6 +2,7 @@ package org.example.backend.controllers;
 
 import org.example.backend.dto.GameDTO;
 import org.example.domain.card.Card;
+import org.example.domain.game.Action;
 import org.example.domain.game.Game;
 import org.example.domain.player.Player;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,10 +26,10 @@ public class GameController {
     }
 
     @PostMapping("/game")
-    public Long makeGame(@RequestParam(value = "arr[]") List<Player> players) {
+    public long makeGame(@RequestParam(value = "arr[]") List<Player> players) {
         //ID를 받고 DB에서 매치한 결과를 가져와야 될듯함.
         Game game = new Game(players, 100, 200);
-        Long id = Long.parseLong(UUID.randomUUID().toString());
+        long id = Long.parseLong(UUID.randomUUID().toString());
         gameHashMap.put(id, game);
         return id;
     }
@@ -47,8 +48,15 @@ public class GameController {
     @PostMapping("/action")
     public void postBet(@RequestParam(value = "gameId") Long id,
                         @RequestParam(value = "playerId") Long playerId,
-                        @RequestParam(value = "action") String action,
+                        @RequestParam(value = "action") String actionInput,
                         @RequestParam(value = "betSize") int betSize) {
-
+        Game game = gameHashMap.get(id);
+        Action action = Action.valueOf(actionInput);
+        for (Player player : game.getPlayers()) {
+            if (player.getId() == playerId) {
+                int playerIndex = game.getPlayers().indexOf(player);
+                game.playAction(playerIndex, action, betSize);
+            }
+        }
     }
 }
