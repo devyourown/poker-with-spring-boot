@@ -2,6 +2,7 @@ package org.example.backend.controllers;
 
 import org.example.backend.dto.ActionDTO;
 import org.example.backend.dto.GameDTO;
+import org.example.backend.dto.HandsDTO;
 import org.example.backend.dto.RoomDTO;
 import org.example.backend.service.GameService;
 import org.example.domain.card.Card;
@@ -9,6 +10,7 @@ import org.example.domain.game.Action;
 import org.example.domain.game.Game;
 import org.example.domain.player.Player;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,34 +29,33 @@ public class GameController {
     private HashMap<String, Game> gameHashMap = new HashMap<>();
 
     @GetMapping("/result")
-    public GameDTO getGame(@AuthenticationPrincipal String playerId,
-                           @RequestParam(value = "gameId") Long id) {
-        Game game = gameHashMap.get(id);
-        return new GameDTO(game);
+    public ResponseEntity<?> getGame(@AuthenticationPrincipal String playerId,
+                                  @RequestParam(value = "gameId") String gameId) {
+        if (!gameService.hasPlayerInGame(gameId, playerId))
+            ResponseEntity.badRequest().body("error: not player");
+        Game game = gameHashMap.get(gameId);
+        return ResponseEntity.ok().body(new GameDTO(game));
     }
 
     @PostMapping("/new-game")
     public String makeGame(@RequestBody RoomDTO roomDTO) {
-        Game game = new Game(roomDTO.getPlayers(), 100, 200);
-        String gameId = UUID.randomUUID().toString();
-        gameHashMap.put(gameId, game);
-        return gameId;
+        return gameService.makeGame(roomDTO);
     }
 
     @PostMapping("/re-game")
     public void resetGame(@RequestBody RoomDTO roomDTO) {
-
+        //should change game domain
     }
 
     @GetMapping("/hands")
-    public List<Card> getHands(@AuthenticationPrincipal String playerId,
+    public ResponseEntity<?> getHands(@AuthenticationPrincipal String playerId,
                                @RequestParam(value = "gameId") String gameId) {
-        Game game = gameHashMap.get(gameId);
-        for (Player player : game.getPlayers()) {
-            if (player.getId() == playerId)
-                return player.getHands();
-        }
-        return Collections.emptyList();
+        if (!gameService.hasPlayerInGame(gameId, playerId))
+            ResponseEntity.badRequest().body("error: not player");
+        HandsDTO handsDTO = HandsDTO.builder()
+                .hands(gameService.getHands(gameId, playerId))
+                .build();
+        return ResponseEntity.ok(handsDTO);
     }
 
     @PostMapping("/action")

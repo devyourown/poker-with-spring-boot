@@ -165,4 +165,12 @@ public class Game {
         }
         return false;
     }
+
+    public List<Card> getHandsOf(String playerId) {
+        for (Player player : players) {
+            if (player.getId().equals(playerId))
+                return player.getHands();
+        }
+        return Collections.EMPTY_LIST;
+    }
 }
