@@ -1,56 +1,67 @@
 package org.example.backend.persistence.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 @Entity
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = "email")})
 public class MemberEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @Column
-    private String userId;
-    @Column
-    private String userPassword;
-    @Column
+    @GeneratedValue(generator = "system-uuid")
+    @GenericGenerator(name = "system-uuid", strategy = "uuid")
+    private String id;
+    @Column(nullable = false)
+    private String nickname;
+    @Column(nullable = false)
+    private String email;
+    @Column(nullable = false)
+    private String password;
+    @Column(nullable = false)
     private int money;
 
     public MemberEntity() {
 
     }
 
-    public MemberEntity(long id, String userId, String userPassword, int money) {
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public MemberEntity(String id, String nickname, String email, String password, int money) {
         this.id = id;
-        this.userId = userId;
-        this.userPassword = userPassword;
+        this.nickname = nickname;
+        this.email = email;
+        this.password = password;
         this.money = money;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public void setUserPassword(String userPassword) {
-        this.userPassword = userPassword;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void setMoney(int money) {
         this.money = money;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getEmail() {
+        return email;
     }
 
-    public String getUserPassword() {
-        return userPassword;
+    public String getPassword() {
+        return password;
     }
 
     public int getMoney() {

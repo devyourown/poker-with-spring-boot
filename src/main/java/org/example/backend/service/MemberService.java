@@ -9,17 +9,23 @@ import org.springframework.stereotype.Service;
 public class MemberService {
 
     @Autowired
-    MemberRepository memberRepository;
+    private MemberRepository memberRepository;
 
     public void create(final MemberEntity entity) {
-        MemberValidator.validate(entity);
+        validate(entity);
         memberRepository.save(entity);
     }
 
-    public static class MemberValidator {
-        public static void validate(MemberEntity entity) {
-            if (entity == null)
-                throw new IllegalArgumentException("Entity can't be null");
-        }
+    private void validate(MemberEntity entity) {
+        if (entity == null)
+            throw new IllegalArgumentException("Entity is empty.");
+        else if (entity.getEmail() == null)
+            throw new IllegalArgumentException("Email is null.");
+        else if (memberRepository.existsByEmail(entity.getEmail()))
+            throw new IllegalArgumentException("Email already exists.");
+    }
+
+    public MemberEntity getByCredentials(final String email, final String password) {
+        return memberRepository.findByEmailAndPassword(email, password);
     }
 }
