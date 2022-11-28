@@ -34,7 +34,7 @@ public class GameController {
         if (!gameService.hasPlayerInGame(gameId, playerId))
             ResponseEntity.badRequest().body("error: not player");
         Game game = gameHashMap.get(gameId);
-        return ResponseEntity.ok().body(new GameDTO(game));
+        return ResponseEntity.ok().body(new GameDTO());
     }
 
     @PostMapping("/new-game")
@@ -61,13 +61,6 @@ public class GameController {
     @PostMapping("/action")
     public void postBet(@AuthenticationPrincipal String playerId,
                         @RequestBody ActionDTO actionDTO) {
-        Game game = gameHashMap.get(actionDTO.getGameId());
-        Action action = actionDTO.getAction();
-        for (Player player : game.getPlayers()) {
-            if (player.getId() == playerId) {
-                int playerIndex = game.getPlayers().indexOf(player);
-                game.playAction(playerIndex, action, actionDTO.getBetSize());
-            }
-        }
+        gameService.playAction(playerId, actionDTO);
     }
 }

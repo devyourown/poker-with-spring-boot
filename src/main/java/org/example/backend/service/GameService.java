@@ -41,12 +41,6 @@ public class GameService {
     public void playAction(String playerId, ActionDTO actionDTO) {
         Game game = gameHashMap.get(actionDTO.getGameId());
         Action action = actionDTO.getAction();
-        for (Player player : game.getPlayers()) {
-            if (player.getId().equals(playerId)) {
-                int playerIndex = game.getPlayers().indexOf(player);
-                game.playAction(playerIndex, action, actionDTO.getBetSize());
-                return ;
-            }
-        }
+        game.playAction(game.getIndexOf(playerId), action, actionDTO.getBetSize());
     }
 }

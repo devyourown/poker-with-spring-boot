@@ -22,23 +22,23 @@ public class GameResultTest {
     @Test
     void testBigAllIn() {
         players = new ArrayList<>();
-        player = new Player(1l, 3000);
+        player = new Player("1", 3000);
         player.setHandRanking(HandRanking.FLUSH);
         players.add(player);
 
-        player2 = new Player(2l, 4000);
+        player2 = new Player("1", 4000);
         player2.setHandRanking(HandRanking.FLUSH);
         players.add(player2);
 
-        player3 = new Player(3l, 7000);
+        player3 = new Player("1", 7000);
         player3.setHandRanking(HandRanking.ONE_PAIR);
         players.add(player3);
 
-        Player player4 = new Player(4l, 8000);
+        Player player4 = new Player("1", 8000);
         player4.setHandRanking(HandRanking.STRAIGHT);
         players.add(player4);
 
-        Player player5 = new Player(5l, 1500);
+        Player player5 = new Player("1", 1500);
         player5.setHandRanking(HandRanking.HIGH_CARD);
         players.add(player5);
 
@@ -77,15 +77,15 @@ public class GameResultTest {
     @Test
     void testAllInTieWin() {
         List<Player> players = new ArrayList<>();
-        Player player = new Player(1l, 1000);
+        Player player = new Player("1", 1000);
         player.setHandRanking(HandRanking.FLUSH);
         players.add(player);
 
-        Player player2 = new Player(2l, 1000);
+        Player player2 = new Player("1", 1000);
         player2.setHandRanking(HandRanking.FLUSH);
         players.add(player2);
 
-        Player player3 = new Player(3l, 1000);
+        Player player3 = new Player("1", 1000);
         player3.setHandRanking(HandRanking.ONE_PAIR);
         players.add(player3);
 
@@ -112,15 +112,15 @@ public class GameResultTest {
     @Test
     void testAllinTieWinDiffAmount() {
         players = new ArrayList<>();
-        player = new Player(1l, 1000);
+        player = new Player("1", 1000);
         player.setHandRanking(HandRanking.FLUSH);
         players.add(player);
 
-        player2 = new Player(2l, 500);
+        player2 = new Player("1", 500);
         player2.setHandRanking(HandRanking.FLUSH);
         players.add(player2);
 
-        player3 = new Player(3l, 1000);
+        player3 = new Player("1", 1000);
         player3.setHandRanking(HandRanking.ONE_PAIR);
         players.add(player3);
 
@@ -147,15 +147,15 @@ public class GameResultTest {
     @Test
     void testAllinOneWinDiffAmount() {
         players = new ArrayList<>();
-        player = new Player(1l, 1000);
+        player = new Player("1", 1000);
         player.setHandRanking(HandRanking.FLUSH);
         players.add(player);
 
-        player2 = new Player(2l, 500);
+        player2 = new Player("1", 500);
         player2.setHandRanking(HandRanking.TWO_PAIR);
         players.add(player2);
 
-        player3 = new Player(3l, 1000);
+        player3 = new Player("1", 1000);
         player3.setHandRanking(HandRanking.ONE_PAIR);
         players.add(player3);
 
@@ -182,15 +182,15 @@ public class GameResultTest {
     @Test
     void testAllinLowAmountWin() {
         players = new ArrayList<>();
-        player = new Player(1l, 1000);
+        player = new Player("1", 1000);
         player.setHandRanking(HandRanking.TWO_PAIR);
         players.add(player);
 
-        player2 = new Player(2l, 500);
+        player2 = new Player("1", 500);
         player2.setHandRanking(HandRanking.FLUSH);
         players.add(player2);
 
-        player3 = new Player(3l, 1000);
+        player3 = new Player("1", 1000);
         player3.setHandRanking(HandRanking.ONE_PAIR);
         players.add(player3);
 
@@ -216,15 +216,15 @@ public class GameResultTest {
     @Test
     void testAllinCaseOneWin() {
         players = new ArrayList<>();
-        player = new Player(1l, 1000);
+        player = new Player("1", 1000);
         player.setHandRanking(HandRanking.FLUSH);
         players.add(player);
 
-        player2 = new Player(2l, 1000);
+        player2 = new Player("1", 1000);
         player2.setHandRanking(HandRanking.HIGH_CARD);
         players.add(player2);
 
-        player3 = new Player(3l, 1000);
+        player3 = new Player("1", 1000);
         player3.setHandRanking(HandRanking.ONE_PAIR);
         players.add(player3);
 

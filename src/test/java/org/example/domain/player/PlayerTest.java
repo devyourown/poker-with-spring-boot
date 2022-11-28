@@ -15,7 +15,7 @@ public class PlayerTest {
 
     @BeforeEach
     void createPlayer() {
-        player = new Player(1l, 1000);
+        player = new Player("1", 1000);
     }
 
     @Test

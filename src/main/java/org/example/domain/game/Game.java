@@ -150,10 +150,6 @@ public class Game {
         return players.size();
     }
 
-    public List<Player> getPlayers() {
-        return Collections.unmodifiableList(players);
-    }
-
     public int getPlayerMoneyOf(int index) {
         return players.get(index).getMoney();
     }
@@ -172,5 +168,13 @@ public class Game {
                 return player.getHands();
         }
         return Collections.EMPTY_LIST;
+    }
+
+    public int getIndexOf(String playerId) {
+        for (int i=0; i<players.size(); i++) {
+            if (players.get(i).getId().equals(playerId))
+                return i;
+        }
+        return -1;
     }
 }

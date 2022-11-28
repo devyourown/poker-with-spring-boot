@@ -18,7 +18,7 @@ public class RoomTest {
 
     @Test
     void testRoom() throws RoomException {
-        room.addPlayer(new Player(1l, 1000));
+        room.addPlayer(new Player("1", 1000));
         assertEquals(1, room.getNumOfPlayer());
         assertEquals(Room.Status.WAITING, room.getStatus());
         assertEquals(1, room.getId());
@@ -26,19 +26,19 @@ public class RoomTest {
 
     @Test
     void testPlayGameInRoom() throws RoomException {
-        room.addPlayer(new Player(1l, 1000));
+        room.addPlayer(new Player("1", 1000));
         assertThrows(RoomException.class, () -> {
             room.setPlayersToPlay();
         });
-        room.addPlayer(new Player(2l, 1000));
+        room.addPlayer(new Player("2", 1000));
         room.setPlayersToPlay();
         assertEquals(Room.Status.PLAYING, room.getStatus());
     }
 
     @Test
     void testChangeOrder() throws RoomException {
-        Player player1 = new Player(1l, 1000);
-        Player player2 = new Player(2l, 2000);
+        Player player1 = new Player("1", 1000);
+        Player player2 = new Player("2", 2000);
         room.addPlayer(player1);
         room.addPlayer(player2);
         room.setPlayersToPlay();
@@ -50,10 +50,10 @@ public class RoomTest {
     @Test
     void testRoomException() throws RoomException {
         for (int i=0; i<10; i++) {
-            room.addPlayer(new Player(1l, 1000));
+            room.addPlayer(new Player("1", 1000));
         }
         assertThrows(RoomException.class, () -> {
-            room.addPlayer(new Player(2l, 1000));
+            room.addPlayer(new Player("2", 1000));
         });
     }
 }

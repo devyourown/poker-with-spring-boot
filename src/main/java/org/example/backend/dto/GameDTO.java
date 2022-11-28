@@ -1,5 +1,6 @@
 package org.example.backend.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,15 +12,11 @@ import java.util.List;
 
 @Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class GameDTO {
     private List<Card> board;
     private int currentBet;
     private int potSize;
     private GameStatus gameStatus;
-
-    public GameDTO(Game game) {
-        board = game.getBoard();
-        currentBet = game.getBettingSize();
-        potSize = game.getPot();
-    }
  }

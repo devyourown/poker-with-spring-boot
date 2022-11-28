@@ -17,9 +17,9 @@ public class Main {
         System.out.println("---------게임 시작----------");
         System.out.println();
         players = new ArrayList<>();
-        players.add(new Player(1l, 10000));
-        players.add(new Player(2l, 5000));
-        players.add(new Player(3l, 6000));
+        players.add(new Player("1", 10000));
+        players.add(new Player("2", 5000));
+        players.add(new Player("3", 6000));
 
         Game game = new Game(players, 100, 200);
         startGame(game);
@@ -38,7 +38,6 @@ public class Main {
                 break ;
             playUntilStatus(game, GameStatus.RIVER);
         }
-        ConsoleOutput.printGameResult(game);
     }
 
     private static void playUntilStatus(Game game, GameStatus status) {

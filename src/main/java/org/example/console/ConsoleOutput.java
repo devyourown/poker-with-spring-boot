@@ -45,12 +45,4 @@ public class ConsoleOutput {
         System.out.println("현재 갖고 있는 돈 : " + money);
     }
 
-    public static void printGameResult(Game game) {
-        System.out.println("결과 : ");
-        for (Player player : game.getPlayers()) {
-            System.out.println("패 : " + player.getHands().get(0).toString() + ", "
-                            + player.getHands().get(1).toString());
-            System.out.println("돈 : " + player.getMoney() + " ");
-        }
-    }
 }

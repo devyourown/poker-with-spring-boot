@@ -15,8 +15,8 @@ public class GameTest {
 
     @BeforeEach
     void setup() {
-        players = List.of(new Player(1l, 1000),
-                new Player(2l, 2000), new Player(3l, 3000));
+        players = List.of(new Player("1", 1000),
+                new Player("2", 2000), new Player("3", 3000));
         game = new Game(players, 100, 200);
     }
 
@@ -34,7 +34,7 @@ public class GameTest {
     void testFold() throws Exception {
         List<Player> players1 = new ArrayList<>();
         for (int i=0; i<4; i++) {
-            players1.add(new Player(1l, 1000));
+            players1.add(new Player("4", 1000));
         }
 
         Game game = new Game(players1, 100, 200);
