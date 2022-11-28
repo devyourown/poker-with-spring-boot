@@ -47,18 +47,13 @@ public class Room {
         return false;
     }
 
-    public void addPlayer(Player player) throws RoomException {
-        validateToAddPlayer();
+    public void addPlayer(Player player) {
         players.add(player);
     }
 
-    private void validateToAddPlayer() throws RoomException {
-        if (!canAddPlayer())
-            throw new RoomException(RoomException.ErrorCode.TOO_MANY_PLAYER);
-    }
-
     private boolean canAddPlayer() {
-        if (getNumOfPlayer() < HEAD_COUNT_LIMIT)
+        if (getNumOfPlayer() < HEAD_COUNT_LIMIT
+                && status == Status.WAITING)
             return true;
         return false;
     }
@@ -73,6 +68,10 @@ public class Room {
 
     public String getId() {
         return id;
+    }
+
+    public boolean isAvailableToEnter() {
+        return canAddPlayer();
     }
 
     public enum Status {

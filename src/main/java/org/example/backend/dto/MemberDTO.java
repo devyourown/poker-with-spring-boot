@@ -16,4 +16,5 @@ public class MemberDTO {
     private String email;
     private String password;
     private int money;
+    private boolean hasRoom;
 }

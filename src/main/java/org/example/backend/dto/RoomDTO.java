@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.domain.player.Player;
+import org.example.domain.room.Room;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,4 +19,5 @@ public class RoomDTO {
     private List<Player> players;
     private int smallBlind;
     private int bigBlind;
+    private Room.Status status;
 }
