@@ -26,21 +26,12 @@ public class GameController {
     @Autowired
     private GameService gameService;
 
-    private HashMap<String, Game> gameHashMap = new HashMap<>();
-
     @GetMapping("/result")
     public ResponseEntity<?> getGame(@AuthenticationPrincipal String playerId,
                                   @RequestParam(value = "gameId") String gameId) {
         if (!gameService.hasPlayerInGame(gameId, playerId))
             ResponseEntity.badRequest().body("error: not player");
-        Game game = gameHashMap.get(gameId);
-        GameDTO gameDTO = GameDTO.builder()
-                .board(game.getBoard())
-                .currentBet(game.getBettingSize())
-                .potSize(game.getPot())
-                .gameStatus(game.getStatus())
-                .build();
-        return ResponseEntity.ok(gameDTO);
+        return ResponseEntity.ok(gameService.getCurrentGame(gameId));
     }
 
     @PostMapping("/new-game")
@@ -66,7 +57,7 @@ public class GameController {
     }
 
     @PostMapping("/action")
-    public void postBet(@AuthenticationPrincipal String playerId,
+    public void playAction(@AuthenticationPrincipal String playerId,
                         @RequestBody ActionDTO actionDTO) {
         gameService.playAction(playerId, actionDTO);
     }

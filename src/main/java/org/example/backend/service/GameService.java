@@ -6,6 +6,7 @@ import org.example.backend.dto.RoomDTO;
 import org.example.domain.card.Card;
 import org.example.domain.game.Action;
 import org.example.domain.game.Game;
+import org.example.domain.game.GameStatus;
 import org.example.domain.player.Player;
 import org.springframework.stereotype.Service;
 
@@ -42,5 +43,22 @@ public class GameService {
         Game game = gameHashMap.get(actionDTO.getGameId());
         Action action = actionDTO.getAction();
         game.playAction(game.getIndexOf(playerId), action, actionDTO.getBetSize());
+    }
+
+    public GameDTO getCurrentGame(String gameId) {
+        Game game = gameHashMap.get(gameId);
+        GameDTO gameDTO = GameDTO.builder()
+                .board(game.getBoard())
+                .currentBet(game.getBettingSize())
+                .potSize(game.getPot())
+                .gameStatus(game.getStatus())
+                .build();
+        if (game.getStatus() == GameStatus.END)
+            removeGame(gameId);
+        return gameDTO;
+    }
+
+    private void removeGame(String gameId) {
+        gameHashMap.remove(gameId);
     }
 }
