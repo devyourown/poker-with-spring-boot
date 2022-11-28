@@ -34,12 +34,19 @@ public class GameController {
         if (!gameService.hasPlayerInGame(gameId, playerId))
             ResponseEntity.badRequest().body("error: not player");
         Game game = gameHashMap.get(gameId);
-        return ResponseEntity.ok().body(new GameDTO());
+        GameDTO gameDTO = GameDTO.builder()
+                .board(game.getBoard())
+                .currentBet(game.getBettingSize())
+                .potSize(game.getPot())
+                .gameStatus(game.getStatus())
+                .build();
+        return ResponseEntity.ok(gameDTO);
     }
 
     @PostMapping("/new-game")
     public String makeGame(@RequestBody RoomDTO roomDTO) {
-        return gameService.makeGame(roomDTO);
+        String gameId = gameService.makeGame(roomDTO);
+        return gameId;
     }
 
     @PostMapping("/re-game")
