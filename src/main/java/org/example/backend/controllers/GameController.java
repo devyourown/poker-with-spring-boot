@@ -1,14 +1,16 @@
 package org.example.backend.controllers;
 
+import org.example.backend.dto.ActionDTO;
 import org.example.backend.dto.GameDTO;
+import org.example.backend.dto.RoomDTO;
+import org.example.backend.service.GameService;
 import org.example.domain.card.Card;
 import org.example.domain.game.Action;
 import org.example.domain.game.Game;
 import org.example.domain.player.Player;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,28 +18,38 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/game")
 public class GameController {
-    private HashMap<Long, Game> gameHashMap = new HashMap<>();
 
-    @GetMapping("/game")
-    public GameDTO getGame(@RequestParam(value = "gameId") Long id) {
+    @Autowired
+    private GameService gameService;
+
+    private HashMap<String, Game> gameHashMap = new HashMap<>();
+
+    @GetMapping("/result")
+    public GameDTO getGame(@AuthenticationPrincipal String playerId,
+                           @RequestParam(value = "gameId") Long id) {
         Game game = gameHashMap.get(id);
         return new GameDTO(game);
     }
 
-    @PostMapping("/game")
-    public long makeGame(@RequestParam(value = "arr[]") List<Player> players) {
-        //ID를 받고 DB에서 매치한 결과를 가져와야 될듯함.
-        Game game = new Game(players, 100, 200);
-        long id = Long.parseLong(UUID.randomUUID().toString());
-        gameHashMap.put(id, game);
-        return id;
+    @PostMapping("/new-game")
+    public String makeGame(@RequestBody RoomDTO roomDTO) {
+        Game game = new Game(roomDTO.getPlayers(), 100, 200);
+        String gameId = UUID.randomUUID().toString();
+        gameHashMap.put(gameId, game);
+        return gameId;
     }
 
-    @GetMapping("/game/hands")
-    public List<Card> getHands(@RequestParam(value = "gameId") Long id,
-                               @RequestParam(value = "playerId") Long playerId) {
-        Game game = gameHashMap.get(id);
+    @PostMapping("/re-game")
+    public void resetGame(@RequestBody RoomDTO roomDTO) {
+
+    }
+
+    @GetMapping("/hands")
+    public List<Card> getHands(@AuthenticationPrincipal String playerId,
+                               @RequestParam(value = "gameId") String gameId) {
+        Game game = gameHashMap.get(gameId);
         for (Player player : game.getPlayers()) {
             if (player.getId() == playerId)
                 return player.getHands();
@@ -46,16 +58,14 @@ public class GameController {
     }
 
     @PostMapping("/action")
-    public void postBet(@RequestParam(value = "gameId") Long id,
-                        @RequestParam(value = "playerId") Long playerId,
-                        @RequestParam(value = "action") String actionInput,
-                        @RequestParam(value = "betSize") int betSize) {
-        Game game = gameHashMap.get(id);
-        Action action = Action.valueOf(actionInput);
+    public void postBet(@AuthenticationPrincipal String playerId,
+                        @RequestBody ActionDTO actionDTO) {
+        Game game = gameHashMap.get(actionDTO.getGameId());
+        Action action = actionDTO.getAction();
         for (Player player : game.getPlayers()) {
             if (player.getId() == playerId) {
                 int playerIndex = game.getPlayers().indexOf(player);
-                game.playAction(playerIndex, action, betSize);
+                game.playAction(playerIndex, action, actionDTO.getBetSize());
             }
         }
     }
