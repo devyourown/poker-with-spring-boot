@@ -2,6 +2,7 @@ package org.example.backend.controllers;
 
 import org.example.backend.dto.MemberDTO;
 import org.example.backend.persistence.entity.MemberEntity;
+import org.example.backend.security.TokenProvider;
 import org.example.backend.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,8 @@ public class MemberController {
 
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private TokenProvider tokenProvider;
 
     @PostMapping("/signup")
     public ResponseEntity<?> createMember(@RequestBody MemberDTO requestDTO) {
@@ -42,10 +45,12 @@ public class MemberController {
 
         if (entity == null)
             return ResponseEntity.badRequest().body("login failed.");
+        final String token = tokenProvider.create(entity);
         final MemberDTO responseDTO = MemberDTO.builder()
                 .email(entity.getEmail())
                 .id(entity.getId())
                 .nickname(entity.getNickname())
+                .token(token)
                 .money(entity.getMoney())
                 .build();
         return ResponseEntity.ok().body(responseDTO);
