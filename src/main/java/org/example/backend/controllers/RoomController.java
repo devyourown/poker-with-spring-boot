@@ -24,11 +24,7 @@ public class RoomController {
     @GetMapping("/status")
     public ResponseEntity<?> getRoomStatus(@RequestParam String roomId) {
         Room room = roomHashMap.get(roomId);
-        RoomDTO roomDTO = RoomDTO.builder()
-                .players(room.getPlayers())
-                .status(room.getStatus())
-                .build();
-        return ResponseEntity.ok(roomDTO);
+        return ResponseEntity.ok(getRoomDTO(room));
     }
 
 
@@ -39,11 +35,7 @@ public class RoomController {
             ResponseEntity.badRequest().body("error : has room");
         Room room = new Room();
         room.addPlayer(new Player(playerId, member.getMoney()));
-        RoomDTO roomDTO = RoomDTO.builder()
-                .players(room.getPlayers())
-                .status(room.getStatus())
-                .build();
-        return ResponseEntity.ok(roomDTO);
+        return ResponseEntity.ok(getRoomDTO(room));
     }
 
     @PostMapping("/manual-enter")
@@ -56,11 +48,7 @@ public class RoomController {
         if (!room.isAvailableToEnter())
             ResponseEntity.badRequest().body("error : room is currently closed");
         room.addPlayer(new Player(playerId, member.getMoney()));
-        RoomDTO roomDTO = RoomDTO.builder()
-                .players(room.getPlayers())
-                .status(room.getStatus())
-                .build();
-        return ResponseEntity.ok(roomDTO);
+        return ResponseEntity.ok(getRoomDTO(room));
     }
 
     @PostMapping("/auto-enter")
@@ -71,11 +59,7 @@ public class RoomController {
         for (Room room : roomHashMap.values()) {
             if (room.isAvailableToEnter()) {
                 room.addPlayer(new Player(playerId, member.getMoney()));
-                RoomDTO roomDTO = RoomDTO.builder()
-                        .players(room.getPlayers())
-                        .status(room.getStatus())
-                        .build();
-                return ResponseEntity.ok(roomDTO);
+                return ResponseEntity.ok(getRoomDTO(room));
             }
         }
         return makeRoom(playerId);
@@ -83,5 +67,12 @@ public class RoomController {
 
     @PostMapping("/chat")
     public void chat() {}
+
+    private RoomDTO getRoomDTO(final Room room) {
+        return RoomDTO.builder()
+                .players(room.getPlayers())
+                .status(room.getStatus())
+                .build();
+    }
 
 }
