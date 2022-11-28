@@ -1,9 +1,17 @@
 package org.example.backend.persistence.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = "email")})
 public class MemberEntity {
@@ -19,52 +27,4 @@ public class MemberEntity {
     private String password;
     @Column(nullable = false)
     private int money;
-
-    public MemberEntity() {
-
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public MemberEntity(String id, String nickname, String email, String password, int money) {
-        this.id = id;
-        this.nickname = nickname;
-        this.email = email;
-        this.password = password;
-        this.money = money;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setMoney(int money) {
-        this.money = money;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public int getMoney() {
-        return money;
-    }
 }

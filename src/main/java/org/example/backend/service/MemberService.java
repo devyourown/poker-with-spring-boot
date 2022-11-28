@@ -11,9 +11,9 @@ public class MemberService {
     @Autowired
     private MemberRepository memberRepository;
 
-    public void create(final MemberEntity entity) {
+    public MemberEntity create(final MemberEntity entity) {
         validate(entity);
-        memberRepository.save(entity);
+        return memberRepository.save(entity);
     }
 
     private void validate(MemberEntity entity) {
