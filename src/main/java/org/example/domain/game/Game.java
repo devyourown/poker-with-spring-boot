@@ -157,4 +157,12 @@ public class Game {
     public int getPlayerMoneyOf(int index) {
         return players.get(index).getMoney();
     }
+
+    public boolean hasThisPlayer(String playerId) {
+        for (Player player : players) {
+            if (player.getId().equals(playerId))
+                return true;
+        }
+        return false;
+    }
 }
