@@ -10,13 +10,13 @@ public class Room {
     private static final int HEAD_COUNT_LIMIT = 10;
     private static final int PLAY_COUNT_LIMIT = 2;
     private Deque<Player> players;
-    private int id;
+    private String id;
     private Status status;
 
     public Room() {
         players = new ArrayDeque<>();
         status = Status.WAITING;
-        id = RoomIdMaker.makeRoomId();
+        id = UUID.randomUUID().toString();
     }
 
     public void changeOrder() {
@@ -71,7 +71,7 @@ public class Room {
         return status;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 

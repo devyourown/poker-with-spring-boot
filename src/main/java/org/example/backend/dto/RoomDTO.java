@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RoomDTO {
+    private String roomId;
     private List<Player> players;
     private int smallBlind;
     private int bigBlind;
