@@ -42,7 +42,8 @@ public class GameService {
     public void playAction(String playerId, ActionDTO actionDTO) {
         Game game = gameHashMap.get(actionDTO.getGameId());
         Action action = actionDTO.getAction();
-        game.playAction(game.getIndexOf(playerId), action, actionDTO.getBetSize());
+        if (game.isCurrentTurn(playerId))
+            game.playAction(action, actionDTO.getBetSize());
     }
 
     public GameDTO getCurrentGame(String gameId) {

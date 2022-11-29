@@ -45,8 +45,7 @@ public class Main {
         while (game.getStatus() == status) {
             printForAction(game, index);
             UserAction userAction = ConsoleInput.getUserAction(game.getBettingSize(), index);
-            game.playAction(index % game.getSizeOfPlayers(),
-                    userAction.action, userAction.betSize);
+            game.playAction(userAction.action, userAction.betSize);
             if (userAction.action == Action.FOLD)
                 index--;
             index++;

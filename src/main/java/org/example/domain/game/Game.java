@@ -17,6 +17,7 @@ public class Game {
     private GameStatus status;
     private Pot pot;
     private int lastTurnIndex;
+    private int currentTurnIndex;
 
     public Game(List<Player> players, int smallBlind, int bigBlind) {
         this.players = new ArrayList<>(players);
@@ -24,6 +25,7 @@ public class Game {
 
         status = GameStatus.PRE_FLOP;
         initLastTurnIndex();
+        this.currentTurnIndex = 0;
 
         this.dealer = new Dealer();
         distributeHands();
@@ -39,34 +41,42 @@ public class Game {
         }
     }
 
-    public void playAction(int playerIndex, Action action, int betSize) {
-        Player player = players.get(playerIndex);
+    public void playAction(Action action, int betSize) {
+        Player player = players.get(currentTurnIndex);
         if (action == Action.FOLD)
-            actFold(player, playerIndex);
+            actFold(player);
         else if (action == Action.CALL)
-            actCall(player, playerIndex);
+            actCall(player);
         else if (action == Action.CHECK)
-            actCheck(playerIndex);
+            actCheck();
         else if (action == Action.BET)
             actBet(player, betSize);
+        initCurrentTurnWhenOver();
     }
 
-    private void actFold(Player player, int playerIndex) {
-        setNextStatusWhenLastAction(playerIndex);
+    private void initCurrentTurnWhenOver() {
+        if (currentTurnIndex == players.size())
+            currentTurnIndex = 0;
+    }
+
+    private void actFold(Player player) {
+        setNextStatusWhenLastAction();
         if (lastTurnIndex != 0)
             lastTurnIndex--;
+        if (currentTurnIndex != 0)
+            currentTurnIndex--;
         players.remove(player);
         if (players.size() < 2)
             setEnd();
     }
 
-    private void actCall(Player player, int playerIndex) {
+    private void actCall(Player player) {
         player.bet(pot.amountToCall(player));
         raisePotMoney(pot.amountToCall(player));
-        setNextStatusWhenLastAction(playerIndex);
+        setNextStatusWhenLastAction();
     }
-    private void actCheck(int playerIndex) {
-        setNextStatusWhenLastAction(playerIndex);
+    private void actCheck() {
+        setNextStatusWhenLastAction();
     }
 
     private void actBet(Player player, int betSize) {
@@ -75,6 +85,7 @@ public class Game {
         raisePotMoney(betSize);
         pot.putPlayerBetLog(player, betSize);
         resetLastTurnIndex(player);
+        currentTurnIndex++;
     }
 
     private void raisePotMoney(int betSize) {
@@ -88,19 +99,22 @@ public class Game {
             lastTurnIndex = players.indexOf(player) - 1;
     }
 
-    private void setNextStatusWhenLastAction(int playerIndex) {
-        if (isLastAction(playerIndex)) {
+    private void setNextStatusWhenLastAction() {
+        if (isLastAction()) {
             setNextStatus();
             initLastTurnIndex();
+            currentTurnIndex = 0;
             dealer.setBoardAsStatus(status);
             setPlayersRanking(players, dealer.getBoard());
             pot.putZeroInBetLog(players);
             pot.resetCurrentBet();
+            return ;
         }
+        currentTurnIndex++;
     }
 
-    private boolean isLastAction(int playerIndex) {
-        if (playerIndex == lastTurnIndex)
+    private boolean isLastAction() {
+        if (currentTurnIndex == lastTurnIndex)
             return true;
         return false;
     }
@@ -170,7 +184,11 @@ public class Game {
         return Collections.EMPTY_LIST;
     }
 
-    public int getIndexOf(String playerId) {
+    public boolean isCurrentTurn(String playerId) {
+        return currentTurnIndex == getIndexOf(playerId);
+    }
+
+    private int getIndexOf(String playerId) {
         for (int i=0; i<players.size(); i++) {
             if (players.get(i).getId().equals(playerId))
                 return i;

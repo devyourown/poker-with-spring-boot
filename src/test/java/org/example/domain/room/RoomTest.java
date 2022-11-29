@@ -21,7 +21,6 @@ public class RoomTest {
         room.addPlayer(new Player("1", 1000));
         assertEquals(1, room.getNumOfPlayer());
         assertEquals(Room.Status.WAITING, room.getStatus());
-        assertEquals(1, room.getId());
     }
 
     @Test
@@ -52,8 +51,6 @@ public class RoomTest {
         for (int i=0; i<10; i++) {
             room.addPlayer(new Player("1", 1000));
         }
-        assertThrows(RoomException.class, () -> {
-            room.addPlayer(new Player("2", 1000));
-        });
+        assertFalse(room.isAvailableToEnter());
     }
 }
