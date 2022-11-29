@@ -18,10 +18,15 @@ public class RoomException extends Exception {
                 return "Player should be more than 1 player to play";
             case TOO_MANY_PLAYER:
                 return "Player should be less than 11 players.";
+            case DUPLICATED_ROOM:
+                return "Player Should have only one room.";
+            case ID_NOT_EXIST:
+                return "The ID does not existed.";
         }
         return "";
     }
     public enum ErrorCode {
-        OK, NOT_ENOUGH_PLAYER, TOO_MANY_PLAYER;
+        OK, NOT_ENOUGH_PLAYER, TOO_MANY_PLAYER, DUPLICATED_ROOM,
+        ID_NOT_EXIST;
     }
 }
