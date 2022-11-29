@@ -22,11 +22,13 @@ public class RoomException extends Exception {
                 return "Player Should have only one room.";
             case ID_NOT_EXIST:
                 return "The ID does not existed.";
+            case NOT_REMOVABLE:
+                return "The room is used by someone.";
         }
         return "";
     }
     public enum ErrorCode {
         OK, NOT_ENOUGH_PLAYER, TOO_MANY_PLAYER, DUPLICATED_ROOM,
-        ID_NOT_EXIST;
+        ID_NOT_EXIST, NOT_REMOVABLE;
     }
 }

@@ -13,6 +13,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/room")
@@ -22,6 +24,7 @@ public class RoomController {
     private MemberService memberService;
     @Autowired
     private RoomService roomService;
+    private Set<String> playerIdSet = new HashSet<>();
 
     @GetMapping("/status")
     public ResponseEntity<?> getRoomStatus(@RequestParam String roomId) {
@@ -39,9 +42,10 @@ public class RoomController {
     public ResponseEntity<?> makeRoom(@AuthenticationPrincipal String playerId) {
         Room room = roomService.makeRoom();
         try {
+            validatePlayerHasNoRoom(playerId);
+            playerIdSet.add(playerId);
             MemberEntity member = memberService.getById(playerId);
             roomService.addPlayerToRoom(room.getId(), member);
-            memberService.create(member);
         } catch (RoomException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -53,10 +57,11 @@ public class RoomController {
                                 @RequestParam String roomId) {
         Room room;
         try {
+            validatePlayerHasNoRoom(playerId);
+            playerIdSet.add(playerId);
             room = roomService.getRoom(roomId);
             MemberEntity member = memberService.getById(playerId);
             roomService.addPlayerToRoom(roomId, member);
-            memberService.create(member);
         } catch (RoomException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -65,11 +70,13 @@ public class RoomController {
 
     @PostMapping("/auto-enter")
     public ResponseEntity<?> enterRandomRoom(@AuthenticationPrincipal String playerId) {
-        Room room = roomService.getAvailableRandomRoom();
+        Room room;
         try {
+            validatePlayerHasNoRoom(playerId);
+            playerIdSet.add(playerId);
+            room = roomService.getAvailableRandomRoom();
             MemberEntity member = memberService.getById(playerId);
             roomService.addPlayerToRoom(room.getId(), member);
-            memberService.create(member);
         } catch (RoomException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -79,11 +86,26 @@ public class RoomController {
     @PostMapping("/chat")
     public void chat() {}
 
+    @PostMapping("/room-break")
+    public ResponseEntity<?> removeRoom(@RequestParam String roomId) {
+        try {
+            roomService.removeRoom(roomId);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return ResponseEntity.ok("Success");
+    }
+
     private RoomDTO getRoomDTO(final Room room) {
         return RoomDTO.builder()
                 .players(room.getPlayers())
                 .status(room.getStatus())
                 .build();
+    }
+
+    private void validatePlayerHasNoRoom(String playerId) throws RoomException {
+        if (playerIdSet.contains(playerId))
+            throw new RoomException(RoomException.ErrorCode.DUPLICATED_ROOM);
     }
 
 }

@@ -7,20 +7,22 @@ import org.example.domain.room.Room;
 import org.springframework.http.ResponseEntity;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class RoomService {
 
-    private HashMap<String, Room> roomHashMap = new HashMap<>();
+    private HashMap<String, Room> occupiedRooms = new HashMap<>();
 
     public Room getRoom(String roomId) throws RoomException {
         validateRoomIsOpen(roomId);
-        if (roomHashMap.containsKey(roomId))
-            return roomHashMap.get(roomId);
+        if (occupiedRooms.containsKey(roomId))
+            return occupiedRooms.get(roomId);
         return null;
     }
 
     public Room getAvailableRandomRoom() {
-        for (Room room : roomHashMap.values()) {
+        for (Room room : occupiedRooms.values()) {
             if (room.isAvailableToEnter()) {
                 return room;
             }
@@ -30,26 +32,33 @@ public class RoomService {
 
     public Room makeRoom() {
         Room room = new Room();
-        roomHashMap.put(room.getId(), room);
+        occupiedRooms.put(room.getId(), room);
         return room;
+    }
+
+    public void removeRoom(String roomId) throws RoomException {
+        validateRoomCanBeRemoved(roomId);
+        occupiedRooms.remove(roomId);
+    }
+
+    private void validateRoomCanBeRemoved(String roomId) throws RoomException {
+        Room room = occupiedRooms.get(roomId);
+        if (room.getStatus() == Room.Status.PLAYING)
+            throw new RoomException(RoomException.ErrorCode.NOT_REMOVABLE);
+        if (room.getNumOfPlayer() > 0)
+            throw new RoomException(RoomException.ErrorCode.NOT_REMOVABLE);
     }
 
     public void addPlayerToRoom(String roomId, MemberEntity member) throws RoomException {
         validateRoomIsOpen(roomId);
-        validateMemberNoRoom(member);
-        Room room = roomHashMap.get(roomId);
+        Room room = occupiedRooms.get(roomId);
         room.addPlayer(new Player(member.getId(), member.getMoney()));
     }
 
     private void validateRoomIsOpen(String roomId) throws RoomException {
-        if (!roomHashMap.containsKey(roomId))
+        if (!occupiedRooms.containsKey(roomId))
             throw new RoomException(RoomException.ErrorCode.ID_NOT_EXIST);
-        if (!roomHashMap.get(roomId).isAvailableToEnter())
+        if (!occupiedRooms.get(roomId).isAvailableToEnter())
             throw new RoomException(RoomException.ErrorCode.TOO_MANY_PLAYER);
-    }
-
-    private void validateMemberNoRoom(MemberEntity member) throws RoomException {
-        if (member.isHasRoom())
-            throw new RoomException(RoomException.ErrorCode.DUPLICATED_ROOM);
     }
 }

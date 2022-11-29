@@ -30,7 +30,6 @@ public class MemberController {
                 .nickname(requestDTO.getNickname())
                 .password(requestDTO.getPassword())
                 .money(requestDTO.getMoney())
-                .hasRoom(requestDTO.isHasRoom())
                 .build();
         MemberEntity registeredMember = memberService.create(entity);
         MemberDTO responseDTO = MemberDTO.builder()
@@ -38,7 +37,6 @@ public class MemberController {
                 .email(registeredMember.getEmail())
                 .nickname(registeredMember.getNickname())
                 .money(registeredMember.getMoney())
-                .hasRoom(requestDTO.isHasRoom())
                 .build();
         return ResponseEntity.ok().body(responseDTO);
     }
@@ -58,7 +56,6 @@ public class MemberController {
                 .nickname(entity.getNickname())
                 .token(token)
                 .money(entity.getMoney())
-                .hasRoom(entity.isHasRoom())
                 .build();
         return ResponseEntity.ok().body(responseDTO);
     }
