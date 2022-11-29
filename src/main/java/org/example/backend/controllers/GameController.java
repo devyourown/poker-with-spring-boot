@@ -6,6 +6,8 @@ import org.example.backend.dto.HandsDTO;
 import org.example.backend.dto.RoomDTO;
 import org.example.backend.service.GameService;
 import org.example.domain.card.Card;
+import org.example.domain.error.BetException;
+import org.example.domain.error.RoomException;
 import org.example.domain.game.Action;
 import org.example.domain.game.Game;
 import org.example.domain.player.Player;
@@ -30,14 +32,19 @@ public class GameController {
     public ResponseEntity<?> getGame(@AuthenticationPrincipal String playerId,
                                   @RequestParam(value = "gameId") String gameId) {
         if (!gameService.hasPlayerInGame(gameId, playerId))
-            ResponseEntity.badRequest().body("error: not player");
+            return ResponseEntity.badRequest().body("error: not player");
         return ResponseEntity.ok(gameService.getCurrentGame(gameId));
     }
 
     @PostMapping("/new-game")
-    public String makeGame(@RequestBody RoomDTO roomDTO) {
-        String gameId = gameService.makeGame(roomDTO);
-        return gameId;
+    public ResponseEntity<?> makeGame(@RequestBody RoomDTO roomDTO) {
+        GameDTO gameDTO;
+        try {
+            gameDTO = gameService.makeGame(roomDTO);
+        } catch (RoomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return ResponseEntity.ok(gameDTO);
     }
 
     @PostMapping("/re-game")
@@ -49,7 +56,7 @@ public class GameController {
     public ResponseEntity<?> getHands(@AuthenticationPrincipal String playerId,
                                @RequestParam(value = "gameId") String gameId) {
         if (!gameService.hasPlayerInGame(gameId, playerId))
-            ResponseEntity.badRequest().body("error: not player");
+            return ResponseEntity.badRequest().body("error: not player");
         HandsDTO handsDTO = HandsDTO.builder()
                 .hands(gameService.getHands(gameId, playerId))
                 .build();
@@ -57,8 +64,13 @@ public class GameController {
     }
 
     @PostMapping("/action")
-    public void playAction(@AuthenticationPrincipal String playerId,
+    public ResponseEntity<?> playAction(@AuthenticationPrincipal String playerId,
                         @RequestBody ActionDTO actionDTO) {
-        gameService.playAction(playerId, actionDTO);
+        try {
+            gameService.playAction(playerId, actionDTO);
+        } catch (BetException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return ResponseEntity.ok("success");
     }
 }

@@ -4,6 +4,8 @@ import org.example.backend.dto.ActionDTO;
 import org.example.backend.dto.GameDTO;
 import org.example.backend.dto.RoomDTO;
 import org.example.domain.card.Card;
+import org.example.domain.error.BetException;
+import org.example.domain.error.RoomException;
 import org.example.domain.game.Action;
 import org.example.domain.game.Game;
 import org.example.domain.game.GameStatus;
@@ -28,22 +30,48 @@ public class GameService {
             throw new IllegalArgumentException("There's no game with this id.");
     }
 
-    public String makeGame(RoomDTO roomDTO) {
+    public GameDTO makeGame(RoomDTO roomDTO) throws RoomException {
+        validateRoom(roomDTO);
         Game game = new Game(roomDTO.getPlayers(), roomDTO.getSmallBlind(), roomDTO.getBigBlind());
         String gameId = UUID.randomUUID().toString();
         gameHashMap.put(gameId, game);
-        return gameId;
+        return getCurrentGame(gameId);
+    }
+
+    private void validateRoom(RoomDTO roomDTO) throws RoomException {
+        if (roomDTO.getPlayers().size() == 1)
+            throw new RoomException(RoomException.ErrorCode.NOT_ENOUGH_PLAYER);
     }
 
     public List<Card> getHands(String gameId, String playerId) {
         return gameHashMap.get(gameId).getHandsOf(playerId);
     }
 
-    public void playAction(String playerId, ActionDTO actionDTO) {
+    public void playAction(String playerId, ActionDTO actionDTO) throws BetException {
+        validateAction(playerId, actionDTO);
         Game game = gameHashMap.get(actionDTO.getGameId());
         Action action = actionDTO.getAction();
-        if (game.isCurrentTurn(playerId))
-            game.playAction(action, actionDTO.getBetSize());
+        game.playAction(action, actionDTO.getBetSize());
+    }
+
+    private void validateAction(String playerId, ActionDTO actionDTO) throws BetException {
+        Game game = gameHashMap.get(actionDTO.getGameId());
+        if (!game.isCurrentTurn(playerId))
+            throw new BetException(BetException.ErrorCode.NOT_YOUR_TURN);
+        if (actionDTO.getAction() == Action.BET) {
+            if (game.getBettingSize() > actionDTO.getBetSize())
+                throw new BetException(BetException.ErrorCode.MONEY_NOT_ENOUGH);
+            if (hasLessThanHundred(game.getBettingSize()))
+                throw new BetException(BetException.ErrorCode.INVALID_BET_SIZE);
+        }
+        if (game.getBettingSize() > 0) {
+            if (actionDTO.getAction() == Action.CHECK)
+                throw new BetException(BetException.ErrorCode.NOT_POSSIBLE_CHECK);
+        }
+    }
+
+    private boolean hasLessThanHundred(int money) {
+        return money % 100 != 0;
     }
 
     public GameDTO getCurrentGame(String gameId) {

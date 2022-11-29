@@ -22,11 +22,15 @@ public class BetException extends Exception {
                 return "Money is not enough to bet.";
             case NOT_INTEGER:
                 return "Money should be number.";
+            case NOT_YOUR_TURN:
+                return "Now is not your turn.";
+            case NOT_POSSIBLE_CHECK:
+                return "Cannot check now.";
         }
         return "";
     }
     public enum ErrorCode {
-        OK, INVALID_BET_SIZE, TOO_SMALL_BET_SIZE,
-        MONEY_NOT_ENOUGH, NOT_INTEGER;
+        OK, INVALID_BET_SIZE, TOO_SMALL_BET_SIZE, NOT_POSSIBLE_CHECK,
+        MONEY_NOT_ENOUGH, NOT_INTEGER, NOT_YOUR_TURN;
     }
 }
