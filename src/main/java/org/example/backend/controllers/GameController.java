@@ -36,7 +36,7 @@ public class GameController {
         return ResponseEntity.ok(gameService.getCurrentGame(gameId));
     }
 
-    @PostMapping("/new-game")
+    @PostMapping("/game")
     public ResponseEntity<?> makeGame(@RequestBody RoomDTO roomDTO) {
         GameDTO gameDTO;
         try {
@@ -45,11 +45,6 @@ public class GameController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
         return ResponseEntity.ok(gameDTO);
-    }
-
-    @PostMapping("/re-game")
-    public void resetGame(@RequestBody RoomDTO roomDTO) {
-        //should change game domain
     }
 
     @GetMapping("/hands")

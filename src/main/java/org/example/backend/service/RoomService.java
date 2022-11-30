@@ -5,11 +5,13 @@ import org.example.domain.error.RoomException;
 import org.example.domain.player.Player;
 import org.example.domain.room.Room;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+@Service
 public class RoomService {
 
     private HashMap<String, Room> occupiedRooms = new HashMap<>();
