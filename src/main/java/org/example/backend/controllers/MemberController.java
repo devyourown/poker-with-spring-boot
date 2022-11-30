@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -21,7 +18,6 @@ public class MemberController {
     private MemberService memberService;
     @Autowired
     private TokenProvider tokenProvider;
-    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @PostMapping("/signup")
     public ResponseEntity<?> createMember(@RequestBody MemberDTO requestDTO) {
@@ -44,8 +40,7 @@ public class MemberController {
     @PostMapping("/signin")
     public ResponseEntity<?> authenticate(@RequestBody MemberDTO requestDTO) {
         MemberEntity entity = memberService
-                .getByCredentials(requestDTO.getEmail(), requestDTO.getPassword(),
-                        passwordEncoder);
+                .getByCredentials(requestDTO.getEmail(), requestDTO.getPassword());
 
         if (entity == null)
             return ResponseEntity.badRequest().body("login failed.");

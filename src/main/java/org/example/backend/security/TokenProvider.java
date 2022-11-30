@@ -15,7 +15,9 @@ import java.util.Date;
 
 @Service
 public class TokenProvider {
-    private static final String SECRET_KEY = "GolesadwweWWEQ2fasdDAasdsadaseqweasdaswqeFSDASFWqweSAqwasdas";
+    private static final String SECRET_KEY =
+            "GolesadwweWWEQ2fasdDAasdsadaseqweasdaswqeFSDASFWqweSAqwasdasASDQWESDACXZCASDTEQRQWEASDZXCASDQWEASDZXCASWDEQWQWERQWDASDASDASD" +
+                    "ASDASDASDASDASDASDASDASDASDASDASDASDASDAASXCXZTEWQTLKHJASIKDHAIUGVIUYASDGJKASDBNKJHQWRWQE";
 
     private final Key key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));
 

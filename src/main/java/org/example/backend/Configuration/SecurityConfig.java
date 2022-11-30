@@ -1,5 +1,6 @@
 package org.example.backend.Configuration;
 
+import lombok.AllArgsConstructor;
 import org.apache.catalina.filters.CorsFilter;
 import org.example.backend.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,17 +10,21 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@AllArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+        return http
                 .cors().and()
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf().disable()
                 .httpBasic().disable()
                 .sessionManagement()
@@ -27,10 +32,8 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/", "/auth/**").permitAll()
-                .anyRequest()
-                .authenticated();
-        return http
-                .addFilterAfter(jwtAuthenticationFilter, CorsFilter.class)
+                .anyRequest().authenticated()
+                .and()
                 .build();
     }
 }
