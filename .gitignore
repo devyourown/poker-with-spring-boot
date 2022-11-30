@@ -4,5 +4,5 @@
 build
 
 #for security
-src/main/java/org/example/backend/security
-src/main/java/org/example/backend/Configuration
+src/main/java/org/example/backend/security/*
+src/main/java/org/example/backend/Configuration/*
