@@ -26,15 +26,29 @@ public class RoomController {
     private Map<String, Player> playerMap = new HashMap();
     private Set<String> playerIdWhoHasRoom = new HashSet<>();
 
-    @GetMapping("/status")
-    public ResponseEntity<?> getRoomStatus(@RequestParam String roomId) {
+    @PostMapping("/status")
+    public ResponseEntity<?> getRoomStatus(@RequestBody RoomDTO roomDTO) {
         Room room;
         try {
-            room = roomService.getRoom(roomId);
+            room = roomService.getRoom(roomDTO.getRoomId());
         } catch (RoomException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
         return ResponseEntity.ok(getRoomDTO(room));
+    }
+
+    @PostMapping("/ready")
+    public ResponseEntity<?> readyPlayer(@AuthenticationPrincipal String playerId,
+                                         @RequestBody RoomDTO roomDTO) {
+        Room room;
+        try {
+            room = roomService.getRoom(roomDTO.getRoomId());
+            playerMap.get(playerId).setStatus(Player.Status.READY);
+            room.setPlayersToPlay();
+        } catch (RoomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return ResponseEntity.ok().body(room.getStatus());
     }
 
 
@@ -54,14 +68,14 @@ public class RoomController {
 
     @PostMapping("/manual-enter")
     public ResponseEntity<?> enterWithNumber(@AuthenticationPrincipal String playerId,
-                                @RequestParam String roomId) {
+                                @RequestBody Map<String, String> roomId) {
         Room room;
         try {
             validatePlayerHasNoRoom(playerId);
             playerIdWhoHasRoom.add(playerId);
-            room = roomService.getRoom(roomId);
+            room = roomService.getRoom(roomId.get("roomId"));
             Player player = playerMap.get(playerId);
-            roomService.addPlayerToRoom(roomId, player);
+            roomService.addPlayerToRoom(roomId.get("roomId"), player);
         } catch (RoomException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -83,14 +97,16 @@ public class RoomController {
         return ResponseEntity.ok(getRoomDTO(room));
     }
 
-    @PostMapping("/chat")
-    public void chat() {}
+    @PostMapping("/room-out")
+    public void leaveRoom(@AuthenticationPrincipal String playerId) {
+        playerIdWhoHasRoom.remove(playerId);
+    }
 
     @PostMapping("/room-break")
-    public ResponseEntity<?> removeRoom(@RequestParam String roomId) {
+    public ResponseEntity<?> removeRoom(@RequestBody Map<String, String> roomId) {
         try {
-            removePlayerInRoom(roomService.getRoom(roomId));
-            roomService.removeRoom(roomId);
+            removePlayerInRoom(roomService.getRoom(roomId.get("roomId")));
+            roomService.removeRoom(roomId.get("roomId"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -105,6 +121,7 @@ public class RoomController {
 
     private RoomDTO getRoomDTO(final Room room) {
         return RoomDTO.builder()
+                .roomId(room.getId())
                 .players(getPlayerDTOs(room.getPlayers()))
                 .status(room.getStatus())
                 .build();
@@ -115,8 +132,7 @@ public class RoomController {
         for (Player player : players) {
             result.add(PlayerDTO.builder()
                     .id(player.getId())
-                    .nickname(memberService
-                            .getById(player.getId()).getNickname())
+                    .nickname(memberService.getById(player.getId()).getNickname())
                     .money(player.getMoney())
                     .build());
         }

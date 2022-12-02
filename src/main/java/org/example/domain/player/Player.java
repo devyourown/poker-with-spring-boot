@@ -12,10 +12,12 @@ public class Player {
     private int money;
     private List<Card> hands;
     private HandRanking handRanking;
+    private Status status;
 
     public Player(String id, int money) {
         this.id = id;
         this.money = money;
+        this.status = Status.WAITING;
     }
 
     public void bet(int betAmount) {
@@ -55,4 +57,16 @@ public class Player {
         return id;
     }
 
+    public Status getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public enum Status {
+        WAITING,
+        READY
+    }
 }

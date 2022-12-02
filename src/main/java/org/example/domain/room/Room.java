@@ -9,26 +9,33 @@ import java.util.*;
 public class Room {
     private static final int HEAD_COUNT_LIMIT = 10;
     private static final int PLAY_COUNT_LIMIT = 2;
-    private Deque<Player> players;
+    private List<Player> players;
     private String id;
     private Status status;
 
     public Room() {
-        players = new ArrayDeque<>();
+        players = new ArrayList<>();
         status = Status.WAITING;
         id = UUID.randomUUID().toString();
     }
 
     public void changeOrder() {
-        players.addFirst(players.getLast());
+        Player firstPlayer = players.get(0);
+        players.remove(0);
+        players.add(firstPlayer);
     }
 
     public void setPlayersToPlay() throws RoomException {
-        play();
+        if (isEveryoneReady())
+            play();
     }
 
-    public List<Player> getPlayers() {
-        return Collections.unmodifiableList(players.stream().toList());
+    private boolean isEveryoneReady() {
+        for (Player player : players) {
+            if (player.getStatus() == Player.Status.WAITING)
+                return false;
+        }
+        return true;
     }
 
     private void play() throws RoomException {
@@ -56,6 +63,10 @@ public class Room {
                 && status == Status.WAITING)
             return true;
         return false;
+    }
+
+    public List<Player> getPlayers() {
+        return Collections.unmodifiableList(players);
     }
 
     public int getNumOfPlayer() {
