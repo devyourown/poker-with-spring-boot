@@ -4,6 +4,7 @@ import org.example.backend.dto.MemberDTO;
 import org.example.backend.persistence.entity.MemberEntity;
 import org.example.backend.security.TokenProvider;
 import org.example.backend.service.MemberService;
+import org.example.domain.player.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,6 +18,8 @@ public class MemberController {
 
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private RoomController roomController;
     @Autowired
     private TokenProvider tokenProvider;
 
@@ -46,6 +49,8 @@ public class MemberController {
         if (entity == null)
             return ResponseEntity.badRequest().body("login failed.");
         final String token = tokenProvider.create(entity);
+        String playerId = tokenProvider.validateAndGetUserId(token);
+        roomController.addPlayer(playerId, new Player(playerId, entity.getMoney()));
         final MemberDTO responseDTO = MemberDTO.builder()
                 .email(entity.getEmail())
                 .id(entity.getId())

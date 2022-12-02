@@ -7,7 +7,6 @@ import org.example.domain.error.RoomException;
 import org.example.domain.game.Action;
 import org.example.domain.game.Game;
 import org.example.domain.game.GameStatus;
-import org.example.domain.player.Player;
 import org.example.domain.room.Room;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

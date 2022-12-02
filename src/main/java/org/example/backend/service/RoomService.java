@@ -51,10 +51,10 @@ public class RoomService {
             throw new RoomException(RoomException.ErrorCode.NOT_REMOVABLE);
     }
 
-    public void addPlayerToRoom(String roomId, MemberEntity member) throws RoomException {
+    public void addPlayerToRoom(String roomId, Player player) throws RoomException {
         validateRoomIsOpen(roomId);
         Room room = occupiedRooms.get(roomId);
-        room.addPlayer(new Player(member.getId(), member.getMoney()));
+        room.addPlayer(player);
     }
 
     private void validateRoomIsOpen(String roomId) throws RoomException {
