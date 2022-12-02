@@ -6,6 +6,7 @@ import org.example.backend.security.TokenProvider;
 import org.example.backend.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class MemberController {
                 .email(requestDTO.getEmail())
                 .nickname(requestDTO.getNickname())
                 .password(requestDTO.getPassword())
-                .money(requestDTO.getMoney())
+                .money(10000)
                 .build();
         MemberEntity registeredMember = memberService.create(entity);
         MemberDTO responseDTO = MemberDTO.builder()
@@ -53,5 +54,12 @@ public class MemberController {
                 .money(entity.getMoney())
                 .build();
         return ResponseEntity.ok().body(responseDTO);
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<?> verifyToken(@AuthenticationPrincipal String id) {
+        if (id != null)
+            return ResponseEntity.ok().body("Verified");
+        return ResponseEntity.badRequest().body("Not verified");
     }
 }

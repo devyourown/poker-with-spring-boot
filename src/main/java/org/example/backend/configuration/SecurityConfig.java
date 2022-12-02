@@ -1,7 +1,6 @@
-package org.example.backend.Configuration;
+package org.example.backend.configuration;
 
 import lombok.AllArgsConstructor;
-import org.apache.catalina.filters.CorsFilter;
 import org.example.backend.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
