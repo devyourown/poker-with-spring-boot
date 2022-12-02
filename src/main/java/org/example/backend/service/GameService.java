@@ -1,8 +1,6 @@
 package org.example.backend.service;
 
-import org.example.backend.dto.ActionDTO;
-import org.example.backend.dto.GameDTO;
-import org.example.backend.dto.RoomDTO;
+import org.example.backend.dto.*;
 import org.example.domain.card.Card;
 import org.example.domain.error.BetException;
 import org.example.domain.error.RoomException;
@@ -10,14 +8,20 @@ import org.example.domain.game.Action;
 import org.example.domain.game.Game;
 import org.example.domain.game.GameStatus;
 import org.example.domain.player.Player;
+import org.example.domain.room.Room;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 public class GameService {
+
+    @Autowired
+    private RoomService roomService;
 
     private HashMap<String, Game> gameHashMap = new HashMap<>();
     public boolean hasPlayerInGame(String gameId, String playerId) {
@@ -32,7 +36,8 @@ public class GameService {
 
     public GameDTO makeGame(RoomDTO roomDTO) throws RoomException {
         validateRoom(roomDTO);
-        Game game = new Game(roomDTO.getPlayers(), roomDTO.getSmallBlind(), roomDTO.getBigBlind());
+        Room room = roomService.getRoom(roomDTO.getRoomId());
+        Game game = new Game(room.getPlayers(), roomDTO.getSmallBlind(), roomDTO.getBigBlind());
         String gameId = UUID.randomUUID().toString();
         gameHashMap.put(gameId, game);
         return getCurrentGame(gameId);
@@ -43,8 +48,16 @@ public class GameService {
             throw new RoomException(RoomException.ErrorCode.NOT_ENOUGH_PLAYER);
     }
 
-    public List<Card> getHands(String gameId, String playerId) {
-        return gameHashMap.get(gameId).getHandsOf(playerId);
+    public List<CardDTO> getHands(String gameId, String playerId) {
+        List<Card> hands = gameHashMap.get(gameId).getHandsOf(playerId);
+        List<CardDTO> result = new ArrayList<>();
+        for (int i=0; i<2; i++) {
+            result.add(CardDTO.builder()
+                    .suit(hands.get(i).getSuit())
+                    .value(hands.get(i).getValue())
+                    .build());
+        }
+        return result;
     }
 
     public void playAction(String playerId, ActionDTO actionDTO) throws BetException {
@@ -77,7 +90,7 @@ public class GameService {
     public GameDTO getCurrentGame(String gameId) {
         Game game = gameHashMap.get(gameId);
         GameDTO gameDTO = GameDTO.builder()
-                .board(game.getBoard())
+                .board(getCardDTOs(game.getBoard()))
                 .currentBet(game.getBettingSize())
                 .potSize(game.getPot())
                 .gameStatus(game.getStatus())
@@ -85,6 +98,18 @@ public class GameService {
         if (game.getStatus() == GameStatus.END)
             removeGame(gameId);
         return gameDTO;
+    }
+
+    private List<CardDTO> getCardDTOs(final List<Card> board) {
+        List<CardDTO> result = new ArrayList<>();
+        for (Card card : board) {
+            result.add(CardDTO
+                    .builder()
+                    .suit(card.getSuit())
+                    .value(card.getValue())
+                    .build());
+        }
+        return result;
     }
 
     private void removeGame(String gameId) {

@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GameDTO {
-    private List<Card> board;
+    private List<CardDTO> board;
     private int currentBet;
     private int potSize;
     private GameStatus gameStatus;

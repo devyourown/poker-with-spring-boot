@@ -14,5 +14,5 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class HandsDTO {
-    private List<Card> hands;
+    private List<CardDTO> hands;
 }

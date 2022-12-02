@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.domain.card.Suit;
 
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CardDTO {
-    private Suit suit;
-    private int value;
+public class PlayerDTO {
+    private String id;
+    private int money;
+    private String nickname;
 }

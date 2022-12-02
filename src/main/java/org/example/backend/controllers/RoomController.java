@@ -1,5 +1,6 @@
 package org.example.backend.controllers;
 
+import org.example.backend.dto.PlayerDTO;
 import org.example.backend.dto.RoomDTO;
 import org.example.backend.persistence.entity.MemberEntity;
 import org.example.backend.service.MemberService;
@@ -12,9 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("/room")
@@ -98,9 +97,22 @@ public class RoomController {
 
     private RoomDTO getRoomDTO(final Room room) {
         return RoomDTO.builder()
-                .players(room.getPlayers())
+                .players(getPlayerDTOs(room.getPlayers()))
                 .status(room.getStatus())
                 .build();
+    }
+
+    private List<PlayerDTO> getPlayerDTOs(final List<Player> players) {
+        List<PlayerDTO> result = new ArrayList<>();
+        for (Player player : players) {
+            result.add(PlayerDTO.builder()
+                    .id(player.getId())
+                    .nickname(memberService
+                            .getById(player.getId()).getNickname())
+                    .money(player.getMoney())
+                    .build());
+        }
+        return result;
     }
 
     private void validatePlayerHasNoRoom(String playerId) throws RoomException {
