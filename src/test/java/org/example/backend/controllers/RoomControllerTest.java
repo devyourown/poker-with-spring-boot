@@ -29,31 +29,10 @@ class RoomControllerTest {
     private String token;
     private String roomId;
 
-    @Test
-    @DisplayName("Get current room status Test")
-    void testGetStatus() throws Exception {
-        String body = mapper.writeValueAsString(getRoomDTOWithId());
-        mvc.perform(post("/room/status")
-                        .header("Authorization", token)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("Change Player Status Test")
-    void testReady() throws Exception {
-        String body = mapper.writeValueAsString(getRoomDTOWithId());
-        mvc.perform(post("/room/player-status")
-                        .header("Authorization", token)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body))
-                .andExpect(status().isOk());
-    }
-
     @BeforeEach
     void createMemberAndLogin() throws Exception {
         String body = mapper.writeValueAsString(getTestMemberDTO());
+        getSignupResult(body);
         MvcResult signinResult = getSigninResult(body);
         token = getBearerToken(signinResult);
         makePlayer();
@@ -71,8 +50,8 @@ class RoomControllerTest {
 
     private MvcResult getSignupResult(String body) throws Exception {
         return mvc.perform(post("/auth/signup")
-                .content(body)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
     }
@@ -100,8 +79,8 @@ class RoomControllerTest {
 
     private MvcResult enterAutoRoom() throws Exception {
         return mvc.perform(post("/room/auto-enter")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", token))
                 .andExpect(status().isOk())
                 .andReturn();
     }
@@ -110,6 +89,28 @@ class RoomControllerTest {
         return result.getResponse().getContentAsString()
                 .replace("{\"roomId\":\"", "")
                 .split("\",")[0];
+    }
+
+    @Test
+    @DisplayName("Get current room status Test")
+    void testGetStatus() throws Exception {
+        String body = mapper.writeValueAsString(getRoomDTOWithId());
+        mvc.perform(post("/room/room-status")
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Change Player Status Test")
+    void testReady() throws Exception {
+        String body = mapper.writeValueAsString(getRoomDTOWithId());
+        mvc.perform(post("/room/player-status-change")
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isOk());
     }
 
     private RoomDTO getRoomDTOWithId() {

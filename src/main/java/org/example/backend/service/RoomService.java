@@ -1,27 +1,65 @@
 package org.example.backend.service;
 
+import org.example.backend.dto.PlayerDTO;
+import org.example.backend.dto.RoomDTO;
 import org.example.backend.persistence.entity.MemberEntity;
 import org.example.domain.error.RoomException;
 import org.example.domain.player.Player;
 import org.example.domain.room.Room;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class RoomService {
+    @Autowired
+    private MemberService memberService;
 
     private HashMap<String, Room> occupiedRooms = new HashMap<>();
+    private final Map<String, Player> playerMap = new HashMap();
+    private final Map<String, Room> playerRoomMap = new HashMap<>();
 
     public Room getRoom(String roomId) throws RoomException {
         validateRoomIsOpen(roomId);
         return occupiedRooms.get(roomId);
     }
 
-    public Room getAvailableRandomRoom() {
+    public Room readyPlayer(String playerId) throws Exception {
+        Room room = playerRoomMap.get(playerId);
+        playerMap.get(playerId).changeStatus();
+        if (room.isReadToPlay())
+            room.setPlayersToPlay();
+        return room;
+    }
+
+    public Room getRoomPlayerIn(String playerId) throws Exception {
+        validatePlayerExist(playerId);
+        return playerRoomMap.get(playerId);
+    }
+
+    public Room enterRandomRoom(String playerId) throws Exception {
+        validatePlayerExist(playerId);
+        validatePlayerHasNoRoom(playerId);
+        Room room = getAvailableRandomRoom();
+        Player player = playerMap.get(playerId);
+        playerRoomMap.put(player.getId(), room);
+        addPlayerToRoom(room.getId(), player);
+        return room;
+    }
+
+    private void validatePlayerExist(String playerId) throws Exception {
+        if (!playerMap.containsKey(playerId))
+            throw new IllegalArgumentException("Player is not existed.");
+    }
+
+    private void validatePlayerHasNoRoom(String playerId) throws RoomException {
+        if (playerRoomMap.containsKey(playerId))
+            throw new RoomException(RoomException.ErrorCode.DUPLICATED_ROOM);
+    }
+
+    private Room getAvailableRandomRoom() {
         for (Room room : occupiedRooms.values()) {
             if (room.isAvailableToEnter()) {
                 return room;
@@ -30,29 +68,31 @@ public class RoomService {
         return makeRoom();
     }
 
-    public Room makeRoom() {
+    private Room makeRoom() {
         Room room = new Room();
         occupiedRooms.put(room.getId(), room);
         return room;
     }
 
-    public void removeRoom(String roomId) throws RoomException {
-        validateRoomCanBeRemoved(roomId);
-        occupiedRooms.remove(roomId);
+    private void addPlayerToRoom(String roomId, Player player) throws RoomException {
+        validateRoomIsOpen(roomId);
+        Room room = occupiedRooms.get(roomId);
+        room.addPlayer(player);
     }
 
-    private void validateRoomCanBeRemoved(String roomId) throws RoomException {
-        Room room = occupiedRooms.get(roomId);
+    public void removeRoom(String playerId) throws RoomException {
+        Room room = playerRoomMap.get(playerId);
+        validateRoomCanBeRemoved(room);
+        room.removePlayer(playerMap.get(playerId));
+        playerMap.remove(playerId);
+        occupiedRooms.remove(room);
+    }
+
+    private void validateRoomCanBeRemoved(Room room) throws RoomException {
         if (room.getStatus() == Room.Status.PLAYING)
             throw new RoomException(RoomException.ErrorCode.NOT_REMOVABLE);
         if (room.getNumOfPlayer() > 0)
             throw new RoomException(RoomException.ErrorCode.NOT_REMOVABLE);
-    }
-
-    public void addPlayerToRoom(String roomId, Player player) throws RoomException {
-        validateRoomIsOpen(roomId);
-        Room room = occupiedRooms.get(roomId);
-        room.addPlayer(player);
     }
 
     private void validateRoomIsOpen(String roomId) throws RoomException {
@@ -60,5 +100,19 @@ public class RoomService {
             throw new RoomException(RoomException.ErrorCode.ID_NOT_EXIST);
         if (!occupiedRooms.get(roomId).isAvailableToEnter())
             throw new RoomException(RoomException.ErrorCode.TOO_MANY_PLAYER);
+    }
+
+    public void makePlayer(String playerId, int playerMoney) throws Exception {
+        validatePlayerNotMade(playerId);
+        addPlayer(playerId, new Player(playerId, playerMoney));
+    }
+
+    private void validatePlayerNotMade(String playerId) throws Exception {
+        if (playerMap.containsKey(playerId))
+            throw new IllegalArgumentException("The Player is already made.");
+    }
+
+    private void addPlayer(String playerId, Player player) {
+        this.playerMap.put(playerId, player);
     }
 }
