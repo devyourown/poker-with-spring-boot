@@ -1,7 +1,9 @@
 package org.example.backend.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.backend.dto.ActionDTO;
 import org.example.backend.dto.MemberDTO;
+import org.example.domain.game.Action;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,12 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 class GameControllerTest {
+    private static final String AUTH_HEADER = "Authorization";
     @Autowired
     private MockMvc mvc;
     @Autowired
@@ -29,6 +33,7 @@ class GameControllerTest {
 
     private List<String> tokens = new ArrayList<>();
     private String roomId;
+    private static int testNumber = 0;
 
     @BeforeEach
     void createMemberAndLogin() throws Exception {
@@ -108,10 +113,63 @@ class GameControllerTest {
     @Test
     @DisplayName("Make game Test")
     void testMakeGame() throws Exception {
-        mvc.perform(post("/game/game")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", tokens.get(0)))
+        makeGame();
+    }
+
+    @Test
+    @DisplayName("Get game Test")
+    void testGetGame() throws Exception {
+        makeGame();
+        MvcResult result = mvc.perform(get("/game/result")
+                        .header(AUTH_HEADER, tokens.get(0))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+        System.out.println(result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @DisplayName("Play action Test")
+    void testPlayAction() throws Exception {
+        makeGame();
+        ActionDTO action = ActionDTO.builder()
+                .action(Action.CALL)
+                .betSize(0)
+                .build();
+        String body = mapper.writeValueAsString(action);
+        MvcResult result = mvc.perform(get("/game/result")
+                        .header(AUTH_HEADER, tokens.get(0))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    @DisplayName("Leave game Test")
+    void testLeaveGame() throws Exception {
+        makeGame();
+        mvc.perform(post("/game/leave")
+                        .header(AUTH_HEADER, tokens.get(0))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @DisplayName("Get hands Test")
+    void testGetHands() throws Exception {
+        makeGame();
+        mvc.perform(get("/game/hands")
+                        .header(AUTH_HEADER, tokens.get(0))
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn();
+    }
+
+    private void makeGame() throws Exception {
+        mvc.perform(post("/game/game")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTH_HEADER, tokens.get(0)))
+                .andExpect(status().isOk());
+    }
 }
