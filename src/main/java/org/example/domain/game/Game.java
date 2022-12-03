@@ -10,6 +10,7 @@ import org.example.domain.rules.RankingCalculator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class Game {
     private List<Player> players;
@@ -18,8 +19,10 @@ public class Game {
     private Pot pot;
     private int lastTurnIndex;
     private int currentTurnIndex;
+    private final String gameId;
 
     public Game(List<Player> players, int smallBlind, int bigBlind) {
+        this.gameId = UUID.randomUUID().toString();
         this.players = new ArrayList<>(players);
         this.pot = new Pot(players, smallBlind, bigBlind);
 
@@ -168,14 +171,6 @@ public class Game {
         return players.get(index).getMoney();
     }
 
-    public boolean hasThisPlayer(String playerId) {
-        for (Player player : players) {
-            if (player.getId().equals(playerId))
-                return true;
-        }
-        return false;
-    }
-
     public List<Card> getHandsOf(String playerId) {
         for (Player player : players) {
             if (player.getId().equals(playerId))
@@ -194,5 +189,19 @@ public class Game {
                 return i;
         }
         return -1;
+    }
+
+    public String getGameId() {
+        return this.gameId;
+    }
+
+    public void removePlayer(String playerId) {
+        for (Player player : players) {
+            if (player.getId().equals(playerId)) {
+                players.remove(player);
+                if (players.size() < 2)
+                    setEnd();
+            }
+        }
     }
 }

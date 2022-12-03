@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.domain.card.Card;
-import org.example.domain.game.Game;
 import org.example.domain.game.GameStatus;
 
 import java.util.List;
@@ -15,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GameDTO {
+    private String gameId;
     private List<CardDTO> board;
     private int currentBet;
     private int potSize;

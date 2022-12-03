@@ -1,13 +1,10 @@
 package org.example.backend.service;
 
-import org.example.backend.dto.PlayerDTO;
-import org.example.backend.dto.RoomDTO;
-import org.example.backend.persistence.entity.MemberEntity;
 import org.example.domain.error.RoomException;
+import org.example.domain.game.Game;
 import org.example.domain.player.Player;
 import org.example.domain.room.Room;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -21,9 +18,16 @@ public class RoomService {
     private final Map<String, Player> playerMap = new HashMap();
     private final Map<String, Room> playerRoomMap = new HashMap<>();
 
-    public Room getRoom(String roomId) throws RoomException {
-        validateRoomIsOpen(roomId);
-        return occupiedRooms.get(roomId);
+    public Game makeGame(String roomId) throws RoomException {
+        validateRoomExist(roomId);
+        validateRoomCanPlay(roomId);
+        Room room = occupiedRooms.get(roomId);
+        return new Game(room.getPlayers(), 100, 200);
+    }
+
+    private void validateRoomCanPlay(String roomId) throws RoomException {
+        if (occupiedRooms.get(roomId).getPlayers().size() <= 1)
+            throw new RoomException(RoomException.ErrorCode.NOT_ENOUGH_PLAYER);
     }
 
     public Room readyPlayer(String playerId) throws Exception {
@@ -95,9 +99,12 @@ public class RoomService {
             throw new RoomException(RoomException.ErrorCode.NOT_REMOVABLE);
     }
 
-    private void validateRoomIsOpen(String roomId) throws RoomException {
+    private void validateRoomExist(String roomId) throws RoomException {
         if (!occupiedRooms.containsKey(roomId))
             throw new RoomException(RoomException.ErrorCode.ID_NOT_EXIST);
+    }
+
+    private void validateRoomIsOpen(String roomId) throws RoomException {
         if (!occupiedRooms.get(roomId).isAvailableToEnter())
             throw new RoomException(RoomException.ErrorCode.TOO_MANY_PLAYER);
     }
