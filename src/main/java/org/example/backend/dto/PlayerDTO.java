@@ -13,4 +13,5 @@ public class PlayerDTO {
     private String id;
     private int money;
     private String nickname;
+    private boolean isReady;
 }

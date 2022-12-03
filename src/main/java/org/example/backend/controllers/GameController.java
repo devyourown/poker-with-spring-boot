@@ -28,14 +28,14 @@ public class GameController {
     @GetMapping("/result")
     public ResponseEntity<?> getGame(@AuthenticationPrincipal UserAdapter user) throws Exception {
         Game game = gameService.getGamePlayerIn(user.getUserId());
-        return ResponseEntity.ok(getGameDTO(game));
+        return ResponseEntity.ok(getGameDTO(game, user.getUserId()));
     }
 
     @PostMapping("/game")
     public ResponseEntity<?> makeGame(@AuthenticationPrincipal UserAdapter user) throws Exception {
         Room room = roomService.getRoomPlayerIn(user.getUserId());
         Game game = gameService.makeGame(room);
-        return ResponseEntity.ok(getGameDTO(game));
+        return ResponseEntity.ok(getGameDTO(game, user.getUserId()));
     }
 
     @GetMapping("/hands")
@@ -57,11 +57,13 @@ public class GameController {
         return ResponseEntity.ok("success");
     }
 
-    private GameDTO getGameDTO(Game game) {
+    private GameDTO getGameDTO(Game game, String playerId) {
         return GameDTO.builder()
                 .gameId(game.getGameId())
                 .board(getCardDTOs(game.getBoard()))
                 .currentBet(game.getBettingSize())
+                .isMyTurn(game.isCurrentTurn(playerId))
+                .turnIndex(game.currentTurnIndex())
                 .potSize(game.getPot())
                 .gameStatus(game.getStatus())
                 .build();

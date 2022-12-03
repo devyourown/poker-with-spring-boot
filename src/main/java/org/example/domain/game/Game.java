@@ -204,4 +204,8 @@ public class Game {
             }
         }
     }
+
+    public int currentTurnIndex() {
+        return this.currentTurnIndex;
+    }
 }

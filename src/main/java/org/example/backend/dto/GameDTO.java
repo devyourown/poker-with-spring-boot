@@ -14,6 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 public class GameDTO {
     private String gameId;
+    private int turnIndex;
+    private boolean isMyTurn;
     private List<CardDTO> board;
     private int currentBet;
     private int potSize;
