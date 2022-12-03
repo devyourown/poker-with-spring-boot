@@ -28,10 +28,11 @@ class RoomControllerTest {
     private MemberService memberService;
     private String token;
     private String roomId;
+    private static int testNumber = 1;
 
     @BeforeEach
     void createMemberAndLogin() throws Exception {
-        String body = mapper.writeValueAsString(getTestMemberDTO());
+        String body = mapper.writeValueAsString(getTestMemberDTO(testNumber++));
         getSignupResult(body);
         MvcResult signinResult = getSigninResult(body);
         token = getBearerToken(signinResult);
@@ -40,10 +41,10 @@ class RoomControllerTest {
         roomId = getRoomId(roomResult);
     }
 
-    private MemberDTO getTestMemberDTO() {
+    private MemberDTO getTestMemberDTO(int testNumber) {
         return MemberDTO.builder()
-                .email("test")
-                .nickname("test")
+                .email("test" + testNumber)
+                .nickname("test" + testNumber)
                 .password("1234")
                 .build();
     }

@@ -24,11 +24,13 @@ public class RoomException extends Exception {
                 return "The ID does not existed.";
             case NOT_REMOVABLE:
                 return "The room is used by someone.";
+            case NOT_PLAYING:
+                return "The room is not playing yet.";
         }
         return "";
     }
     public enum ErrorCode {
         OK, NOT_ENOUGH_PLAYER, TOO_MANY_PLAYER, DUPLICATED_ROOM,
-        ID_NOT_EXIST, NOT_REMOVABLE;
+        ID_NOT_EXIST, NOT_REMOVABLE, NOT_PLAYING;
     }
 }

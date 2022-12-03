@@ -28,6 +28,8 @@ public class RoomService {
     private void validateRoomCanPlay(String roomId) throws RoomException {
         if (occupiedRooms.get(roomId).getPlayers().size() <= 1)
             throw new RoomException(RoomException.ErrorCode.NOT_ENOUGH_PLAYER);
+        if (occupiedRooms.get(roomId).getStatus() == Room.Status.WAITING)
+            throw new RoomException(RoomException.ErrorCode.NOT_PLAYING);
     }
 
     public Room readyPlayer(String playerId) throws Exception {
