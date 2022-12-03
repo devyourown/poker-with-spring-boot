@@ -19,8 +19,6 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
     @Autowired
-    private RoomController roomController;
-    @Autowired
     private TokenProvider tokenProvider;
 
     @PostMapping("/signup")
@@ -49,8 +47,6 @@ public class MemberController {
         if (entity == null)
             return ResponseEntity.badRequest().body("login failed.");
         final String token = tokenProvider.create(entity);
-        String playerId = tokenProvider.validateAndGetUserId(token);
-        roomController.addPlayer(playerId, new Player(playerId, entity.getMoney()));
         final MemberDTO responseDTO = MemberDTO.builder()
                 .email(entity.getEmail())
                 .id(entity.getId())

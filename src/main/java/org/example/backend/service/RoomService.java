@@ -18,9 +18,7 @@ public class RoomService {
 
     public Room getRoom(String roomId) throws RoomException {
         validateRoomIsOpen(roomId);
-        if (occupiedRooms.containsKey(roomId))
-            return occupiedRooms.get(roomId);
-        return null;
+        return occupiedRooms.get(roomId);
     }
 
     public Room getAvailableRandomRoom() {

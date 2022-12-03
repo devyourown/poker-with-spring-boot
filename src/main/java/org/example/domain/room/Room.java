@@ -32,7 +32,7 @@ public class Room {
 
     private boolean isEveryoneReady() {
         for (Player player : players) {
-            if (player.getStatus() == Player.Status.WAITING)
+            if (!player.isReady())
                 return false;
         }
         return true;

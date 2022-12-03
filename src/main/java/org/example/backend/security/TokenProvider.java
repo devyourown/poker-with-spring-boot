@@ -17,6 +17,10 @@ import java.util.Date;
 
 @Service
 public class TokenProvider {
+
+    @Autowired
+    private MemberService memberService;
+
     private static final String SECRET_KEY =
             "GolesadwweWWEQ2fasdDAasdsadaseqweasdaswqeFSDASFWqweSAqwasdasASDQWESDACXZCASDTEQRQWEASDZXCASDQWEASDZXCASWDEQWQWERQWDASDASDASD" +
                     "ASDASDASDASDASDASDASDASDASDASDASDASDASDAASXCXZTEWQTLKHJASIKDHAIUGVIUYASDGJKASDBNKJHQWRWQE";
@@ -35,12 +39,12 @@ public class TokenProvider {
                 .compact();
     }
 
-    public String validateAndGetUserId(String token) {
+    public MemberEntity validateAndGetMemberEntity(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        return claims.getSubject();
+        return memberService.getById(claims.getSubject());
     }
 }

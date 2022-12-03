@@ -3,6 +3,7 @@ package org.example.backend.controllers;
 import org.example.backend.dto.PlayerDTO;
 import org.example.backend.dto.RoomDTO;
 import org.example.backend.persistence.entity.MemberEntity;
+import org.example.backend.security.UserAdapter;
 import org.example.backend.service.MemberService;
 import org.example.backend.service.RoomService;
 import org.example.domain.error.RoomException;
@@ -23,7 +24,7 @@ public class RoomController {
     private MemberService memberService;
     @Autowired
     private RoomService roomService;
-    private Map<String, Player> playerMap = new HashMap();
+    public final static Map<String, Player> playerMap = new HashMap();
     private Set<String> playerIdWhoHasRoom = new HashSet<>();
 
     @PostMapping("/status")
@@ -37,18 +38,18 @@ public class RoomController {
         return ResponseEntity.ok(getRoomDTO(room));
     }
 
-    @PostMapping("/ready")
-    public ResponseEntity<?> readyPlayer(@AuthenticationPrincipal String playerId,
+    @PostMapping("/player-status")
+    public ResponseEntity<?> readyPlayer(@AuthenticationPrincipal UserAdapter user,
                                          @RequestBody RoomDTO roomDTO) {
         Room room;
         try {
             room = roomService.getRoom(roomDTO.getRoomId());
-            playerMap.get(playerId).setStatus(Player.Status.READY);
+            //playerMap.get(user.getUserId()).changeStatus();
             room.setPlayersToPlay();
         } catch (RoomException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return ResponseEntity.ok().body(room.getStatus());
+        return ResponseEntity.ok().body(getRoomDTO(room));
     }
 
 
@@ -83,13 +84,13 @@ public class RoomController {
     }
 
     @PostMapping("/auto-enter")
-    public ResponseEntity<?> enterRandomRoom(@AuthenticationPrincipal String playerId) {
+    public ResponseEntity<?> enterRandomRoom(@AuthenticationPrincipal UserAdapter user) {
         Room room;
         try {
-            validatePlayerHasNoRoom(playerId);
-            playerIdWhoHasRoom.add(playerId);
+            validatePlayerHasNoRoom(user.getUserId());
+            playerIdWhoHasRoom.add(user.getUserId());
             room = roomService.getAvailableRandomRoom();
-            Player player = playerMap.get(playerId);
+            Player player = playerMap.get(user.getUserId());
             roomService.addPlayerToRoom(room.getId(), player);
         } catch (RoomException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -111,6 +112,16 @@ public class RoomController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
         return ResponseEntity.ok("Success");
+    }
+
+    @PostMapping("/player-maker")
+    public ResponseEntity<?> makePlayer(@AuthenticationPrincipal UserAdapter user) {
+        try {
+            addPlayer(user.getUserId(), new Player(user.getUserId(), user.geUserMoney()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return ResponseEntity.ok("success");
     }
 
     private void removePlayerInRoom(Room room) {

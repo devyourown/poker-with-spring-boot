@@ -1,5 +1,6 @@
 package org.example.backend.security;
 
+import org.example.backend.persistence.entity.MemberEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,9 +31,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String token = parseBearerToken(request);
             if (token != null && !token.equalsIgnoreCase("null")) {
-                String userId = tokenProvider.validateAndGetUserId(token);
                 AbstractAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        userId,
+                        new UserAdapter(tokenProvider.validateAndGetMemberEntity(token)),
                         null,
                         AuthorityUtils.NO_AUTHORITIES
                 );

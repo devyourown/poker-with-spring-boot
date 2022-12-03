@@ -57,12 +57,12 @@ public class Player {
         return id;
     }
 
-    public Status getStatus() {
-        return this.status;
+    public boolean isReady() {
+        return this.status == Status.READY;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void changeStatus() {
+        this.status = this.status == Status.WAITING ? Status.READY : Status.WAITING;
     }
 
     public enum Status {
