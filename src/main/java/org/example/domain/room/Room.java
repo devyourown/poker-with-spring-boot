@@ -26,8 +26,11 @@ public class Room {
     }
 
     public void setPlayersToPlay() throws RoomException {
-        if (isEveryoneReady())
-            play();
+        play();
+    }
+
+    public boolean isReadToPlay() {
+        return isEveryoneReady() && canPlay();
     }
 
     private boolean isEveryoneReady() {
@@ -83,6 +86,10 @@ public class Room {
 
     public boolean isAvailableToEnter() {
         return canAddPlayer();
+    }
+
+    public void removePlayer(Player player) {
+        players.remove(player);
     }
 
     public enum Status {

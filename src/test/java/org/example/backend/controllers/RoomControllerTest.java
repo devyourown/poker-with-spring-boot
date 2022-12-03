@@ -10,13 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -26,13 +24,36 @@ class RoomControllerTest {
     private MockMvc mvc;
     @Autowired
     private ObjectMapper mapper;
+    @Autowired
+    private MemberService memberService;
     private String token;
     private String roomId;
+
+    @Test
+    @DisplayName("Get current room status Test")
+    void testGetStatus() throws Exception {
+        String body = mapper.writeValueAsString(getRoomDTOWithId());
+        mvc.perform(post("/room/status")
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Change Player Status Test")
+    void testReady() throws Exception {
+        String body = mapper.writeValueAsString(getRoomDTOWithId());
+        mvc.perform(post("/room/player-status")
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isOk());
+    }
 
     @BeforeEach
     void createMemberAndLogin() throws Exception {
         String body = mapper.writeValueAsString(getTestMemberDTO());
-        getSignupResult(body);
         MvcResult signinResult = getSigninResult(body);
         token = getBearerToken(signinResult);
         makePlayer();
@@ -89,28 +110,6 @@ class RoomControllerTest {
         return result.getResponse().getContentAsString()
                 .replace("{\"roomId\":\"", "")
                 .split("\",")[0];
-    }
-
-    @Test
-    @DisplayName("Get current room status Test")
-    void testGetStatus() throws Exception {
-        String body = mapper.writeValueAsString(getRoomDTOWithId());
-        mvc.perform(post("/room/status")
-                .header("Authorization", token)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("Change Player Status Test")
-    void testReady() throws Exception {
-        String body = mapper.writeValueAsString(getRoomDTOWithId());
-        mvc.perform(post("/room/player-status")
-                .header("Authorization", token)
-                        .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andExpect(status().isOk());
     }
 
     private RoomDTO getRoomDTOWithId() {

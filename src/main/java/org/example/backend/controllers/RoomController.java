@@ -2,7 +2,6 @@ package org.example.backend.controllers;
 
 import org.example.backend.dto.PlayerDTO;
 import org.example.backend.dto.RoomDTO;
-import org.example.backend.persistence.entity.MemberEntity;
 import org.example.backend.security.UserAdapter;
 import org.example.backend.service.MemberService;
 import org.example.backend.service.RoomService;
@@ -24,109 +23,82 @@ public class RoomController {
     private MemberService memberService;
     @Autowired
     private RoomService roomService;
-    public final static Map<String, Player> playerMap = new HashMap();
-    private Set<String> playerIdWhoHasRoom = new HashSet<>();
+    private final Map<String, Player> playerMap = new HashMap();
+    private final Map<String, Room> playerRoomMap = new HashMap<>();
 
     @PostMapping("/status")
-    public ResponseEntity<?> getRoomStatus(@RequestBody RoomDTO roomDTO) {
-        Room room;
-        try {
-            room = roomService.getRoom(roomDTO.getRoomId());
-        } catch (RoomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<?> getRoomStatus(@RequestBody RoomDTO roomDTO) throws Exception {
+        Room room = roomService.getRoom(roomDTO.getRoomId());
         return ResponseEntity.ok(getRoomDTO(room));
     }
 
     @PostMapping("/player-status")
     public ResponseEntity<?> readyPlayer(@AuthenticationPrincipal UserAdapter user,
-                                         @RequestBody RoomDTO roomDTO) {
-        Room room;
-        try {
-            room = roomService.getRoom(roomDTO.getRoomId());
-            //playerMap.get(user.getUserId()).changeStatus();
+                                         @RequestBody RoomDTO roomDTO) throws Exception {
+        Room room = roomService.getRoom(roomDTO.getRoomId());
+        playerMap.get(user.getUserId()).changeStatus();
+        if (room.isReadToPlay())
             room.setPlayersToPlay();
-        } catch (RoomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
         return ResponseEntity.ok().body(getRoomDTO(room));
     }
 
 
     @PostMapping("/new-room")
-    public ResponseEntity<?> makeRoom(@AuthenticationPrincipal String playerId) {
+    public ResponseEntity<?> makeRoom(@AuthenticationPrincipal UserAdapter user) throws Exception {
         Room room = roomService.makeRoom();
-        try {
-            validatePlayerHasNoRoom(playerId);
-            playerIdWhoHasRoom.add(playerId);
-            Player player = playerMap.get(playerId);
-            roomService.addPlayerToRoom(room.getId(), player);
-        } catch (RoomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        validatePlayerHasNoRoom(user.getUserId());
+        Player player = playerMap.get(user.getUserId());
+        roomService.addPlayerToRoom(room.getId(), player);
         return ResponseEntity.ok(getRoomDTO(room));
     }
 
     @PostMapping("/manual-enter")
     public ResponseEntity<?> enterWithNumber(@AuthenticationPrincipal String playerId,
-                                @RequestBody Map<String, String> roomId) {
-        Room room;
-        try {
-            validatePlayerHasNoRoom(playerId);
-            playerIdWhoHasRoom.add(playerId);
-            room = roomService.getRoom(roomId.get("roomId"));
-            Player player = playerMap.get(playerId);
-            roomService.addPlayerToRoom(roomId.get("roomId"), player);
-        } catch (RoomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+                                @RequestBody RoomDTO roomDTO) throws Exception {
+        validatePlayerHasNoRoom(playerId);
+        Room room = roomService.getRoom(roomDTO.getRoomId());
+        Player player = playerMap.get(playerId);
+        playerRoomMap.put(player.getId(), room);
+        roomService.addPlayerToRoom(roomDTO.getRoomId(), player);
         return ResponseEntity.ok(getRoomDTO(room));
     }
 
     @PostMapping("/auto-enter")
-    public ResponseEntity<?> enterRandomRoom(@AuthenticationPrincipal UserAdapter user) {
-        Room room;
-        try {
-            validatePlayerHasNoRoom(user.getUserId());
-            playerIdWhoHasRoom.add(user.getUserId());
-            room = roomService.getAvailableRandomRoom();
-            Player player = playerMap.get(user.getUserId());
-            roomService.addPlayerToRoom(room.getId(), player);
-        } catch (RoomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<?> enterRandomRoom(@AuthenticationPrincipal UserAdapter user) throws Exception {
+        validatePlayerHasNoRoom(user.getUserId());
+        Room room = roomService.getAvailableRandomRoom();
+        Player player = playerMap.get(user.getUserId());
+        playerRoomMap.put(player.getId(), room);
+        roomService.addPlayerToRoom(room.getId(), player);
         return ResponseEntity.ok(getRoomDTO(room));
     }
 
     @PostMapping("/room-out")
-    public void leaveRoom(@AuthenticationPrincipal String playerId) {
-        playerIdWhoHasRoom.remove(playerId);
+    public void leaveRoom(@AuthenticationPrincipal UserAdapter user) throws Exception {
+        Room room = playerRoomMap.get(user.getUserId());
+        room.removePlayer(playerMap.get(user.getUserId()));
+        playerMap.remove(user.getUserId());
     }
 
     @PostMapping("/room-break")
-    public ResponseEntity<?> removeRoom(@RequestBody Map<String, String> roomId) {
-        try {
-            removePlayerInRoom(roomService.getRoom(roomId.get("roomId")));
-            roomService.removeRoom(roomId.get("roomId"));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<?> removeRoom(@RequestBody RoomDTO roomDTO) throws Exception {
+        removePlayerInRoom(roomService.getRoom(roomDTO.getRoomId()));
+        roomService.removeRoom(roomDTO.getRoomId());
         return ResponseEntity.ok("Success");
     }
 
     @PostMapping("/player-maker")
-    public ResponseEntity<?> makePlayer(@AuthenticationPrincipal UserAdapter user) {
-        try {
-            addPlayer(user.getUserId(), new Player(user.getUserId(), user.geUserMoney()));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<?> makePlayer(@AuthenticationPrincipal UserAdapter user) throws Exception{
+        validatePlayerNotMade(user.getUserId());
+        addPlayer(user.getUserId(), new Player(user.getUserId(), user.geUserMoney()));
         return ResponseEntity.ok("success");
     }
 
     private void removePlayerInRoom(Room room) {
         for (Player player : room.getPlayers()) {
-            playerIdWhoHasRoom.remove(player.getId());
+            playerRoomMap.remove(player.getId());
+            room.removePlayer(player);
+            playerMap.remove(player.getId());
         }
     }
 
@@ -150,8 +122,13 @@ public class RoomController {
         return result;
     }
 
+    private void validatePlayerNotMade(String playerId) throws Exception {
+        if (playerMap.containsKey(playerId))
+            throw new IllegalArgumentException("The Player is already made.");
+    }
+
     private void validatePlayerHasNoRoom(String playerId) throws RoomException {
-        if (playerIdWhoHasRoom.contains(playerId))
+        if (playerRoomMap.containsKey(playerId))
             throw new RoomException(RoomException.ErrorCode.DUPLICATED_ROOM);
     }
 
