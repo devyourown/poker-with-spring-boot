@@ -112,13 +112,9 @@ public class RoomService {
     }
 
     public void makePlayer(String playerId, int playerMoney) throws Exception {
-        validatePlayerNotMade(playerId);
-        addPlayer(playerId, new Player(playerId, playerMoney));
-    }
-
-    private void validatePlayerNotMade(String playerId) throws Exception {
         if (playerMap.containsKey(playerId))
-            throw new IllegalArgumentException("The Player is already made.");
+            return ;
+        addPlayer(playerId, new Player(playerId, playerMoney));
     }
 
     private void addPlayer(String playerId, Player player) {
