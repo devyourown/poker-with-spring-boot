@@ -66,6 +66,8 @@ public class GameController {
                 .turnIndex(game.currentTurnIndex())
                 .potSize(game.getPot())
                 .gameStatus(game.getStatus())
+                .lastAction(game.getLastAction())
+                .lastActionIndex(game.getLastActionIndex())
                 .build();
     }
 

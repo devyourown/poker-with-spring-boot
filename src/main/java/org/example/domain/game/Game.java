@@ -20,6 +20,8 @@ public class Game {
     private int lastTurnIndex;
     private int currentTurnIndex;
     private final String gameId;
+    private Action lastAction;
+    private int lastActionIndex;
 
     public Game(List<Player> players, int smallBlind, int bigBlind) {
         this.gameId = UUID.randomUUID().toString();
@@ -29,6 +31,8 @@ public class Game {
         status = GameStatus.PRE_FLOP;
         initLastTurnIndex();
         this.currentTurnIndex = 0;
+        this.lastActionIndex = -1;
+        this.lastAction = null;
 
         this.dealer = new Dealer();
         distributeHands();
@@ -46,6 +50,8 @@ public class Game {
 
     public void playAction(Action action, int betSize) {
         Player player = players.get(currentTurnIndex);
+        this.lastAction = action;
+        this.lastActionIndex = currentTurnIndex;
         if (action == Action.FOLD)
             actFold(player);
         else if (action == Action.CALL)
@@ -207,5 +213,13 @@ public class Game {
 
     public int currentTurnIndex() {
         return this.currentTurnIndex;
+    }
+
+    public Action getLastAction() {
+        return this.lastAction;
+    }
+
+    public int getLastActionIndex() {
+        return this.lastActionIndex;
     }
 }

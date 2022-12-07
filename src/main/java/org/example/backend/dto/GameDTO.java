@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.domain.game.Action;
 import org.example.domain.game.GameStatus;
 
 import java.util.List;
@@ -20,4 +21,6 @@ public class GameDTO {
     private int currentBet;
     private int potSize;
     private GameStatus gameStatus;
+    private Action lastAction;
+    private int lastActionIndex;
  }
