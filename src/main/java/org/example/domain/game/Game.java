@@ -7,10 +7,7 @@ import org.example.domain.game.helper.Pot;
 import org.example.domain.player.Player;
 import org.example.domain.rules.RankingCalculator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class Game {
     private List<Player> players;
@@ -22,10 +19,12 @@ public class Game {
     private final String gameId;
     private Action lastAction;
     private int lastActionIndex;
+    private Set<Integer> foldPlayerIndex;
 
     public Game(List<Player> players, int smallBlind, int bigBlind) {
         this.gameId = UUID.randomUUID().toString();
         this.players = new ArrayList<>(players);
+        this.foldPlayerIndex = new HashSet<>();
         this.pot = new Pot(players, smallBlind, bigBlind);
 
         status = GameStatus.PRE_FLOP;
@@ -49,6 +48,7 @@ public class Game {
     }
 
     public void playAction(Action action, int betSize) {
+        passFoldPlayer();
         Player player = players.get(currentTurnIndex);
         this.lastAction = action;
         this.lastActionIndex = currentTurnIndex;
@@ -63,6 +63,14 @@ public class Game {
         initCurrentTurnWhenOver();
     }
 
+    private void passFoldPlayer() {
+        while (foldPlayerIndex.contains(currentTurnIndex)) {
+            currentTurnIndex++;
+            if (currentTurnIndex >= players.size())
+                currentTurnIndex = 0;
+        }
+    }
+
     private void initCurrentTurnWhenOver() {
         if (currentTurnIndex == players.size())
             currentTurnIndex = 0;
@@ -70,13 +78,13 @@ public class Game {
 
     private void actFold(Player player) {
         setNextStatusWhenLastAction();
-        if (lastTurnIndex != 0)
-            lastTurnIndex--;
-        if (currentTurnIndex != 0)
-            currentTurnIndex--;
-        players.remove(player);
-        if (players.size() < 2)
+        foldPlayerIndex.add(players.indexOf(player));
+        if (getPlayingPlayer()< 2)
             setEnd();
+    }
+
+    private int getPlayingPlayer() {
+        return players.size() - foldPlayerIndex.size();
     }
 
     private void actCall(Player player) {
@@ -114,7 +122,6 @@ public class Game {
             initLastTurnIndex();
             currentTurnIndex = 0;
             dealer.setBoardAsStatus(status);
-            setPlayersRanking(players, dealer.getBoard());
             pot.putZeroInBetLog(players);
             pot.resetCurrentBet();
             return ;
@@ -132,17 +139,18 @@ public class Game {
         status = status.nextStatus();
     }
 
+    private void setEnd() {
+        setPlayersRanking(players, dealer.getBoard());
+        new GameResult(players, pot);
+        status = GameStatus.END;
+    }
+
     private void setPlayersRanking(List<Player> players, List<Card> cards) {
         for (Player player : players) {
             List<Card> totalCards = new ArrayList<>(cards);
             totalCards.addAll(player.getHands());
             player.setHandRanking(RankingCalculator.calculateCards(totalCards));
         }
-    }
-
-    private void setEnd() {
-        new GameResult(players, pot);
-        status = GameStatus.END;
     }
 
     public boolean isEnd() {
@@ -205,8 +213,9 @@ public class Game {
         for (Player player : players) {
             if (player.getId().equals(playerId)) {
                 players.remove(player);
-                if (players.size() < 2)
+                if (getPlayingPlayer() < 2)
                     setEnd();
+                return ;
             }
         }
     }
