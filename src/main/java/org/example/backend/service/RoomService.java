@@ -15,8 +15,8 @@ public class RoomService {
     private MemberService memberService;
 
     private HashMap<String, Room> occupiedRooms = new HashMap<>();
-    private final Map<String, Player> playerMap = new HashMap();
-    private final Map<String, Room> playerRoomMap = new HashMap<>();
+    private final Map<String, Player> playerIdMap = new HashMap();
+    private final Map<String, Room> playerIdRoomMap = new HashMap<>();
 
     public Game makeGame(String roomId) throws RoomException {
         validateRoomExist(roomId);
@@ -33,8 +33,8 @@ public class RoomService {
     }
 
     public Room readyPlayer(String playerId) throws Exception {
-        Room room = playerRoomMap.get(playerId);
-        playerMap.get(playerId).changeStatus();
+        Room room = playerIdRoomMap.get(playerId);
+        playerIdMap.get(playerId).changeStatus();
         if (room.isReadToPlay())
             room.setPlayersToPlay();
         return room;
@@ -42,26 +42,26 @@ public class RoomService {
 
     public Room getRoomPlayerIn(String playerId) throws Exception {
         validatePlayerExist(playerId);
-        return playerRoomMap.get(playerId);
+        return playerIdRoomMap.get(playerId);
     }
 
     public Room enterRandomRoom(String playerId) throws Exception {
         validatePlayerExist(playerId);
         validatePlayerHasNoRoom(playerId);
         Room room = getAvailableRandomRoom();
-        Player player = playerMap.get(playerId);
-        playerRoomMap.put(player.getId(), room);
+        Player player = playerIdMap.get(playerId);
+        playerIdRoomMap.put(player.getId(), room);
         addPlayerToRoom(room.getId(), player);
         return room;
     }
 
     private void validatePlayerExist(String playerId) throws Exception {
-        if (!playerMap.containsKey(playerId))
+        if (!playerIdMap.containsKey(playerId))
             throw new IllegalArgumentException("Player is not existed.");
     }
 
     private void validatePlayerHasNoRoom(String playerId) throws RoomException {
-        if (playerRoomMap.containsKey(playerId))
+        if (playerIdRoomMap.containsKey(playerId))
             throw new RoomException(RoomException.ErrorCode.DUPLICATED_ROOM);
     }
 
@@ -87,10 +87,10 @@ public class RoomService {
     }
 
     public void removeRoom(String playerId) throws RoomException {
-        Room room = playerRoomMap.get(playerId);
+        Room room = playerIdRoomMap.get(playerId);
         validateRoomCanBeRemoved(room);
-        room.removePlayer(playerMap.get(playerId));
-        playerMap.remove(playerId);
+        room.removePlayer(playerIdMap.get(playerId));
+        playerIdMap.remove(playerId);
         occupiedRooms.remove(room);
     }
 
@@ -112,12 +112,12 @@ public class RoomService {
     }
 
     public void makePlayer(String playerId, int playerMoney) throws Exception {
-        if (playerMap.containsKey(playerId))
+        if (playerIdMap.containsKey(playerId))
             return ;
         addPlayer(playerId, new Player(playerId, playerMoney));
     }
 
     private void addPlayer(String playerId, Player player) {
-        this.playerMap.put(playerId, player);
+        this.playerIdMap.put(playerId, player);
     }
 }

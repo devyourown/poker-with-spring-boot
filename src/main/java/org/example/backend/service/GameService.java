@@ -3,6 +3,7 @@ package org.example.backend.service;
 import org.example.backend.dto.*;
 import org.example.domain.card.Card;
 import org.example.domain.error.BetException;
+import org.example.domain.error.RoomException;
 import org.example.domain.game.Action;
 import org.example.domain.game.Game;
 import org.example.domain.game.GameStatus;
@@ -12,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class GameService {
@@ -22,6 +25,7 @@ public class GameService {
 
     private HashMap<String, Game> gameHashMap = new HashMap<>();
     private HashMap<String, String> playerGameId = new HashMap<>();
+    private Set<String> roomHasGame = new HashSet<>();
 
     public Game getGamePlayerIn(String playerId) throws Exception {
         String gameId = playerGameId.get(playerId);
@@ -33,10 +37,17 @@ public class GameService {
     }
 
     public Game makeGame(Room room) throws Exception {
+        validateRoomHasNoGame(room.getId());
         Game game = roomService.makeGame(room.getId());
         registerPlayerInGame(game.getGameId(), room.getPlayers());
         gameHashMap.put(game.getGameId(), game);
+        roomHasGame.add(room.getId());
         return game;
+    }
+
+    private void validateRoomHasNoGame(String roomId) throws RoomException {
+        if (roomHasGame.contains(roomId))
+            throw new RoomException(RoomException.ErrorCode.ALREADY_HAS_GAME);
     }
 
     private void registerPlayerInGame(String gameId, List<Player> players) {

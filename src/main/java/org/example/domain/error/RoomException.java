@@ -26,11 +26,13 @@ public class RoomException extends Exception {
                 return "The room is used by someone.";
             case NOT_PLAYING:
                 return "The room is not playing yet.";
+            case ALREADY_HAS_GAME:
+                return "The room has already game.";
         }
         return "";
     }
     public enum ErrorCode {
         OK, NOT_ENOUGH_PLAYER, TOO_MANY_PLAYER, DUPLICATED_ROOM,
-        ID_NOT_EXIST, NOT_REMOVABLE, NOT_PLAYING;
+        ID_NOT_EXIST, NOT_REMOVABLE, NOT_PLAYING, ALREADY_HAS_GAME;
     }
 }
