@@ -47,7 +47,8 @@ public class RoomService {
 
     public Room enterRandomRoom(String playerId) throws Exception {
         validatePlayerExist(playerId);
-        validatePlayerHasNoRoom(playerId);
+        if (playerIdRoomMap.containsKey(playerId))
+            return playerIdRoomMap.get(playerId);
         Room room = getAvailableRandomRoom();
         Player player = playerIdMap.get(playerId);
         playerIdRoomMap.put(player.getId(), room);
@@ -58,11 +59,6 @@ public class RoomService {
     private void validatePlayerExist(String playerId) throws Exception {
         if (!playerIdMap.containsKey(playerId))
             throw new IllegalArgumentException("Player is not existed.");
-    }
-
-    private void validatePlayerHasNoRoom(String playerId) throws RoomException {
-        if (playerIdRoomMap.containsKey(playerId))
-            throw new RoomException(RoomException.ErrorCode.DUPLICATED_ROOM);
     }
 
     private Room getAvailableRandomRoom() {
