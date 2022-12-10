@@ -25,7 +25,7 @@ public class GameService {
 
     private HashMap<String, Game> gameHashMap = new HashMap<>();
     private HashMap<String, String> playerGameId = new HashMap<>();
-    private Set<String> roomHasGame = new HashSet<>();
+    private HashMap<String, Game> roomIdWithGame = new HashMap();
 
     public Game getGamePlayerIn(String playerId) throws Exception {
         String gameId = playerGameId.get(playerId);
@@ -37,17 +37,13 @@ public class GameService {
     }
 
     public Game makeGame(Room room) throws Exception {
-        validateRoomHasNoGame(room.getId());
+        if (roomIdWithGame.containsKey(room.getId()))
+            return roomIdWithGame.get(room.getId());
         Game game = roomService.makeGame(room.getId());
         registerPlayerInGame(game.getGameId(), room.getPlayers());
         gameHashMap.put(game.getGameId(), game);
-        roomHasGame.add(room.getId());
+        roomIdWithGame.put(room.getId(), game);
         return game;
-    }
-
-    private void validateRoomHasNoGame(String roomId) throws RoomException {
-        if (roomHasGame.contains(roomId))
-            throw new RoomException(RoomException.ErrorCode.ALREADY_HAS_GAME);
     }
 
     private void registerPlayerInGame(String gameId, List<Player> players) {
