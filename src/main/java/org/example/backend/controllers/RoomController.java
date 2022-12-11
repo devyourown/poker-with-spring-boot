@@ -36,6 +36,11 @@ public class RoomController {
         return ResponseEntity.ok().body(getRoomDTO(room));
     }
 
+    @GetMapping("/player-index")
+    public int getPlayerIndex(@AuthenticationPrincipal UserAdapter user) {
+        return roomService.getPlayerIndex(user.getUserId());
+    }
+
     @PostMapping("/auto-enter")
     public ResponseEntity<?> enterRandomRoom(@AuthenticationPrincipal UserAdapter user) throws Exception {
         Room room = roomService.enterRandomRoom(user.getUserId());

@@ -82,6 +82,16 @@ public class RoomService {
         room.addPlayer(player);
     }
 
+    public int getPlayerIndex(String playerId) {
+        Room room = playerIdRoomMap.get(playerId);
+        List<Player> players = room.getPlayers();
+        for (Player player : players) {
+            if (player.getId().equals(playerId))
+                return players.indexOf(player);
+        }
+        return -1;
+    }
+
     public void removeRoom(String playerId) throws RoomException {
         Room room = playerIdRoomMap.get(playerId);
         validateRoomCanBeRemoved(room);
