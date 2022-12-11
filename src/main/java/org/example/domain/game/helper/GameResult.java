@@ -4,6 +4,7 @@ import org.example.domain.player.Player;
 import org.example.domain.rules.HandRanking;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GameResult {
@@ -74,5 +75,9 @@ public class GameResult {
                 result.add(player);
         }
         return result;
+    }
+
+    public List<Player> getWinner() {
+        return Collections.unmodifiableList(winner);
     }
 }

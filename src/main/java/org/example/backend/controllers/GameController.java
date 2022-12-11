@@ -7,6 +7,7 @@ import org.example.backend.service.RoomService;
 import org.example.domain.card.Card;
 import org.example.domain.error.BetException;
 import org.example.domain.game.Game;
+import org.example.domain.player.Player;
 import org.example.domain.room.Room;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,14 @@ public class GameController {
     private RoomService roomService;
 
     @GetMapping("/result")
+    public ResponseEntity<?> getGameResult(@AuthenticationPrincipal UserAdapter user) throws Exception {
+        Game game = gameService.getGamePlayerIn(user.getUserId());
+        if (game.isEnd())
+            return ResponseEntity.ok(getGameResultDTO(game));
+        return ResponseEntity.badRequest().body("Not end");
+    }
+
+    @GetMapping("/game")
     public ResponseEntity<?> getGame(@AuthenticationPrincipal UserAdapter user) throws Exception {
         Game game = gameService.getGamePlayerIn(user.getUserId());
         return ResponseEntity.ok(getGameDTO(game));
@@ -55,6 +64,17 @@ public class GameController {
                         @RequestBody ActionDTO actionDTO) throws BetException{
         gameService.playAction(user.getUserId(), actionDTO);
         return ResponseEntity.ok("success");
+    }
+
+    private GameResultDTO getGameResultDTO(Game game) {
+        List<HandsDTO> allOfHands = new ArrayList<>();
+        for (Player player : game.getPlayersAlive()) {
+            allOfHands.add(getHandsDTO(getCardDTOs(player.getHands())));
+        }
+        return GameResultDTO.builder()
+                .winner(game.getWinner())
+                .allOfHands(allOfHands)
+                .build();
     }
 
     private GameDTO getGameDTO(Game game) {

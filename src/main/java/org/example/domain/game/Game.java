@@ -20,6 +20,7 @@ public class Game {
     private Action lastAction;
     private int lastActionIndex;
     private Set<Integer> foldPlayerIndex;
+    private GameResult gameResult;
 
     public Game(List<Player> players, int smallBlind, int bigBlind) {
         this.gameId = UUID.randomUUID().toString();
@@ -141,7 +142,7 @@ public class Game {
 
     private void setEnd() {
         setPlayersRanking(players, dealer.getBoard());
-        new GameResult(players, pot);
+        gameResult = new GameResult(players, pot);
         status = GameStatus.END;
     }
 
@@ -230,5 +231,19 @@ public class Game {
 
     public int getLastActionIndex() {
         return this.lastActionIndex;
+    }
+
+    public List<Player> getWinner() {
+        return gameResult.getWinner();
+    }
+
+    public List<Player> getPlayersAlive() {
+        List<Player> result = new ArrayList<>();
+        for (int i=0; i<this.players.size(); i++) {
+            if (this.foldPlayerIndex.contains(i))
+                continue;
+            result.add(this.players.get(i));
+        }
+        return Collections.unmodifiableList(result);
     }
 }
