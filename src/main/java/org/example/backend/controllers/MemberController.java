@@ -56,11 +56,4 @@ public class MemberController {
                 .build();
         return ResponseEntity.ok().body(responseDTO);
     }
-
-    @GetMapping("/status")
-    public ResponseEntity<?> verifyToken(@AuthenticationPrincipal String id) {
-        if (id != null)
-            return ResponseEntity.ok().body("Verified");
-        return ResponseEntity.badRequest().body("Not verified");
-    }
 }
