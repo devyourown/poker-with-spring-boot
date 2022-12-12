@@ -3,19 +3,15 @@ package org.example.backend.service;
 import org.example.backend.dto.*;
 import org.example.domain.card.Card;
 import org.example.domain.error.BetException;
-import org.example.domain.error.RoomException;
 import org.example.domain.game.Action;
 import org.example.domain.game.Game;
-import org.example.domain.game.GameStatus;
 import org.example.domain.player.Player;
 import org.example.domain.room.Room;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class GameService {
@@ -30,10 +26,7 @@ public class GameService {
     public Game getGamePlayerIn(String playerId) throws Exception {
         String gameId = playerGameId.get(playerId);
         validateGame(gameId);
-        Game game = gameHashMap.get(gameId);
-        if (game.getStatus() == GameStatus.END)
-            removeGame(gameId);
-        return game;
+        return gameHashMap.get(gameId);
     }
 
     public Game makeGame(Room room) throws Exception {
@@ -97,6 +90,8 @@ public class GameService {
     }
 
     private void removeGame(String gameId) {
-        gameHashMap.remove(gameId);
+        Game game = gameHashMap.get(gameId);
+        if (game.isEnd())
+            gameHashMap.remove(gameId);
     }
 }

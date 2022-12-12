@@ -34,7 +34,6 @@ public class Player {
 
     public void setHands(List<Card> cards) {
         hands = cards;
-        handRanking = RankingCalculator.calculateHands(cards);
     }
 
     public List<Card> getHands() {

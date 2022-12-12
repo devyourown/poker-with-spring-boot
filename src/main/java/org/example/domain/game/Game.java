@@ -48,6 +48,19 @@ public class Game {
         }
     }
 
+    public void resetGame() {
+        this.dealer = new Dealer();
+        this.foldPlayerIndex.clear();
+
+        status = GameStatus.PRE_FLOP;
+        initLastTurnIndex();
+        this.currentTurnIndex = 0;
+        this.lastActionIndex = -1;
+        this.lastAction = null;
+
+        distributeHands();
+    }
+
     public void playAction(Action action, int betSize) {
         passFoldPlayer();
         Player player = players.get(currentTurnIndex);

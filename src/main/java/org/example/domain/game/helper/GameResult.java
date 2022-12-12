@@ -9,11 +9,9 @@ import java.util.List;
 
 public class GameResult {
     private List<Player> winner;
-    private Pot pot;
     private Presenter presenter;
 
     public GameResult(List<Player> players, Pot pot) {
-        this.pot = pot;
         presenter = new Presenter(pot);
         winner = makeWinner(players);
         if (isAllInPlayerWin(players)) {
