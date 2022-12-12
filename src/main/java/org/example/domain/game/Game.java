@@ -50,6 +50,7 @@ public class Game {
 
     public void resetGame() {
         this.dealer = new Dealer(players.size());
+        this.pot = new Pot(players, 100, 200);
         this.foldPlayerIndex.clear();
 
         status = GameStatus.PRE_FLOP;
