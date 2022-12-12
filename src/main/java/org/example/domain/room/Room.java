@@ -19,12 +19,6 @@ public class Room {
         id = UUID.randomUUID().toString();
     }
 
-    public void changeOrder() {
-        Player firstPlayer = players.get(0);
-        players.remove(0);
-        players.add(firstPlayer);
-    }
-
     public void setPlayersToPlay() throws RoomException {
         play();
     }

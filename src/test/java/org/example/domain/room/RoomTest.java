@@ -42,8 +42,6 @@ public class RoomTest {
         room.addPlayer(player2);
         room.setPlayersToPlay();
         assertTrue(room.getPlayers().get(0).equals(player1));
-        room.changeOrder();
-        assertTrue(room.getPlayers().get(1).equals(player1));
     }
 
     @Test
