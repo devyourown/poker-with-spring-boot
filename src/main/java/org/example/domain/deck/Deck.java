@@ -3,33 +3,30 @@ package org.example.domain.deck;
 import org.example.domain.card.Card;
 import org.example.domain.card.Suit;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Deck {
-    private Stack<Card> deck;
+    private List<Card> deck;
 
-    public Deck() {
-        deck = initDeck();
+    public Deck(int numOfPlayer) {
+        deck = initDeck(numOfPlayer);
     }
 
-    private Stack<Card> initDeck() {
+    private List<Card> initDeck(int numOfPlayer) {
+        int neededNumOfCards = numOfPlayer * 2 + 5;
         Stack<Card> result = new Stack<>();
-        for (Suit suit : Suit.values()) {
-            result.addAll(makeCardsWith(suit));
+        Set<Card> cards = new HashSet<>();
+        while (cards.size() != neededNumOfCards) {
+            cards.add(makeRandomCard());
         }
-        Collections.shuffle(result);
-        return result;
+        return cards.stream().collect(Collectors.toList());
     }
 
-    private List<Card> makeCardsWith(Suit suit) {
-        List<Card> result = new ArrayList<>();
-        for (int i=1; i<=13; i++) {
-            result.add(Card.of(i, suit));
-        }
-        return result;
+    private Card makeRandomCard() {
+        int value = (int) (Math.random() * 13 + 1);
+        Suit suit = Suit.values()[(int) (Math.random() * 4)];
+        return Card.of(value, suit);
     }
 
     public int getNumOfCards() {
@@ -37,7 +34,7 @@ public class Deck {
     }
 
     public Card draw() {
-        return deck.pop();
+        return deck.remove(deck.size() - 1);
     }
 
 }

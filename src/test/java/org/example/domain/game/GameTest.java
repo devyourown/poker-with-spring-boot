@@ -121,5 +121,7 @@ public class GameTest {
 
         assertTrue(game.isEnd());
         assertEquals(1300, players.get(0).getMoney());
+        assertEquals(1900, players.get(1).getMoney());
+        assertEquals(2800, players.get(2).getMoney());
     }
 }

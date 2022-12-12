@@ -34,7 +34,7 @@ public class Game {
         this.lastActionIndex = -1;
         this.lastAction = null;
 
-        this.dealer = new Dealer();
+        this.dealer = new Dealer(players.size());
         distributeHands();
     }
 
@@ -49,7 +49,7 @@ public class Game {
     }
 
     public void resetGame() {
-        this.dealer = new Dealer();
+        this.dealer = new Dealer(players.size());
         this.foldPlayerIndex.clear();
 
         status = GameStatus.PRE_FLOP;
@@ -93,7 +93,7 @@ public class Game {
     private void actFold(Player player) {
         setNextStatusWhenLastAction();
         foldPlayerIndex.add(players.indexOf(player));
-        if (getPlayingPlayer()< 2)
+        if (getPlayingPlayer() < 2)
             setEnd();
     }
 
@@ -155,7 +155,7 @@ public class Game {
 
     private void setEnd() {
         setPlayersRanking(players, dealer.getBoard());
-        gameResult = new GameResult(players, pot);
+        gameResult = new GameResult(getPlayersAlive(), pot);
         status = GameStatus.END;
     }
 

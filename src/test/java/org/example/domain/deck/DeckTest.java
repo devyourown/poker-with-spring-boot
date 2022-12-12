@@ -9,8 +9,8 @@ public class DeckTest {
 
     @Test
     void testDeckHasCard() {
-        Deck deck = new Deck();
-        assertEquals(52, deck.getNumOfCards());
+        Deck deck = new Deck(3);
+        assertEquals(11, deck.getNumOfCards());
         assertEquals(Card.class, deck.draw().getClass());
     }
 }

@@ -12,8 +12,8 @@ public class Dealer {
     private Deck deck;
     private List<Card> board;
 
-    public Dealer() {
-        deck = new Deck();
+    public Dealer(int numOfPlayer) {
+        deck = new Deck(numOfPlayer);
         board = new ArrayList<>();
     }
 

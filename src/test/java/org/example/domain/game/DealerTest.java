@@ -6,6 +6,6 @@ import org.junit.jupiter.api.Test;
 class DealerTest {
     @Test
     void testDealer() {
-        Dealer dealer = new Dealer();
+        Dealer dealer = new Dealer(3);
     }
 }
