@@ -49,8 +49,9 @@ public class Game {
     }
 
     public void resetGame() {
-        this.dealer = new Dealer(players.size());
-        this.pot = new Pot(players, 100, 200);
+        this.changeOrder();
+        this.dealer.reset();
+        this.pot.reset(this.players);
         this.foldPlayerIndex.clear();
 
         status = GameStatus.PRE_FLOP;
@@ -60,6 +61,10 @@ public class Game {
         this.lastAction = null;
 
         distributeHands();
+    }
+
+    private void changeOrder() {
+        this.players.add(0, this.players.remove(players.size() - 1));
     }
 
     public void playAction(Action action, int betSize) {

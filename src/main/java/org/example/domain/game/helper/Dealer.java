@@ -11,8 +11,10 @@ import java.util.List;
 public class Dealer {
     private Deck deck;
     private List<Card> board;
+    private int numOfPlayer;
 
     public Dealer(int numOfPlayer) {
+        this.numOfPlayer = numOfPlayer;
         deck = new Deck(numOfPlayer);
         board = new ArrayList<>();
     }
@@ -24,6 +26,11 @@ public class Dealer {
             setTurn();
         else if (status == GameStatus.RIVER)
             setRiver();
+    }
+
+    public void reset() {
+        deck = new Deck(this.numOfPlayer);
+        board.clear();
     }
 
     private void setFlop() {

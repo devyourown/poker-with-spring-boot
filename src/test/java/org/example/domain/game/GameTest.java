@@ -134,17 +134,17 @@ public class GameTest {
         assertTrue(game.isEnd());
         assertEquals(0, game.getPot());
         game.resetGame();
-        assertEquals(1300, players.get(0).getMoney());
-        assertEquals(1800, players.get(1).getMoney());
-        assertEquals(2600, players.get(2).getMoney());
+        assertEquals(1200, players.get(0).getMoney());
+        assertEquals(1700, players.get(1).getMoney());
+        assertEquals(2800, players.get(2).getMoney());
 
         game.playAction(Action.BET, 300);
         game.playAction(Action.FOLD, 0);
         game.playAction(Action.FOLD, 0);
         assertTrue(game.isEnd());
 
-        assertEquals(1600, players.get(0).getMoney());
-        assertEquals(1800, players.get(1).getMoney());
-        assertEquals(2600, players.get(2).getMoney());
+        assertEquals(1200, players.get(0).getMoney());
+        assertEquals(1700, players.get(1).getMoney());
+        assertEquals(3100, players.get(2).getMoney());
     }
 }

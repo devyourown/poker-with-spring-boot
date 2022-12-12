@@ -31,6 +31,12 @@ public class Pot {
         playerBetLog.put(players.get(players.size() - 1), bigBlind);
     }
 
+    public void reset(List<Player> players) {
+        this.currentBet = bigBlind;
+        this.totalAmount = smallBlind + bigBlind;
+        initPlayerBetLog(players);
+    }
+
     public void putZeroInBetLog(List<Player> players) {
         for (int i = 0; i < players.size(); i++) {
             playerBetLog.put(players.get(i), 0);
