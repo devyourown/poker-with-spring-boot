@@ -23,37 +23,12 @@ public class MemberController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> createMember(@RequestBody MemberDTO requestDTO) {
-        MemberEntity entity = MemberEntity.builder()
-                .email(requestDTO.getEmail())
-                .nickname(requestDTO.getNickname())
-                .password(requestDTO.getPassword())
-                .money(10000)
-                .build();
-        MemberEntity registeredMember = memberService.create(entity);
-        MemberDTO responseDTO = MemberDTO.builder()
-                .id(registeredMember.getId())
-                .email(registeredMember.getEmail())
-                .nickname(registeredMember.getNickname())
-                .money(registeredMember.getMoney())
-                .build();
-        return ResponseEntity.ok().body(responseDTO);
+        return ResponseEntity.ok().body(memberService.createMember(requestDTO));
     }
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticate(@RequestBody MemberDTO requestDTO) {
-        MemberEntity entity = memberService
-                .getByCredentials(requestDTO.getEmail(), requestDTO.getPassword());
-
-        if (entity == null)
-            return ResponseEntity.badRequest().body("login failed.");
-        final String token = tokenProvider.create(entity);
-        final MemberDTO responseDTO = MemberDTO.builder()
-                .email(entity.getEmail())
-                .id(entity.getId())
-                .nickname(entity.getNickname())
-                .token(token)
-                .money(entity.getMoney())
-                .build();
-        return ResponseEntity.ok().body(responseDTO);
+        return ResponseEntity.ok(memberService
+                    .authenticate(requestDTO.getEmail(), requestDTO.getPassword()));
     }
 }
