@@ -1,15 +1,10 @@
 package org.example.backend.controllers;
 
 import org.example.backend.dto.MemberDTO;
-import org.example.backend.persistence.entity.MemberEntity;
 import org.example.backend.security.TokenProvider;
 import org.example.backend.service.MemberService;
-import org.example.domain.player.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
