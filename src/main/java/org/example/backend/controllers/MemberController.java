@@ -1,6 +1,7 @@
 package org.example.backend.controllers;
 
 import org.example.backend.dto.MemberDTO;
+import org.example.backend.persistence.entity.MemberEntity;
 import org.example.backend.security.TokenProvider;
 import org.example.backend.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,21 @@ public class MemberController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticate(@RequestBody MemberDTO requestDTO) {
-        return ResponseEntity.ok(memberService
-                    .authenticate(requestDTO.getEmail(), requestDTO.getPassword()));
+        MemberEntity memberEntity = memberService
+                .getByCredentials(requestDTO.getEmail(), requestDTO.getPassword());
+        if (memberEntity == null)
+            throw new IllegalArgumentException("Login fail");
+        final String token = tokenProvider.create(memberEntity);
+        return ResponseEntity.ok(makeMemberDTOWithToken(memberEntity, token));
+    }
+
+    private MemberDTO makeMemberDTOWithToken(MemberEntity member, String token) {
+        return MemberDTO.builder()
+                .email(member.getEmail())
+                .id(member.getId())
+                .nickname(member.getNickname())
+                .token(token)
+                .money(member.getMoney())
+                .build();
     }
 }

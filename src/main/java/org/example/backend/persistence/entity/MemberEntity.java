@@ -27,6 +27,4 @@ public class MemberEntity {
     private String password;
     @Column(nullable = false)
     private int money;
-    @Column(nullable = false)
-    private boolean hasRoom;
 }
