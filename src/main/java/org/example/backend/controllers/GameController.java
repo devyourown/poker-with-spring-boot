@@ -26,6 +26,15 @@ public class GameController {
     @Autowired
     private RoomService roomService;
 
+    @PostMapping("/restart")
+    public ResponseEntity<?> restartGame(@AuthenticationPrincipal UserAdapter user) throws Exception {
+        Game game = gameService.getGamePlayerIn(user.getUserId());
+        if (!game.isEnd())
+            return ResponseEntity.badRequest().body("Not end");
+        game.resetGame();
+        return ResponseEntity.ok("Ok");
+    }
+
     @GetMapping("/result")
     public ResponseEntity<?> getGameResult(@AuthenticationPrincipal UserAdapter user) throws Exception {
         Game game = gameService.getGamePlayerIn(user.getUserId());
