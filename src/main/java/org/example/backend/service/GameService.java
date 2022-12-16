@@ -49,6 +49,9 @@ public class GameService {
         String gameId = playerGameId.get(playerId);
         validateGame(gameId);
         gameHashMap.get(gameId).removePlayer(playerId);
+        playerGameId.remove(playerId);
+        if (gameHashMap.get(gameId).getSizeOfPlayers() == 0)
+            gameHashMap.remove(gameId);
     }
 
     public List<Card> getHands(String playerId) throws Exception {
