@@ -24,8 +24,16 @@ public class RoomController {
     @Autowired
     private RoomService roomService;
 
+    private Map<String, Integer> userRequest = new HashMap<>();
+
     @PostMapping("/room-status")
     public ResponseEntity<?> getRoomStatus(@AuthenticationPrincipal UserAdapter user) throws Exception {
+        if (userRequest.containsKey(user.getUserId())) {
+            if (userRequest.get(user.getUserId()) > 1)
+                return ResponseEntity.status(203).body("Already Sent");
+        } else
+            userRequest.put(user.getUserId(), 0);
+        userRequest.put(user.getUserId(), userRequest.get(user.getUserId()) + 1);
         Room room = roomService.getRoomPlayerIn(user.getUserId());
         return ResponseEntity.ok(getRoomDTO(room));
     }
@@ -33,7 +41,14 @@ public class RoomController {
     @PostMapping("/player-status-change")
     public ResponseEntity<?> readyPlayer(@AuthenticationPrincipal UserAdapter user) throws Exception {
         Room room =  roomService.readyPlayer(user.getUserId());
+        initRequestInRoom(room);
         return ResponseEntity.ok().body(getRoomDTO(room));
+    }
+
+    private void initRequestInRoom(Room room) {
+        for (Player player : room.getPlayers()) {
+            userRequest.put(player.getId(), 0);
+        }
     }
 
     @GetMapping("/player-index")
@@ -44,6 +59,7 @@ public class RoomController {
     @PostMapping("/auto-enter")
     public ResponseEntity<?> enterRandomRoom(@AuthenticationPrincipal UserAdapter user) throws Exception {
         Room room = roomService.enterRandomRoom(user.getUserId());
+        initRequestInRoom(room);
         return ResponseEntity.ok(getRoomDTO(room));
     }
 
