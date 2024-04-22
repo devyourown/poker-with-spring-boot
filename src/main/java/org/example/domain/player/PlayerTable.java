@@ -14,9 +14,11 @@ public class PlayerTable {
         for (int i=1; i<players.size(); i++) {
             Node newNode = new Node(players.get(i));
             node.setNext(newNode);
+            newNode.setPrev(node);
             node = newNode;
         }
         node.setNext(head);
+        head.setPrev(node);
         this.current = head;
         this.firstPlayer = head;
         this.size = players.size();
@@ -25,6 +27,8 @@ public class PlayerTable {
     public void removeSelf() {
         current.prev.setNext(current.getNext());
         current.next.setPrev(current.getPrev());
+        if (current == firstPlayer)
+            this.firstPlayer = current.getNext();
         this.current = current.getNext();
         size--;
     }

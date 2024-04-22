@@ -6,80 +6,38 @@ import org.example.domain.rules.Ranking;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class GameResult {
     private List<Player> winner;
-    private Presenter presenter;
     private List<Player> players;
 
     public GameResult(List<Player> players, Pot pot) {
         this.players = players;
-        presenter = new Presenter(pot);
-        winner = makeWinner(this.players);
-        if (isAllInPlayerWin(this.players)) {
-            giveMoneyWhenAllIn(this.players);
-            return ;
-        }
-        presenter.giveMoney(winner);
+        players.sort(Comparator.comparingInt(Player::getRanks).reversed());
+        this.winner = getWinners(players);
+        pot.splitMoney(this.winner, getRest(players));
     }
 
-    private boolean isAllInPlayerWin(List<Player> players) {
-        return !getAllInWinners(players).isEmpty();
-    }
-
-    private List<Player> getAllInWinners(List<Player> players) {
+    private List<Player> getWinners(List<Player> players) {
         List<Player> result = new ArrayList<>();
-        Ranking winnerRanking = getWinnerRanking(players);
         for (Player player : players) {
-            if (player.isAllIn() && player.getRanking() == winnerRanking)
+            if (player.getRanks() == players.get(0).getRanks())
+                result.add(player);
+            else
+                break;
+        }
+        return result;
+    }
+
+    private List<Player> getRest(List<Player> players) {
+        List<Player> result = new ArrayList<>();
+        for (Player player : players) {
+            if (player.getRanks() != players.get(0).getRanks())
                 result.add(player);
         }
         return result;
-    }
-
-    private void giveMoneyWhenAllIn(List<Player> players) {
-        List<Player> losers = makePeopleWhoGetPaidButLose(players);
-        presenter.giveMoneyToAllInWinner(winner, losers);
-        if (!losers.isEmpty())
-            presenter.giveMoney(makeWinner(losers));
-    }
-
-    private List<Player> makePeopleWhoGetPaidButLose(List<Player> players) {
-        List<Player> result = new ArrayList<>();
-        for (Player player : players) {
-            if (!winner.contains(player))
-                result.add(player);
-        }
-        return result;
-    }
-
-    private List<Player> makeWinner(List<Player> players) {
-        Ranking winnerRanking = getWinnerRanking(players);
-        return getPlayersWithSameRank(players, winnerRanking);
-    }
-
-    private Ranking getWinnerRanking(List<Player> players) {
-        Ranking result = Ranking.HIGH_CARD;
-        for (Player player : players) {
-            if (result.ordinal() <= player.getRanking().ordinal()) {
-                result = player.getRanking();
-            }
-        }
-        return result;
-    }
-
-    private List<Player> getPlayersWithSameRank(List<Player> players, Ranking rank) {
-        List<Player> result = new ArrayList<>();
-        for (Player player : players) {
-            if (player.getRanking() == rank)
-                result.add(player);
-        }
-        return result;
-    }
-
-    public List<Player> getWinner() {
-        return Collections.unmodifiableList(winner);
     }
 
     @Override

@@ -35,68 +35,12 @@ public class GameController {
         return ResponseEntity.ok("Ok");
     }
 
-    @GetMapping("/result")
-    public ResponseEntity<?> getGameResult(@AuthenticationPrincipal UserAdapter user) throws Exception {
-        Game game = gameService.getGamePlayerIn(user.getUserId());
-        if (game.isEnd())
-            return ResponseEntity.ok(getGameResultDTO(game));
-        return ResponseEntity.badRequest().body("Not end");
-    }
-
-    @GetMapping("/game")
-    public ResponseEntity<?> getGame(@AuthenticationPrincipal UserAdapter user) throws Exception {
-        Game game = gameService.getGamePlayerIn(user.getUserId());
-        return ResponseEntity.ok(getGameDTO(game));
-    }
-
-    @PostMapping("/game")
-    public ResponseEntity<?> makeGame(@AuthenticationPrincipal UserAdapter user) throws Exception {
-        Room room = roomService.getRoomPlayerIn(user.getUserId());
-        Game game = gameService.makeGame(room);
-        return ResponseEntity.ok(getGameDTO(game));
-    }
-
-    @GetMapping("/hands")
-    public ResponseEntity<?> getHands(@AuthenticationPrincipal UserAdapter user) throws Exception {
-        List<Card> hands = gameService.getHands(user.getUserId());
-        return ResponseEntity.ok(getHandsDTO(getCardDTOs(hands)));
-    }
-
-    @PostMapping("/leave")
-    public ResponseEntity<?> leaveGame(@AuthenticationPrincipal UserAdapter user) throws Exception {
-        gameService.leaveGame(user.getUserId());
-        return ResponseEntity.ok("success");
-    }
 
     @PostMapping("/action")
     public ResponseEntity<?> playAction(@AuthenticationPrincipal UserAdapter user,
                         @RequestBody ActionDTO actionDTO) throws BetException{
-        gameService.playAction(user.getUserId(), actionDTO);
+        gameService.playAction(actionDTO);
         return ResponseEntity.ok("success");
-    }
-
-    private GameResultDTO getGameResultDTO(Game game) {
-        List<HandsDTO> allOfHands = new ArrayList<>();
-        for (Player player : game.getPlayersAlive()) {
-            allOfHands.add(getHandsDTO(getCardDTOs(player.getHands())));
-        }
-        return GameResultDTO.builder()
-                .winner(game.getWinner())
-                .allOfHands(allOfHands)
-                .build();
-    }
-
-    private GameDTO getGameDTO(Game game) {
-        return GameDTO.builder()
-                .gameId(game.getGameId())
-                .board(getCardDTOs(game.getBoard()))
-                .currentBet(game.getBettingSize())
-                .turnIndex(game.currentTurnIndex())
-                .potSize(game.getPot())
-                .gameStatus(game.getStatus())
-                .lastAction(game.getLastAction())
-                .lastActionIndex(game.getLastActionIndex())
-                .build();
     }
 
     private List<CardDTO> getCardDTOs(List<Card> cards) {

@@ -15,12 +15,13 @@ public class Player {
     private int ranks;
     private RoomStatus roomStatus;
     private PlayingStatus playingStatus;
+    private int possibleTakingAmountOfMoney;
 
     public Player(String id, int money) {
         this.id = id;
         this.money = money;
         this.roomStatus = RoomStatus.WAITING;
-        setPlayingStatus();
+        setPlayingStatus(PlayingStatus.PLAYING);
     }
 
     public void bet(int betAmount) {
@@ -60,15 +61,23 @@ public class Player {
         this.roomStatus = this.roomStatus == RoomStatus.WAITING ? RoomStatus.READY : RoomStatus.WAITING;
     }
 
-    public void setPlayingStatus() {
+    public void setPlayingStatus(PlayingStatus status) {
         if (money == 0)
             playingStatus = PlayingStatus.ALLIN;
         else
-            playingStatus = PlayingStatus.PLAYING;
+            playingStatus = status;
     }
 
-    public void setCallStatus() {
-        playingStatus = PlayingStatus.CALL;
+    public void plusPossibleTakingAmountOfMoney(int money) {
+        this.possibleTakingAmountOfMoney += money;
+    }
+
+    public void giveUpMoney() {
+        this.possibleTakingAmountOfMoney = 0;
+    }
+
+    public int getPossibleTakingAmountOfMoney() {
+        return this.possibleTakingAmountOfMoney;
     }
 
     public PlayingStatus getPlayingStatus() {
@@ -79,6 +88,10 @@ public class Player {
         this.ranks = ranks;
     }
 
+    public int getRanks() {
+        return this.ranks;
+    }
+
     public enum RoomStatus {
         WAITING,
         READY
@@ -87,6 +100,7 @@ public class Player {
     public enum PlayingStatus {
         PLAYING,
         ALLIN,
-        CALL
+        CALL,
+        BET
     }
 }

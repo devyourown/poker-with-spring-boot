@@ -33,7 +33,7 @@ public class Game {
 
     public GameResult play() {
         for (GameStatus gameStatus : GameStatus.values()) {
-            playUntilStatus();
+            playUntilTurnOver();
             if (isEnd())
                 break;
         }
@@ -55,31 +55,31 @@ public class Game {
         return result;
     }
 
-    private void playUntilStatus() {
+    private void playUntilTurnOver() {
         boolean isStart = true;
-        int betToCall = 0;
-        while (!turnOver(betToCall)) {
+        int numOfResponseToTurnOver = 0;
+        List<Player> foldPlayers = new ArrayList<>();
+        while (!turnOver(numOfResponseToTurnOver)) {
             ConsoleOutput.printForAction(this, pot);
             UserAction userAction = ConsoleInput.getUserAction(playerTable.getCurrentPlayer(),
                     pot.getCurrentBet(), isStart);
             if (userAction.action == Action.BET)
-                betToCall = playerTable.getSize();
-            if (userAction.action == Action.CALL)
-                playerTable.getCurrentPlayer().setCallStatus();
+                numOfResponseToTurnOver = playerTable.getSize() - 1;
+            if (userAction.action == Action.FOLD)
+                foldPlayers.add(playerTable.getCurrentPlayer());
             playAction(userAction.action, userAction.betSize);
             playerTable.moveNext();
             isStart = false;
-            betToCall--;
+            numOfResponseToTurnOver--;
         }
         dealer.setBoard();
-        pot.reset();
+        pot.refresh(foldPlayers);
     }
 
-    private boolean turnOver(int betToCall) {
+    private boolean turnOver(int leftNumOfResponse) {
         if (isEnd()) return true;
-        if (betToCall > 0) return false;
-        return playerTable.getCurrentPlayer().getPlayingStatus() == Player.PlayingStatus.CALL;
-
+        if (leftNumOfResponse > 0) return false;
+        return playerTable.getCurrentPlayer().getPlayingStatus() == Player.PlayingStatus.BET;
     }
 
     private void distributeHands() {
@@ -91,7 +91,6 @@ public class Game {
     public void resetGame() {
         this.playerTable.changeOrder();
         this.dealer.reset();
-        this.pot.reset();
         status = GameStatus.PRE_FLOP;
         distributeHands();
     }
@@ -117,10 +116,12 @@ public class Game {
 
     private void actCall() {
         pot.call(playerTable.getCurrentPlayer());
+        playerTable.getCurrentPlayer().setPlayingStatus(Player.PlayingStatus.CALL);
     }
 
     private void actBet(int betSize) {
         pot.bet(playerTable.getCurrentPlayer(), betSize);
+        playerTable.getCurrentPlayer().setPlayingStatus(Player.PlayingStatus.BET);
     }
 
     private void setEnd() {
@@ -137,10 +138,6 @@ public class Game {
 
     public boolean isEnd() {
         return status == GameStatus.END;
-    }
-
-    public GameStatus getStatus() {
-        return status;
     }
 
     public List<Card> getBoard() {

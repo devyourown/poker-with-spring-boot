@@ -28,14 +28,4 @@ public class PlayerTest {
         player.bet(500);
         assertEquals(500, player.getMoney());
     }
-
-    @Test
-    void testPlayerHasCards() {
-        player.setHands(List.of(Card.of(1, Suit.CLUBS), Card.of(2, Suit.CLUBS)));
-        assertEquals(2, player.getHands().size());
-        assertEquals(Suit.CLUBS, player.getHands().get(0).getSuit());
-        assertEquals(Ranking.HIGH_CARD, player.getRanking());
-        player.setHands(List.of(Card.of(1, Suit.CLUBS), Card.of(1, Suit.CLUBS)));
-        assertEquals(Ranking.ONE_PAIR, player.getRanking());
-    }
 }

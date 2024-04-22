@@ -8,6 +8,8 @@ public enum GameStatus {
     END;
 
     public GameStatus nextStatus() {
+        if (this.ordinal() == 4)
+            return END;
         return GameStatus.values()[this.ordinal() + 1];
     }
 }

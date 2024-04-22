@@ -45,47 +45,15 @@ public class GameService {
         }
     }
 
-    public void leaveGame(String playerId) throws Exception {
-        String gameId = playerGameId.get(playerId);
-        validateGame(gameId);
-        gameHashMap.get(gameId).removePlayer(playerId);
-        playerGameId.remove(playerId);
-        if (gameHashMap.get(gameId).getSizeOfPlayers() == 0)
-            gameHashMap.remove(gameId);
-    }
-
-    public List<Card> getHands(String playerId) throws Exception {
-        String gameId = playerGameId.get(playerId);
-        validateGame(gameId);
-        return gameHashMap.get(gameId).getHandsOf(playerId);
-    }
-
     private void validateGame(String gameId) throws Exception {
         if (!gameHashMap.containsKey(gameId))
             throw new IllegalArgumentException("There's no game with this id.");
     }
 
-    public void playAction(String playerId, ActionDTO actionDTO) throws BetException {
-        validateAction(playerId, actionDTO);
+    public void playAction(ActionDTO actionDTO) throws BetException {
         Game game = gameHashMap.get(actionDTO.getGameId());
         Action action = actionDTO.getAction();
         game.playAction(action, actionDTO.getBetSize());
-    }
-
-    private void validateAction(String playerId, ActionDTO actionDTO) throws BetException {
-        Game game = gameHashMap.get(actionDTO.getGameId());
-        if (!game.isCurrentTurn(playerId))
-            throw new BetException(BetException.ErrorCode.NOT_YOUR_TURN);
-        if (actionDTO.getAction() == Action.BET) {
-            if (game.getBettingSize() > actionDTO.getBetSize())
-                throw new BetException(BetException.ErrorCode.MONEY_NOT_ENOUGH);
-            if (hasLessThanHundred(game.getBettingSize()))
-                throw new BetException(BetException.ErrorCode.INVALID_BET_SIZE);
-        }
-        if (game.getBettingSize() > 0) {
-            if (actionDTO.getAction() == Action.CHECK)
-                throw new BetException(BetException.ErrorCode.NOT_POSSIBLE_CHECK);
-        }
     }
 
     private boolean hasLessThanHundred(int money) {
