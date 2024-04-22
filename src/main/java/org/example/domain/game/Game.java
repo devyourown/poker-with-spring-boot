@@ -1,45 +1,85 @@
 package org.example.domain.game;
 
+import org.example.console.ConsoleInput;
+import org.example.console.ConsoleOutput;
+import org.example.console.UserAction;
 import org.example.domain.card.Card;
 import org.example.domain.game.helper.Dealer;
 import org.example.domain.game.helper.GameResult;
 import org.example.domain.game.helper.Pot;
 import org.example.domain.player.Player;
+import org.example.domain.player.PlayerTable;
 import org.example.domain.rules.RankingCalculator;
 
 import java.util.*;
 
 public class Game {
-    private List<Player> players;
-    private Dealer dealer;
+    private final List<Player> players;
+    private final PlayerTable playerTable;
+    private final Dealer dealer;
     private GameStatus status;
-    private Pot pot;
-    private int lastTurnIndex;
-    private int currentTurnIndex;
+    private final Pot pot;
     private final String gameId;
-    private Action lastAction;
-    private int lastActionIndex;
-    private Set<Integer> foldPlayerIndex;
-    private GameResult gameResult;
 
     public Game(List<Player> players, int smallBlind, int bigBlind) {
         this.gameId = UUID.randomUUID().toString();
         this.players = new ArrayList<>(players);
-        this.foldPlayerIndex = new HashSet<>();
+        this.playerTable = new PlayerTable(players);
         this.pot = new Pot(players, smallBlind, bigBlind);
-
         status = GameStatus.PRE_FLOP;
-        initLastTurnIndex();
-        this.currentTurnIndex = 0;
-        this.lastActionIndex = -1;
-        this.lastAction = null;
-
         this.dealer = new Dealer(players.size());
         distributeHands();
     }
 
-    private void initLastTurnIndex() {
-        lastTurnIndex = players.size() - 1;
+    public GameResult play() {
+        for (GameStatus gameStatus : GameStatus.values()) {
+            playUntilStatus();
+            if (isEnd())
+                break;
+        }
+        List<Player> lastPlayers = convertTableToList(playerTable);
+        setPlayersRanking(lastPlayers, dealer.getBoard());
+        return new GameResult(lastPlayers, pot);
+    }
+
+    private List<Player> convertTableToList(PlayerTable playerTable) {
+        List<Player> result = new ArrayList<>();
+        result.add(playerTable.getCurrentPlayer());
+        playerTable.moveNext();
+        Player player = playerTable.getCurrentPlayer();
+        while (result.get(0) != player) {
+            result.add(player);
+            playerTable.moveNext();
+            player = playerTable.getCurrentPlayer();
+        }
+        return result;
+    }
+
+    private void playUntilStatus() {
+        boolean isStart = true;
+        int betToCall = 0;
+        while (!turnOver(betToCall)) {
+            ConsoleOutput.printForAction(this, pot);
+            UserAction userAction = ConsoleInput.getUserAction(playerTable.getCurrentPlayer(),
+                    pot.getCurrentBet(), isStart);
+            if (userAction.action == Action.BET)
+                betToCall = playerTable.getSize();
+            if (userAction.action == Action.CALL)
+                playerTable.getCurrentPlayer().setCallStatus();
+            playAction(userAction.action, userAction.betSize);
+            playerTable.moveNext();
+            isStart = false;
+            betToCall--;
+        }
+        dealer.setBoard();
+        pot.reset();
+    }
+
+    private boolean turnOver(int betToCall) {
+        if (isEnd()) return true;
+        if (betToCall > 0) return false;
+        return playerTable.getCurrentPlayer().getPlayingStatus() == Player.PlayingStatus.CALL;
+
     }
 
     private void distributeHands() {
@@ -49,121 +89,41 @@ public class Game {
     }
 
     public void resetGame() {
-        this.changeOrder();
+        this.playerTable.changeOrder();
         this.dealer.reset();
-        this.pot.reset(this.players);
-        this.foldPlayerIndex.clear();
-
+        this.pot.reset();
         status = GameStatus.PRE_FLOP;
-        initLastTurnIndex();
-        this.currentTurnIndex = 0;
-        this.lastActionIndex = -1;
-        this.lastAction = null;
-
         distributeHands();
     }
 
-    private void changeOrder() {
-        this.players.add(0, this.players.remove(players.size() - 1));
-    }
-
     public void playAction(Action action, int betSize) {
-        passFoldPlayer();
-        Player player = players.get(currentTurnIndex);
-        this.lastAction = action;
-        this.lastActionIndex = currentTurnIndex;
         if (action == Action.FOLD)
-            actFold(player);
+            actFold();
         else if (action == Action.CALL)
-            actCall(player);
-        else if (action == Action.CHECK)
-            actCheck();
+            actCall();
         else if (action == Action.BET)
-            actBet(player, betSize);
-        initCurrentTurnWhenOver();
+            actBet(betSize);
     }
 
-    private void passFoldPlayer() {
-        while (foldPlayerIndex.contains(currentTurnIndex)) {
-            currentTurnIndex++;
-            if (currentTurnIndex >= players.size())
-                currentTurnIndex = 0;
-        }
-    }
-
-    private void initCurrentTurnWhenOver() {
-        if (currentTurnIndex == players.size())
-            currentTurnIndex = 0;
-    }
-
-    private void actFold(Player player) {
-        setNextStatusWhenLastAction();
-        foldPlayerIndex.add(players.indexOf(player));
-        if (getPlayingPlayer() < 2)
+    private void actFold() {
+        playerTable.removeSelf();
+        if (impossibleToPlay())
             setEnd();
     }
 
-    private int getPlayingPlayer() {
-        return players.size() - foldPlayerIndex.size();
+    private boolean impossibleToPlay() {
+        return playerTable.getSize() < 2;
     }
 
-    private void actCall(Player player) {
-        player.bet(pot.amountToCall(player));
-        raisePotMoney(pot.amountToCall(player));
-        setNextStatusWhenLastAction();
-    }
-    private void actCheck() {
-        setNextStatusWhenLastAction();
+    private void actCall() {
+        pot.call(playerTable.getCurrentPlayer());
     }
 
-    private void actBet(Player player, int betSize) {
-        if (player.getMoney() <= betSize)
-            betSize = player.getMoney();
-        pot.setCurrentBet(betSize);
-        player.bet(betSize);
-        raisePotMoney(betSize);
-        pot.putPlayerBetLog(player, betSize);
-        resetLastTurnIndex(player);
-        currentTurnIndex++;
-    }
-
-    private void raisePotMoney(int betSize) {
-        pot.raiseMoney(betSize);
-    }
-
-    private void resetLastTurnIndex(Player player) {
-        if (players.indexOf(player) == 0)
-            initLastTurnIndex();
-        else
-            lastTurnIndex = players.indexOf(player) - 1;
-    }
-
-    private void setNextStatusWhenLastAction() {
-        if (isLastAction()) {
-            setNextStatus();
-            initLastTurnIndex();
-            currentTurnIndex = 0;
-            dealer.setBoardAsStatus(status);
-            pot.putZeroInBetLog(players);
-            pot.resetCurrentBet();
-            return ;
-        }
-        currentTurnIndex++;
-    }
-
-    private boolean isLastAction() {
-        if (currentTurnIndex == lastTurnIndex)
-            return true;
-        return false;
-    }
-
-    private void setNextStatus() {
-        status = status.nextStatus();
+    private void actBet(int betSize) {
+        pot.bet(playerTable.getCurrentPlayer(), betSize);
     }
 
     private void setEnd() {
-        setPlayersRanking(players, dealer.getBoard());
-        gameResult = new GameResult(getPlayersAlive(), pot);
         status = GameStatus.END;
     }
 
@@ -171,16 +131,12 @@ public class Game {
         for (Player player : players) {
             List<Card> totalCards = new ArrayList<>(cards);
             totalCards.addAll(player.getHands());
-            player.setHandRanking(RankingCalculator.calculateCards(totalCards));
+            player.setRanks(RankingCalculator.calculateCards(totalCards));
         }
     }
 
     public boolean isEnd() {
         return status == GameStatus.END;
-    }
-
-    public int getPot() {
-        return pot.getTotalAmount();
     }
 
     public GameStatus getStatus() {
@@ -191,80 +147,19 @@ public class Game {
         return dealer.getBoard();
     }
 
-    public int getBettingSize() {
-        return pot.getCurrentBet();
-    }
-
-    public List<Card> getPlayerHandsOf(int index) {
-        return players.get(index).getHands();
-    }
-
     public int getSizeOfPlayers() {
         return players.size();
-    }
-
-    public int getPlayerMoneyOf(int index) {
-        return players.get(index).getMoney();
-    }
-
-    public List<Card> getHandsOf(String playerId) {
-        for (Player player : players) {
-            if (player.getId().equals(playerId))
-                return player.getHands();
-        }
-        return Collections.EMPTY_LIST;
-    }
-
-    public boolean isCurrentTurn(String playerId) {
-        return currentTurnIndex == getIndexOf(playerId);
-    }
-
-    private int getIndexOf(String playerId) {
-        for (int i=0; i<players.size(); i++) {
-            if (players.get(i).getId().equals(playerId))
-                return i;
-        }
-        return -1;
     }
 
     public String getGameId() {
         return this.gameId;
     }
 
-    public void removePlayer(String playerId) {
-        for (Player player : players) {
-            if (player.getId().equals(playerId)) {
-                players.remove(player);
-                if (getPlayingPlayer() < 2)
-                    setEnd();
-                return ;
-            }
-        }
+    public int getCurrentPlayerMoney() {
+        return playerTable.getCurrentPlayer().getMoney();
     }
 
-    public int currentTurnIndex() {
-        return this.currentTurnIndex;
-    }
-
-    public Action getLastAction() {
-        return this.lastAction;
-    }
-
-    public int getLastActionIndex() {
-        return this.lastActionIndex;
-    }
-
-    public List<Player> getWinner() {
-        return gameResult.getWinner();
-    }
-
-    public List<Player> getPlayersAlive() {
-        List<Player> result = new ArrayList<>();
-        for (int i=0; i<this.players.size(); i++) {
-            if (this.foldPlayerIndex.contains(i))
-                continue;
-            result.add(this.players.get(i));
-        }
-        return Collections.unmodifiableList(result);
+    public List<Card> getCurrentPlayerHands() {
+        return playerTable.getCurrentPlayer().getHands();
     }
 }

@@ -2,7 +2,7 @@ package org.example.domain.player;
 
 import org.example.domain.card.Card;
 import org.example.domain.card.Suit;
-import org.example.domain.rules.HandRanking;
+import org.example.domain.rules.Ranking;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -34,8 +34,8 @@ public class PlayerTest {
         player.setHands(List.of(Card.of(1, Suit.CLUBS), Card.of(2, Suit.CLUBS)));
         assertEquals(2, player.getHands().size());
         assertEquals(Suit.CLUBS, player.getHands().get(0).getSuit());
-        assertEquals(HandRanking.HIGH_CARD, player.getRanking());
+        assertEquals(Ranking.HIGH_CARD, player.getRanking());
         player.setHands(List.of(Card.of(1, Suit.CLUBS), Card.of(1, Suit.CLUBS)));
-        assertEquals(HandRanking.ONE_PAIR, player.getRanking());
+        assertEquals(Ranking.ONE_PAIR, player.getRanking());
     }
 }

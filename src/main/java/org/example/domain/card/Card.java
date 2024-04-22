@@ -21,7 +21,9 @@ public class Card {
     }
 
     public int getValue() {
-        return value;
+        if (isAce())
+            return 14;
+        return this.value;
     }
 
     public Suit getSuit() {

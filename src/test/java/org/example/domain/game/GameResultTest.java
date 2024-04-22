@@ -3,7 +3,7 @@ package org.example.domain.game;
 import org.example.domain.game.helper.GameResult;
 import org.example.domain.game.helper.Pot;
 import org.example.domain.player.Player;
-import org.example.domain.rules.HandRanking;
+import org.example.domain.rules.Ranking;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -23,23 +23,23 @@ public class GameResultTest {
     void testBigAllIn() {
         players = new ArrayList<>();
         player = new Player("1", 3000);
-        player.setHandRanking(HandRanking.FLUSH);
+        player.setRanking(Ranking.FLUSH);
         players.add(player);
 
         player2 = new Player("1", 4000);
-        player2.setHandRanking(HandRanking.FLUSH);
+        player2.setRanking(Ranking.FLUSH);
         players.add(player2);
 
         player3 = new Player("1", 7000);
-        player3.setHandRanking(HandRanking.ONE_PAIR);
+        player3.setRanking(Ranking.ONE_PAIR);
         players.add(player3);
 
         Player player4 = new Player("1", 8000);
-        player4.setHandRanking(HandRanking.STRAIGHT);
+        player4.setRanking(Ranking.STRAIGHT);
         players.add(player4);
 
         Player player5 = new Player("1", 1500);
-        player5.setHandRanking(HandRanking.HIGH_CARD);
+        player5.setRanking(Ranking.HIGH_CARD);
         players.add(player5);
 
         Pot pot = new Pot(players, 100, 200);
@@ -78,15 +78,15 @@ public class GameResultTest {
     void testAllInTieWin() {
         List<Player> players = new ArrayList<>();
         Player player = new Player("1", 1000);
-        player.setHandRanking(HandRanking.FLUSH);
+        player.setRanking(Ranking.FLUSH);
         players.add(player);
 
         Player player2 = new Player("1", 1000);
-        player2.setHandRanking(HandRanking.FLUSH);
+        player2.setRanking(Ranking.FLUSH);
         players.add(player2);
 
         Player player3 = new Player("1", 1000);
-        player3.setHandRanking(HandRanking.ONE_PAIR);
+        player3.setRanking(Ranking.ONE_PAIR);
         players.add(player3);
 
         Pot pot = new Pot(players, 100, 200);
@@ -113,15 +113,15 @@ public class GameResultTest {
     void testAllinTieWinDiffAmount() {
         players = new ArrayList<>();
         player = new Player("1", 1000);
-        player.setHandRanking(HandRanking.FLUSH);
+        player.setRanking(Ranking.FLUSH);
         players.add(player);
 
         player2 = new Player("1", 500);
-        player2.setHandRanking(HandRanking.FLUSH);
+        player2.setRanking(Ranking.FLUSH);
         players.add(player2);
 
         player3 = new Player("1", 1000);
-        player3.setHandRanking(HandRanking.ONE_PAIR);
+        player3.setRanking(Ranking.ONE_PAIR);
         players.add(player3);
 
         Pot pot = new Pot(players, 100, 200);
@@ -148,15 +148,15 @@ public class GameResultTest {
     void testAllinOneWinDiffAmount() {
         players = new ArrayList<>();
         player = new Player("1", 1000);
-        player.setHandRanking(HandRanking.FLUSH);
+        player.setRanking(Ranking.FLUSH);
         players.add(player);
 
         player2 = new Player("1", 500);
-        player2.setHandRanking(HandRanking.TWO_PAIR);
+        player2.setRanking(Ranking.TWO_PAIR);
         players.add(player2);
 
         player3 = new Player("1", 1000);
-        player3.setHandRanking(HandRanking.ONE_PAIR);
+        player3.setRanking(Ranking.ONE_PAIR);
         players.add(player3);
 
         Pot pot = new Pot(players, 100, 200);
@@ -183,15 +183,15 @@ public class GameResultTest {
     void testAllinLowAmountWin() {
         players = new ArrayList<>();
         player = new Player("1", 1000);
-        player.setHandRanking(HandRanking.TWO_PAIR);
+        player.setRanking(Ranking.TWO_PAIR);
         players.add(player);
 
         player2 = new Player("1", 500);
-        player2.setHandRanking(HandRanking.FLUSH);
+        player2.setRanking(Ranking.FLUSH);
         players.add(player2);
 
         player3 = new Player("1", 1000);
-        player3.setHandRanking(HandRanking.ONE_PAIR);
+        player3.setRanking(Ranking.ONE_PAIR);
         players.add(player3);
 
         Pot pot = new Pot(players, 100, 200);
@@ -217,15 +217,15 @@ public class GameResultTest {
     void testAllinCaseOneWin() {
         players = new ArrayList<>();
         player = new Player("1", 1000);
-        player.setHandRanking(HandRanking.FLUSH);
+        player.setRanking(Ranking.FLUSH);
         players.add(player);
 
         player2 = new Player("1", 1000);
-        player2.setHandRanking(HandRanking.HIGH_CARD);
+        player2.setRanking(Ranking.HIGH_CARD);
         players.add(player2);
 
         player3 = new Player("1", 1000);
-        player3.setHandRanking(HandRanking.ONE_PAIR);
+        player3.setRanking(Ranking.ONE_PAIR);
         players.add(player3);
 
         Pot pot = new Pot(players, 100, 200);

@@ -1,5 +1,6 @@
 package org.example.domain.game.helper;
 
+import org.example.domain.error.BetException;
 import org.example.domain.player.Player;
 
 import java.util.HashMap;
@@ -7,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Pot {
-    private Map<Player, Integer> playerBetLog;
+    private Map<String, Integer> playerBetLog;
     private int smallBlind;
     private int bigBlind;
     private int currentBet;
@@ -16,66 +17,66 @@ public class Pot {
     public Pot(List<Player> players, int smallBlind, int bigBlind) {
         this.smallBlind = smallBlind;
         this.bigBlind = bigBlind;
-        this.currentBet = bigBlind;
-        this.totalAmount = smallBlind + bigBlind;
         initPlayerBetLog(players);
     }
 
     private void initPlayerBetLog(List<Player> players) {
-        playerBetLog = new HashMap<>();
-        for (int i = 0; i < players.size() - 2; i++)
-            playerBetLog.put(players.get(i), 0);
-        players.get(players.size() - 2).bet(smallBlind);
-        players.get(players.size() - 1).bet(bigBlind);
-        playerBetLog.put(players.get(players.size() - 2), smallBlind);
-        playerBetLog.put(players.get(players.size() - 1), bigBlind);
-    }
-
-    public void reset(List<Player> players) {
         this.currentBet = bigBlind;
         this.totalAmount = smallBlind + bigBlind;
-        initPlayerBetLog(players);
+        playerBetLog = new HashMap<>();
+        for (Player player : players)
+            playerBetLog.put(player.getId(), 0);
+        players.get(players.size() - 2).bet(smallBlind);
+        players.get(players.size() - 1).bet(bigBlind);
+        playerBetLog.put(players.get(players.size() - 2).getId(), smallBlind);
+        playerBetLog.put(players.get(players.size() - 1).getId(), bigBlind);
     }
 
-    public void putZeroInBetLog(List<Player> players) {
-        for (int i = 0; i < players.size(); i++) {
-            playerBetLog.put(players.get(i), 0);
-        }
+    public void reset() {
+        playerBetLog.clear();
+        this.currentBet = bigBlind;
     }
 
-    public int amountToCall(Player player) {
-        return currentBet - playerBetLog.get(player);
+    private void splitMoney(List<Player> winner, List<Player> loser) {
+
     }
 
-    public void raiseMoney(int money) {
+    public void call(Player player) {
+        int callAmount =  currentBet - playerBetLog.get(player.getId());
+        player.bet(callAmount);
+        raiseMoney(callAmount);
+    }
+
+    private void raiseMoney(int money) {
         this.totalAmount += money;
     }
 
-    public void setCurrentBet(int betSize) {
+    public void bet(Player player, int betSize) {
         this.currentBet = betSize;
+        player.bet(betSize);
+        raiseMoney(betSize);
+        playerBetLog.put(player.getId(), betSize);
     }
 
     public int getTotalAmount() {
         return totalAmount;
     }
 
-    public void putPlayerBetLog(Player player, int betSize) {
-        playerBetLog.put(player, betSize);
-    }
-
     public int getPlayerBetLog(Player player) {
-        return playerBetLog.get(player);
+        return playerBetLog.get(player.getId());
     }
 
     public int getCurrentBet() {
         return currentBet;
     }
 
-    public void resetCurrentBet() {
-        currentBet = 0;
-    }
-
     public void takeOutMoney(int money) {
         this.totalAmount -= money;
+    }
+
+    public void returnMoneyTo(Player player) {
+        int moneySize = getPlayerBetLog(player);
+        this.totalAmount -= moneySize;
+        player.raiseMoney(moneySize);
     }
 }

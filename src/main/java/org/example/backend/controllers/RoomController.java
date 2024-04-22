@@ -89,7 +89,7 @@ public class RoomController {
                     .id(player.getId())
                     .nickname(memberService.getById(player.getId()).getNickname())
                     .money(player.getMoney())
-                    .isReady(player.isReady())
+                    .isReady(player.isRoomReady())
                     .build());
         }
         return result;

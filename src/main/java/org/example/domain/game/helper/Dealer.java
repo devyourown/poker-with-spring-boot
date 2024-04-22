@@ -12,19 +12,22 @@ public class Dealer {
     private Deck deck;
     private List<Card> board;
     private int numOfPlayer;
+    private GameStatus gameStatus;
 
     public Dealer(int numOfPlayer) {
         this.numOfPlayer = numOfPlayer;
         deck = new Deck(numOfPlayer);
         board = new ArrayList<>();
+        gameStatus = GameStatus.PRE_FLOP;
     }
 
-    public void setBoardAsStatus(GameStatus status) {
-        if (status == GameStatus.FLOP)
+    public void setBoard() {
+        gameStatus = gameStatus.nextStatus();
+        if (gameStatus == GameStatus.FLOP)
             setFlop();
-        else if (status == GameStatus.TURN)
+        else if (gameStatus == GameStatus.TURN)
             setTurn();
-        else if (status == GameStatus.RIVER)
+        else if (gameStatus == GameStatus.RIVER)
             setRiver();
     }
 

@@ -56,10 +56,16 @@ public class ConsoleInput {
         return true;
     }
 
-    public static UserAction getUserAction(int betSize, int gameOrder) {
-        Action action = getAction(betSize, gameOrder);
+    public static boolean askPlayAgain() {
+        System.out.print("Do you want to stop game?(Y/N): ");
+        String answer = scanner.next();
+        return !answer.equals("N") && !answer.equals("n");
+    }
+
+    public static UserAction getUserAction(Player player, int betSize, boolean isStart) {
+        Action action = getAction(betSize, isStart);
         if (shouldGetMoney(action))
-            return new UserAction(action, getBetSize(betSize));
+            return new UserAction(action, getBetSize(player, betSize));
         return new UserAction(action, 0);
     }
 
@@ -67,19 +73,19 @@ public class ConsoleInput {
         return action == Action.BET;
     }
 
-    private static Action getAction(int betSize, int gameOrder) {
+    private static Action getAction(int betSize, boolean isStart) {
         System.out.print("ACTION : ");
         String action = scanner.next();
         try {
-            validateActionInput(action, betSize, gameOrder);
+            validateActionInput(action, betSize, isStart);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return getAction(betSize, gameOrder);
+            return getAction(betSize, isStart);
         }
         return Action.valueOf(action);
     }
 
-    private static void validateActionInput(String input, int betSize, int gameOrder) {
+    private static void validateActionInput(String input, int betSize, boolean isStart) {
         Action action;
         try {
             action = Action.valueOf(input);
@@ -90,7 +96,7 @@ public class ConsoleInput {
             if (isCheck(action))
                 throw new IllegalArgumentException("[ERROR] The Action is impossible.");
         }
-        else if (gameOrder == 0) {
+        else if (isStart) {
             if (isCall(action))
                 throw new IllegalArgumentException("[ERROR] The Action is impossible.");
         }
@@ -108,19 +114,19 @@ public class ConsoleInput {
         return action == Action.CALL;
     }
 
-    private static int getBetSize(int prevBetSize) {
+    private static int getBetSize(Player player, int prevBetSize) {
         System.out.print("Betting : ");
         String betSize = scanner.next();
         try {
-            validateBetInput(betSize, prevBetSize);
+            validateBetInput(player, betSize, prevBetSize);
         } catch (BetException e) {
             System.out.println(e.errorMessage());
-            return getBetSize(prevBetSize);
+            return getBetSize(player, prevBetSize);
         }
         return Integer.parseInt(betSize);
     }
 
-    private static void validateBetInput(String input, int prevBetSize) throws BetException {
+    private static void validateBetInput(Player player, String input, int prevBetSize) throws BetException {
         int betSize;
         try {
             betSize = Integer.parseInt(input);
@@ -131,5 +137,7 @@ public class ConsoleInput {
             throw new BetException(BetException.ErrorCode.TOO_SMALL_BET_SIZE);
         if (betSize % 100 != 0)
             throw new BetException(BetException.ErrorCode.INVALID_BET_SIZE);
+        if (player.getMoney() < betSize)
+            throw new BetException(BetException.ErrorCode.MONEY_NOT_ENOUGH);
     }
 }

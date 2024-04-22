@@ -29,7 +29,7 @@ public class Room {
 
     private boolean isEveryoneReady() {
         for (Player player : players) {
-            if (!player.isReady())
+            if (!player.isRoomReady())
                 return false;
         }
         return true;

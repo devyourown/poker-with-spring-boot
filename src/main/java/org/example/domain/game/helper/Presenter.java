@@ -11,6 +11,7 @@ public class Presenter {
         this.pot = pot;
     }
 
+    /* 진 사람이 올인 싸움에서 돈을 더 많이 냈을 경우를 따진다.*/
     public void giveMoneyToAllInWinner(List<Player> winner, List<Player> loser) {
         winner.sort((a, b) -> pot.getPlayerBetLog(a) - pot.getPlayerBetLog(b));
         returnMoneyFromBetting(winner);
@@ -23,8 +24,7 @@ public class Presenter {
 
     private void returnMoneyFromBetting(List<Player> players) {
         for (Player player : players) {
-            pot.takeOutMoney(pot.getPlayerBetLog(player));
-            player.raiseMoney(pot.getPlayerBetLog(player));
+            pot.returnMoneyTo(player);
         }
     }
 

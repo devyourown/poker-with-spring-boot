@@ -9,36 +9,27 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class RankingCalculator {
-    public static HandRanking calculateHands(List<Card> hands) {
-        if (hands.get(0).isSameValue(hands.get(1)))
-            return HandRanking.ONE_PAIR;
-        return HandRanking.HIGH_CARD;
-    }
 
-    public static HandRanking calculateCards(List<Card> cards) {
+    public static int calculateCards(List<Card> cards) {
         List<Integer> numbersOfCards = convertToNumber(cards);
         List<Suit> suitsOfCards = convertToSuit(cards);
-        if (isRoyalStraightFlush(cards))
-            return HandRanking.ROYAL_STRAIGHT_FLUSH;
-        else if (isStraightFlush(cards))
-            return HandRanking.STRAIGHT_FLUSH;
-        else if (isFourCards(numbersOfCards))
-            return HandRanking.FOUR_CARDS;
+        if (getStraightFlush(cards) > 0)
+            return getStraightFlush(cards);
+        else if (getFourCards(numbersOfCards) > 0)
+            return getFourCards();
         else if (isFullHouse(numbersOfCards))
-            return HandRanking.FULL_HOUSE;
+            return Ranking.FULL_HOUSE;
         else if (isFlush(suitsOfCards))
-            return HandRanking.FLUSH;
-        else if (isMountain(numbersOfCards))
-            return HandRanking.MOUNTAIN;
+            return Ranking.FLUSH;
         else if (isStraight(numbersOfCards))
-            return HandRanking.STRAIGHT;
+            return Ranking.STRAIGHT;
         else if (isTriple(numbersOfCards))
-            return HandRanking.TRIPLE;
+            return Ranking.TRIPLE;
         else if (isTwoPair(numbersOfCards))
-            return HandRanking.TWO_PAIR;
+            return Ranking.TWO_PAIR;
         else if (isOnePair(numbersOfCards))
-            return HandRanking.ONE_PAIR;
-        return HandRanking.HIGH_CARD;
+            return Ranking.ONE_PAIR;
+        return Ranking.HIGH_CARD;
     }
 
     private static List<Integer> convertToNumber(List<Card> cards) {
@@ -57,61 +48,43 @@ public class RankingCalculator {
         return result;
     }
 
-    private static boolean isRoyalStraightFlush(List<Card> cards) {
-        List<Card> copied = new ArrayList<>(cards);
-        for (Card card : cards) {
-            if (card.isAce()) {
-                copied.add(Card.of(14, card.getSuit()));
-                copied.remove(card);
-            }
+    private static int getStraightFlush(List<Card> cards) {
+        List<Card> sorted = cards.stream().sorted().collect(Collectors.toList());
+        for (int i=0; i<3; i++) {
+            if (isStraightFlush(sorted, i, i+5))
+                return Ranking.STRAIGHT_FLUSH.getValue() + sorted.get(i+4).getValue();
         }
-        for (Suit suit : Suit.values()) {
-            int count = (int) copied.stream()
-                    .filter(card -> card.getSuit() == suit)
-                    .count();
-            if (count >= 5)
-                return copied.stream()
-                        .filter(card -> card.getValue() >= 10)
-                        .filter(card -> card.getSuit() == suit)
-                        .count() == 5;
-        }
-        return false;
+        return 0;
     }
 
-    private static boolean isStraightFlush(List<Card> cards) {
-        List<Card> sorted = cards.stream()
-                .sorted((a, b) -> a.getValue() - b.getValue())
-                .collect(Collectors.toList());
-        for (int i=1; i<sorted.size(); i++) {
-            if (sorted.get(i-1).getValue() != sorted.get(i).getValue() - 1)
-                if (i >= cards.size() - 4)
-                    return false;
-            if (sorted.get(i-1).getSuit() != sorted.get(i).getSuit())
-                if (i >= cards.size() - 4)
-                    return false;
+    private static boolean isStraightFlush(List<Card> cards, int start, int end) {
+        for (int i=start+1; i<end; i++) {
+            if (cards.get(i-1).getValue() + 1 != cards.get(i).getValue())
+                return false;
+            if (cards.get(i-1).getSuit() != cards.get(i).getSuit())
+                return false;
         }
         return true;
     }
 
-    private static boolean isFourCards(List<Integer> cardNumbers) {
-        if (sameCountAsExpected(cardNumbers, 4))
-            return true;
-        return false;
+    private static int getFourCards(List<Integer> cardNumbers) {
+        return Ranking.FOUR_CARDS.getValue() + sameCountAsExpected(cardNumbers, 4);
     }
 
-    private static boolean sameCountAsExpected(List<Integer> cardNumbers, int expected) {
+    private static int sameCountAsExpected(List<Integer> cardNumbers, int expected) {
         for (int number : cardNumbers) {
             int count = (int) cardNumbers.stream()
                     .filter(cardNumber -> cardNumber == number)
                     .count();
             if (count == expected)
-                return true;
+                return number;
         }
-        return false;
+        return 0;
     }
 
     private static boolean isFullHouse(List<Integer> cardNumbers) {
         List<Integer> leftWithoutTriple = getListWithoutTriple(cardNumbers);
+        
         if (leftWithoutTriple.isEmpty())
             return false;
         if (!isOnePair(leftWithoutTriple) && !isTriple(leftWithoutTriple))
