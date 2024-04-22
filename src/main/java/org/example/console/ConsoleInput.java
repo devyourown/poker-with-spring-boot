@@ -20,13 +20,11 @@ public class ConsoleInput {
     }
 
     private static int getNumberFromInput(String inputText) {
-        while (true) {
-            System.out.print(inputText);
-            String numOfPlayers = scanner.next();
-            if (!isNumber(numOfPlayers))
-                continue;
-            return Integer.parseInt(numOfPlayers);
-        }
+        System.out.print(inputText);
+        String numOfPlayers = scanner.next();
+        if (!isNumber(numOfPlayers))
+            return getNumberFromInput(inputText);
+        return Integer.parseInt(numOfPlayers);
     }
 
     private static Player getPlayerFromInput() {
@@ -36,14 +34,21 @@ public class ConsoleInput {
     }
 
     private static String getIdFromInput() {
-        while (true) {
-            System.out.print("Current Player ID : ");
-            String id = scanner.next();
-            if (idSet.contains(id))
-                continue;
-            idSet.add(id);
-            return id;
+        System.out.print("Current Player ID : ");
+        String id = scanner.next();
+        if (!isPossibleId(id)) {
+            return getIdFromInput();
         }
+        idSet.add(id);
+        return id;
+    }
+
+    private static boolean isPossibleId(String id) {
+        if (idSet.contains(id)) {
+            System.out.println("[ERROR] ID Should be unique.");
+            return false;
+        }
+        return true;
     }
 
     private static boolean isNumber(String number) {

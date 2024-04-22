@@ -28,8 +28,8 @@ public class PlayerTable {
         current.prev.setNext(current.getNext());
         current.next.setPrev(current.getPrev());
         if (current == firstPlayer)
-            this.firstPlayer = current.getNext();
-        this.current = current.getNext();
+            this.firstPlayer = current.getPrev();
+        this.current = current.getPrev();
         size--;
     }
 

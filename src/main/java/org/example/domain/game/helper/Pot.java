@@ -69,7 +69,7 @@ public class Pot {
             getMoneyOneAnother(winners);
         else
             getMoneyTogether(winners);
-        if (getTotalAmount() >= 100) {
+        if (getTotalAmount() >= 100 && losers.size() >= 1) {
             List<Player> chopped = getChopped(losers);
             chopped.sort(Comparator.comparingInt(Player::getPossibleTakingAmountOfMoney));
             int splitted = getTotalAmount() / chopped.size();
@@ -125,7 +125,10 @@ public class Pot {
     }
 
     public void call(Player player) {
-        int callAmount =  currentBet - playerBetLog.get(player);
+        int prevAmount = 0;
+        if (playerBetLog.containsKey(player))
+            prevAmount = playerBetLog.get(player);
+        int callAmount =  currentBet - prevAmount;
         player.bet(callAmount);
         raiseMoney(callAmount);
     }

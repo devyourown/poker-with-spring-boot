@@ -57,14 +57,14 @@ public class Game {
 
     private void playUntilTurnOver() {
         boolean isStart = true;
-        int numOfResponseToTurnOver = 0;
+        int numOfResponseToTurnOver = playerTable.getSize();
         List<Player> foldPlayers = new ArrayList<>();
         while (!turnOver(numOfResponseToTurnOver)) {
             ConsoleOutput.printForAction(this, pot);
             UserAction userAction = ConsoleInput.getUserAction(playerTable.getCurrentPlayer(),
                     pot.getCurrentBet(), isStart);
             if (userAction.action == Action.BET)
-                numOfResponseToTurnOver = playerTable.getSize() - 1;
+                numOfResponseToTurnOver = playerTable.getSize();
             if (userAction.action == Action.FOLD)
                 foldPlayers.add(playerTable.getCurrentPlayer());
             playAction(userAction.action, userAction.betSize);
@@ -78,8 +78,7 @@ public class Game {
 
     private boolean turnOver(int leftNumOfResponse) {
         if (isEnd()) return true;
-        if (leftNumOfResponse > 0) return false;
-        return playerTable.getCurrentPlayer().getPlayingStatus() == Player.PlayingStatus.BET;
+        return leftNumOfResponse <= 0;
     }
 
     private void distributeHands() {

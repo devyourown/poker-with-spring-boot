@@ -4,6 +4,8 @@
     you can play texas holdem with CLI.
     you should modify METHOD variable as CLI in env.properties to play in CLI.
     
+    you can execute like this!
+    ![](docs/images/execute1.png)
     
 
     
