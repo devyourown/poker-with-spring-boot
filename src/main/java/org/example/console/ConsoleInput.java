@@ -2,11 +2,60 @@ package org.example.console;
 
 import org.example.domain.error.BetException;
 import org.example.domain.game.Action;
+import org.example.domain.player.Player;
 
-import java.util.Scanner;
+import java.util.*;
 
 public class ConsoleInput {
     private static Scanner scanner = new Scanner(System.in);
+    private static Set<String> idSet = new HashSet<>();
+
+    public static ArrayList<Player> initUserFromInput() {
+        ArrayList<Player> result = new ArrayList<>();
+        int numOfPlayers = getNumberFromInput("How Many Players: ");
+        for (int i=0; i<numOfPlayers; i++) {
+            result.add(getPlayerFromInput());
+        }
+        return result;
+    }
+
+    private static int getNumberFromInput(String inputText) {
+        while (true) {
+            System.out.print(inputText);
+            String numOfPlayers = scanner.next();
+            if (!isNumber(numOfPlayers))
+                continue;
+            return Integer.parseInt(numOfPlayers);
+        }
+    }
+
+    private static Player getPlayerFromInput() {
+        String id = getIdFromInput();
+        int moneyAmount = getNumberFromInput("How much money the player has : ");
+        return new Player(id, moneyAmount);
+    }
+
+    private static String getIdFromInput() {
+        while (true) {
+            System.out.print("Current Player ID : ");
+            String id = scanner.next();
+            if (idSet.contains(id))
+                continue;
+            idSet.add(id);
+            return id;
+        }
+    }
+
+    private static boolean isNumber(String number) {
+        try {
+            Integer.parseInt(number);
+        } catch (Exception e) {
+            System.out.println("[ERROR] Input should be number.");
+            return false;
+        }
+        return true;
+    }
+
     public static UserAction getUserAction(int betSize, int gameOrder) {
         Action action = getAction(betSize, gameOrder);
         if (shouldGetMoney(action))
@@ -35,19 +84,19 @@ public class ConsoleInput {
         try {
             action = Action.valueOf(input);
         } catch (Exception e) {
-            throw new IllegalArgumentException("[ERROR] 액션을 제대로 입력해 주세요.");
+            throw new IllegalArgumentException("[ERROR] The Action is not available.");
         }
         if (betSize > 0) {
             if (isCheck(action))
-                throw new IllegalArgumentException("[ERROR] 가능한 액션만 입력해 주세요.");
+                throw new IllegalArgumentException("[ERROR] The Action is impossible.");
         }
         else if (gameOrder == 0) {
             if (isCall(action))
-                throw new IllegalArgumentException("[ERROR] 가능한 액션만 입력해 주세요.");
+                throw new IllegalArgumentException("[ERROR] The Action is impossible.");
         }
         else {
             if (isCall(action))
-                throw new IllegalArgumentException("[ERROR] 가능한 액션만 입력해 주세요.");
+                throw new IllegalArgumentException("[ERROR] The Action is not available.");
         }
     }
 

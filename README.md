@@ -1,13 +1,9 @@
-# This is a back-end for poker game.
+# Poker with spring boot
 
-## Tech stack
-    - Java
-    - Spring-boot
-    - Spring-Security
-    
 ## description
-    This app has a domain of Poker, and communicate with inferface of controllers (which use a HTTP protocol).
-    Frontend interface can be found in my repo.
+    you can play texas holdem with CLI.
+    
+
     
 ## distribute
-    You can distribute to this app. Just PR and add description of your code.
+    You can distribute to this app. Just PR with description of your code.

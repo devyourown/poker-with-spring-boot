@@ -17,7 +17,7 @@ public class BetException extends Exception {
             case INVALID_BET_SIZE:
                 return "Bet size should be 100 unit.";
             case TOO_SMALL_BET_SIZE:
-                return "Bet size should upper than 100.";
+                return "Bet size should upper than BetiingSize.";
             case MONEY_NOT_ENOUGH:
                 return "Money is not enough to bet.";
             case NOT_INTEGER:

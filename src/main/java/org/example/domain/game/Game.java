@@ -117,6 +117,8 @@ public class Game {
     }
 
     private void actBet(Player player, int betSize) {
+        if (player.getMoney() <= betSize)
+            betSize = player.getMoney();
         pot.setCurrentBet(betSize);
         player.bet(betSize);
         raisePotMoney(betSize);
