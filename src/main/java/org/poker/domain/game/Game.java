@@ -17,11 +17,13 @@ import java.util.*;
 public class Game {
     private final List<Player> players;
     private final PlayerTable playerTable;
+    private List<Player> foldPlayers;
     private final Dealer dealer;
     private GameStatus status;
     private final Pot pot;
     private final String gameId;
     private int numOfAllin;
+    private int leftNumOfResponse;
 
     public Game(List<Player> players, int smallBlind, int bigBlind, Deck deck) {
         this.gameId = UUID.randomUUID().toString();
@@ -30,6 +32,7 @@ public class Game {
         this.pot = new Pot(players, smallBlind, bigBlind);
         status = GameStatus.PRE_FLOP;
         this.dealer = new Dealer(players, deck);
+        this.foldPlayers = new ArrayList<>();
     }
 
     public GameResult play() {
@@ -37,6 +40,7 @@ public class Game {
         for (GameStatus gameStatus : GameStatus.values()) {
             if (gameStatus == GameStatus.END || isEnd())
                 break;
+            leftNumOfResponse = playerTable.getSize();
             playUntilTurnOver();
         }
         List<Player> lastPlayers = convertTableToList(playerTable);
@@ -58,26 +62,17 @@ public class Game {
     }
 
     private void playUntilTurnOver() {
-        int numOfResponseToTurnOver = playerTable.getSize();
-        List<Player> foldPlayers = new ArrayList<>();
-        while (!turnOver(numOfResponseToTurnOver) && !allIn()) {
+        while (!isTurnOver() && !isAllPlayerAllIn()) {
             ConsoleOutput.printForAction(pot, dealer, playerTable.getCurrentPlayer());
-            UserAction userAction = ConsoleInput.getUserAction(
-                    playerTable.getCurrentPlayer(),
-                    pot.getCurrentBet());
-            if (userAction.action == Action.BET)
-                numOfResponseToTurnOver = playerTable.getSize();
-            if (userAction.action == Action.FOLD)
-                foldPlayers.add(playerTable.getCurrentPlayer());
+            UserAction userAction = ConsoleInput.getUserAction(playerTable.getCurrentPlayer(), pot);
             playAction(userAction.action, userAction.betSize);
-            playerTable.moveNext();
-            numOfResponseToTurnOver--;
         }
         dealer.nextStatus();
         pot.refresh(foldPlayers);
+        foldPlayers.clear();
     }
 
-    private boolean turnOver(int leftNumOfResponse) {
+    private boolean isTurnOver() {
         if (isEnd()) return true;
         return leftNumOfResponse <= 0;
     }
@@ -87,6 +82,7 @@ public class Game {
         this.playerTable.reset(players);
         this.dealer.reset(players);
         this.pot.reset(convertTableToList(playerTable));
+        players.forEach(Player::gameOver);
         status = GameStatus.PRE_FLOP;
     }
 
@@ -106,9 +102,12 @@ public class Game {
                     (action == Action.CALL && numOfAllin + 1 == playerTable.getSize()))
                 numOfAllin += 1;
         }
+        playerTable.moveNext();
+        leftNumOfResponse--;
     }
 
     private void actFold() {
+        foldPlayers.add(playerTable.getCurrentPlayer());
         playerTable.removeSelf();
         if (impossibleToPlay())
             setEnd();
@@ -122,9 +121,10 @@ public class Game {
 
     private void actBet(int betSize) {
         pot.bet(playerTable.getCurrentPlayer(), betSize);
+        leftNumOfResponse = playerTable.getSize();
     }
 
-    private boolean allIn() {
+    private boolean isAllPlayerAllIn() {
         return playerTable.getSize() == numOfAllin;
     }
 

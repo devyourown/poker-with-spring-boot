@@ -24,9 +24,7 @@ public class Dealer {
     }
 
     private void distributeCards() {
-        for (Player player : players) {
-            player.setHands(handoutCards());
-        }
+        players.forEach(player -> player.setHands(handoutCards()));
     }
 
     public void nextStatus() {

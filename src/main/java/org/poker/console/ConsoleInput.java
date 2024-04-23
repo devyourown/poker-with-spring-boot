@@ -2,6 +2,7 @@ package org.poker.console;
 
 import org.poker.domain.error.BetException;
 import org.poker.domain.game.Action;
+import org.poker.domain.game.helper.Pot;
 import org.poker.domain.player.Player;
 
 import java.util.*;
@@ -67,10 +68,10 @@ public class ConsoleInput {
         return !answer.equals("N") && !answer.equals("n");
     }
 
-    public static UserAction getUserAction(Player player, int betSize) {
-        Action action = getAction(betSize);
+    public static UserAction getUserAction(Player player, Pot pot) {
+        Action action = getAction(pot.getCurrentBet());
         if (shouldGetMoney(action))
-            return new UserAction(action, getBetSize(player, betSize));
+            return new UserAction(action, getBetSize(player, pot.getCurrentBet()));
         return new UserAction(action, 0);
     }
 

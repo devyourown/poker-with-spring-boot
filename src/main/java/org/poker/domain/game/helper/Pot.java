@@ -55,26 +55,26 @@ public class Pot {
 
     public void splitMoney(List<Player> winners, List<Player> losers) {
         winners.sort(Comparator.comparingInt(Player::getPossibleTakingAmountOfMoney));
-        getMoneyTogether(new LinkedList<>(winners));
+        giveMoneyTo(winners);
         if (hasMoneyLeftOver()) {
+            List<Player> chopped = getChopped(losers);
             int bestBet = winners.stream().mapToInt(Player::getBeforeBetMoney)
                     .max().orElse(0);
-            payBack(losers, bestBet);
-             if (hasMoneyLeftOver())
-                 splitLeftOver(losers);
+            payBack(chopped, bestBet);
+            if (hasMoneyLeftOver())
+                 splitLeftOver(chopped);
         }
     }
 
     private void splitLeftOver(List<Player> losers) {
-        List<Player> chopped = getChopped(losers);
-        int split = getTotalAmount() / chopped.size();
-        chopped.forEach(player -> player.raiseMoney(split));
+        int split = getTotalAmount() / losers.size();
+        losers.forEach(player -> player.raiseMoney(split));
         takeOutMoney(getTotalAmount());
     }
 
-    private void payBack(List<Player> loser, int bestBet) {
-        for (Player player : getChopped(loser))
-            player.raiseMoney(takeOutMoney(player.getBeforeBetMoney() - bestBet));
+    private void payBack(List<Player> players, int alreadyTaken) {
+        for (Player player : players)
+            player.raiseMoney(takeOutMoney(player.getBeforeBetMoney() - alreadyTaken));
     }
 
     private boolean hasMoneyLeftOver() {
@@ -89,24 +89,28 @@ public class Pot {
                 .collect(Collectors.toList());
     }
 
-    private void getMoneyTogether(Queue<Player> players) {
+    private void giveMoneyTo(List<Player> players) {
         if (players.size() > 1) {
-            for (Player player : players) {
-                player.raiseMoney(player.getBeforeBetMoney());
-                takeOutMoney(player.getBeforeBetMoney());
-            }
-            while (!players.isEmpty()) {
-                int size = players.size();
-                Player player = players.poll();
-                int money = takeOutMoney(player.getBeforeBetMoney()/size);
-                player.raiseMoney(money);
-            }
-        } else {
-            Player player = players.poll();
-            int money = player.getPossibleTakingAmountOfMoney();
-            int possibleMoney = takeOutMoney(money);
-            player.raiseMoney(possibleMoney);
+            payBack(players, 0);
+            takeMoneyWhenChopped(players);
+            return;
         }
+        takeMoneyOnePerson(Objects.requireNonNull(players.get(0)));
+    }
+
+    private void takeMoneyWhenChopped(List<Player> players) {
+        int size = players.size();
+        for (Player player : players) {
+            int money = takeOutMoney(player.getBeforeBetMoney()/size);
+            player.raiseMoney(money);
+            size -= 1;
+        }
+    }
+
+    private void takeMoneyOnePerson(Player player) {
+        int money = player.getPossibleTakingAmountOfMoney();
+        int possibleMoney = takeOutMoney(money);
+        player.raiseMoney(possibleMoney);
     }
 
     public void call(Player player) {
