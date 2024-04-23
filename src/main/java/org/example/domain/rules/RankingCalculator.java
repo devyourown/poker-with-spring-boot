@@ -13,6 +13,7 @@ public class RankingCalculator {
 
     public static int calculateCards(List<Card> cards) {
         List<Integer> numbersOfCards = convertToNumber(cards);
+        Collections.sort(numbersOfCards);
         if (getStraightFlush(cards) > 0)
             return getStraightFlush(cards);
         else if (getFourCards(numbersOfCards) > 0)
@@ -94,6 +95,9 @@ public class RankingCalculator {
     }
 
     private static int getFourCards(List<Integer> cardNumbers) {
+        int count = sameCountAsExpected(cardNumbers, 4);
+        if (count == 0)
+            return 0;
         return Ranking.FOUR_CARDS.getValue() + sameCountAsExpected(cardNumbers, 4);
     }
 
@@ -157,10 +161,9 @@ public class RankingCalculator {
     }
 
     private static int getStraight(List<Integer> cardNumbers) {
-        List<Integer> sorted = cardNumbers.stream().sorted().collect(Collectors.toList());
         for (int i=2; i>=0; i--) {
-            if (isStraight(sorted, i, i+5))
-                return Ranking.STRAIGHT.getValue() + sorted.get(i+4);
+            if (isStraight(cardNumbers, i, i+5))
+                return Ranking.STRAIGHT.getValue() + cardNumbers.get(i+4);
         }
         if (cardNumbers.get(cardNumbers.size()-1) == 14) {
             if (isLowAceStraight(cardNumbers))
@@ -188,6 +191,9 @@ public class RankingCalculator {
     }
 
     private static int getTriple(List<Integer> cardNumbers) {
+        int count = sameCountAsExpected(cardNumbers, 3);
+        if (count == 0)
+            return 0;
         return Ranking.TRIPLE.getValue() + sameCountAsExpected(cardNumbers, 3);
     }
 
@@ -205,10 +211,10 @@ public class RankingCalculator {
                     highCard = number;
             }
         }
-        if (result.size() < 2)
+        if (result.size() < 4)
             return 0;
         List<Integer> sorted = result.stream().sorted().collect(Collectors.toList());
-        return Ranking.TWO_PAIR.getValue() + sorted.get(sorted.size()-1) * 14 + sorted.get(sorted.size()-2) + highCard;
+        return Ranking.TWO_PAIR.getValue() + sorted.get(sorted.size()-1);
     }
 
     private static int getOnePair(List<Integer> cardNumbers) {
@@ -216,8 +222,18 @@ public class RankingCalculator {
             int count = (int) cardNumbers.stream()
                     .filter(cardNumber -> cardNumber == number)
                     .count();
-            if (count == 2)
-                return Ranking.ONE_PAIR.getValue() + number;
+            if (count == 2) {
+                int leftOver = 0;
+                int numOfLeft = 0;
+                for (int i=cardNumbers.size()-1; i>=0; i--) {
+                    if (number != cardNumbers.get(i)) {
+                        leftOver += cardNumbers.get(i);
+                        numOfLeft += 1;
+                    }
+                    if (numOfLeft == 3) break;
+                }
+                return Ranking.ONE_PAIR.getValue() + leftOver;
+            }
         }
         return 0;
     }

@@ -33,13 +33,13 @@ public class Game {
 
     public GameResult play() {
         for (GameStatus gameStatus : GameStatus.values()) {
-            playUntilTurnOver();
-            if (isEnd())
+            if (gameStatus == GameStatus.END || isEnd())
                 break;
+            playUntilTurnOver();
         }
         List<Player> lastPlayers = convertTableToList(playerTable);
         setPlayersRanking(lastPlayers, dealer.getBoard());
-        return new GameResult(lastPlayers, pot);
+        return new GameResult(lastPlayers, players, pot);
     }
 
     private List<Player> convertTableToList(PlayerTable playerTable) {
@@ -60,7 +60,7 @@ public class Game {
         int numOfResponseToTurnOver = playerTable.getSize();
         List<Player> foldPlayers = new ArrayList<>();
         while (!turnOver(numOfResponseToTurnOver)) {
-            ConsoleOutput.printForAction(this, pot, dealer);
+            ConsoleOutput.printForAction(pot, dealer, playerTable.getCurrentPlayer());
             UserAction userAction = ConsoleInput.getUserAction(playerTable.getCurrentPlayer(),
                     pot.getCurrentBet(), isStart);
             if (userAction.action == Action.BET)
@@ -91,6 +91,7 @@ public class Game {
         removeNoMoneyPlayer();
         this.playerTable.reset(players);
         this.dealer.reset();
+        this.pot.reset(convertTableToList(playerTable));
         status = GameStatus.PRE_FLOP;
         distributeHands();
     }
@@ -146,13 +147,5 @@ public class Game {
 
     public String getGameId() {
         return this.gameId;
-    }
-
-    public int getCurrentPlayerMoney() {
-        return playerTable.getCurrentPlayer().getMoney();
-    }
-
-    public List<Card> getCurrentPlayerHands() {
-        return playerTable.getCurrentPlayer().getHands();
     }
 }

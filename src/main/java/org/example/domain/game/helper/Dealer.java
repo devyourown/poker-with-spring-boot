@@ -34,6 +34,7 @@ public class Dealer {
     public void reset() {
         deck = new Deck(this.numOfPlayer);
         board.clear();
+        gameStatus = GameStatus.PRE_FLOP;
     }
 
     private void setFlop() {

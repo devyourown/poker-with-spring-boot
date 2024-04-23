@@ -13,11 +13,11 @@ public class GameResult {
     private List<Player> winner;
     private List<Player> players;
 
-    public GameResult(List<Player> players, Pot pot) {
-        this.players = players;
-        players.sort(Comparator.comparingInt(Player::getRanks).reversed());
-        this.winner = getWinners(players);
-        pot.splitMoney(this.winner, getRest(players));
+    public GameResult(List<Player> survivor, List<Player> wholePlayer, Pot pot) {
+        survivor.sort(Comparator.comparingInt(Player::getRanks).reversed());
+        this.winner = getWinners(survivor);
+        pot.splitMoney(this.winner, getRest(survivor));
+        this.players = wholePlayer;
     }
 
     private List<Player> getWinners(List<Player> players) {
@@ -44,10 +44,15 @@ public class GameResult {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (Player player : players) {
-            sb.append("ID: " + player.getId() + " money: " + player.getMoney() + "\n");
+            Ranking rank = Ranking.getRank(player.getRanks());
+            sb.append("ID: ").append(player.getId()).append(", money: ").append(player.getMoney())
+                    .append(" with ").append(rank).append("\n");
         }
         for (Player player : winner) {
-            sb.append("Winner : " + player.getId() + "\n");
+            Ranking rank = Ranking.getRank(player.getRanks());
+            sb.append("Winner : ").append(player.getId()).append(" with ").append(rank)
+                    .append(" : ")
+                    .append(player.getRanks()).append("\n");
         }
         return sb.toString();
     }

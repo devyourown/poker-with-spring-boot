@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Pot {
-    private Map<Player, Integer> playerBetLog;
+    private final Map<Player, Integer> playerBetLog;
     private final int smallBlind;
     private final int bigBlind;
     private int currentBet;
@@ -18,20 +18,25 @@ public class Pot {
     public Pot(List<Player> players, int smallBlind, int bigBlind) {
         this.smallBlind = smallBlind;
         this.bigBlind = bigBlind;
-        initPlayerBetLog(players);
-    }
-
-    private void initPlayerBetLog(List<Player> players) {
         this.currentBet = bigBlind;
         this.totalAmount = smallBlind + bigBlind;
-        this.turnBet = totalAmount;
+        this.turnBet = bigBlind;
         playerBetLog = new HashMap<>();
-        for (Player player : players)
-            playerBetLog.put(player, 0);
-        players.get(players.size() - 2).bet(smallBlind);
-        players.get(players.size() - 1).bet(bigBlind);
-        playerBetLog.put(players.get(players.size() - 2), smallBlind);
-        playerBetLog.put(players.get(players.size() - 1), bigBlind);
+        paySmallBig(players.get(players.size()-2), players.get(players.size()-1));
+    }
+
+    public void reset(List<Player> players) {
+        this.currentBet = bigBlind;
+        this.totalAmount = smallBlind + bigBlind;
+        this.turnBet = bigBlind;
+        paySmallBig(players.get(players.size()-2), players.get(players.size()-1));
+    }
+
+    private void paySmallBig(Player smallBlinder, Player bigBlinder) {
+        smallBlinder.bet(smallBlind);
+        bigBlinder.bet(bigBlind);
+        playerBetLog.put(smallBlinder, smallBlind);
+        playerBetLog.put(bigBlinder, bigBlind);
     }
 
     public void refresh(List<Player> foldPlayers) {
@@ -139,9 +144,11 @@ public class Pot {
     }
 
     public void bet(Player player, int betSize) {
-        this.currentBet = betSize;
         player.bet(betSize);
         raiseMoney(betSize);
+        if (playerBetLog.containsKey(player))
+            betSize += playerBetLog.get(player);
+        this.currentBet = betSize;
         playerBetLog.put(player, betSize);
     }
 

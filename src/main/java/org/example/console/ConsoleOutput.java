@@ -19,12 +19,18 @@ public class ConsoleOutput {
         System.out.println();
     }
 
-    public static void printPotSize(Pot pot) {
+    private static void printPotSize(Pot pot) {
         System.out.println("PotSize : " + pot.getTotalAmount());
         System.out.println("BettingSize : " + pot.getCurrentBet());
     }
 
-    public static void printHands(List<Card> hands) {
+    private static void printPlayer(Player player) {
+        System.out.println("Player ID : " + player.getId());
+        printHands(player.getHands());
+        printMoney(player.getMoney());
+    }
+
+    private static void printHands(List<Card> hands) {
         System.out.println("Hands : ");
         for (Card card : hands) {
             System.out.print(card.getValue() + " : " + card.getSuit());
@@ -33,24 +39,24 @@ public class ConsoleOutput {
         System.out.println();
     }
 
+    public static void printMoney(int money) {
+        System.out.println("Money you have : " + money);
+    }
+
     public static void printAvailableAction(Pot pot) {
-        System.out.print("선택할 수 있는 액션 : ");
+        System.out.print("Choose the Action : ");
         if (pot.getCurrentBet() > 0)
             System.out.println(Action.FOLD.toString() + " " + Action.BET + " " + Action.CALL);
         else
             System.out.println(Action.FOLD.toString() + " " + Action.BET + " " + Action.CHECK);
     }
 
-    public static void printMoney(int money) {
-        System.out.println("현재 갖고 있는 돈 : " + money);
-    }
 
-    public static void printForAction(Game game, Pot pot, Dealer dealer) {
+    public static void printForAction(Pot pot, Dealer dealer, Player player) {
         if (dealer.isAfterPreFlop())
             ConsoleOutput.printBoard(dealer.getBoard());
+        ConsoleOutput.printPlayer(player);
         ConsoleOutput.printPotSize(pot);
-        ConsoleOutput.printMoney(game.getCurrentPlayerMoney());
-        ConsoleOutput.printHands(game.getCurrentPlayerHands());
         ConsoleOutput.printAvailableAction(pot);
     }
 
