@@ -1,12 +1,8 @@
 package org.example.domain.player;
 
-import org.example.domain.card.Card;
-import org.example.domain.card.Suit;
-import org.example.domain.rules.Ranking;
+import org.poker.domain.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,9 +1,10 @@
 package org.example.domain.room;
 
-import org.example.domain.error.RoomException;
-import org.example.domain.player.Player;
+import org.poker.domain.error.RoomException;
+import org.poker.domain.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.poker.domain.room.Room;
 
 import static org.junit.jupiter.api.Assertions.*;
 

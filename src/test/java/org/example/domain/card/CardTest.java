@@ -1,7 +1,7 @@
 package org.example.domain.card;
 
-import org.example.domain.card.Card;
-import org.example.domain.card.Suit;
+import org.poker.domain.card.Card;
+import org.poker.domain.card.Suit;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
