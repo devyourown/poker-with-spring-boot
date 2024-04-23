@@ -67,4 +67,8 @@ public class Dealer {
     public List<Card> getBoard() {
         return Collections.unmodifiableList(board);
     }
+
+    public boolean isAfterPreFlop() {
+        return gameStatus.compareTo(GameStatus.PRE_FLOP) > 0;
+    }
 }

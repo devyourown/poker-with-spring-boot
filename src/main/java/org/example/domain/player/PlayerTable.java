@@ -1,14 +1,23 @@
 package org.example.domain.player;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class PlayerTable {
     private Node current;
-    private Node firstPlayer;
     private int size;
+    private int changed;
 
     public PlayerTable(List<Player> players) {
+        sitPlayerToTable(players);
+    }
+
+    public void reset(List<Player> players) {
+        sitPlayerToTable(players);
+        changed = (changed + 1) % size;
+        moveTurn();
+    }
+
+    private void sitPlayerToTable(List<Player> players) {
         Node head = new Node(players.get(0));
         Node node = head;
         for (int i=1; i<players.size(); i++) {
@@ -20,15 +29,17 @@ public class PlayerTable {
         node.setNext(head);
         head.setPrev(node);
         this.current = head;
-        this.firstPlayer = head;
         this.size = players.size();
+    }
+
+    private void moveTurn() {
+        for (int i=0; i<changed; i++)
+            this.current = this.current.getNext();
     }
 
     public void removeSelf() {
         current.prev.setNext(current.getNext());
         current.next.setPrev(current.getPrev());
-        if (current == firstPlayer)
-            this.firstPlayer = current.getPrev();
         this.current = current.getPrev();
         size--;
     }
@@ -43,11 +54,6 @@ public class PlayerTable {
 
     public void moveNext() {
         this.current = this.current.getNext();
-    }
-
-    public void changeOrder() {
-        this.firstPlayer = this.firstPlayer.getNext();
-        this.current = this.firstPlayer;
     }
 }
 

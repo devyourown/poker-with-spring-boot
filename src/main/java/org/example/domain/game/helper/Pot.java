@@ -72,11 +72,11 @@ public class Pot {
         if (getTotalAmount() >= 100 && losers.size() >= 1) {
             List<Player> chopped = getChopped(losers);
             chopped.sort(Comparator.comparingInt(Player::getPossibleTakingAmountOfMoney));
-            int splitted = getTotalAmount() / chopped.size();
+            int split = getTotalAmount() / chopped.size();
             for (Player player : chopped) {
                 int money = player.getPossibleTakingAmountOfMoney();
-                if (money < splitted)
-                    money = splitted;
+                if (money < split)
+                    money = split;
                 int possibleMoney = takeOutMoney(money);
                 player.raiseMoney(possibleMoney);
             }
@@ -152,6 +152,8 @@ public class Pot {
     public int getCurrentBet() {
         return currentBet;
     }
+
+    public int getBigBlind() { return bigBlind; }
 
     private int takeOutMoney(int money) {
         if (money <= totalAmount) {

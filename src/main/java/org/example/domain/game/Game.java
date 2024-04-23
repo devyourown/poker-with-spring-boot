@@ -60,7 +60,7 @@ public class Game {
         int numOfResponseToTurnOver = playerTable.getSize();
         List<Player> foldPlayers = new ArrayList<>();
         while (!turnOver(numOfResponseToTurnOver)) {
-            ConsoleOutput.printForAction(this, pot);
+            ConsoleOutput.printForAction(this, pot, dealer);
             UserAction userAction = ConsoleInput.getUserAction(playerTable.getCurrentPlayer(),
                     pot.getCurrentBet(), isStart);
             if (userAction.action == Action.BET)
@@ -88,10 +88,15 @@ public class Game {
     }
 
     public void resetGame() {
-        this.playerTable.changeOrder();
+        removeNoMoneyPlayer();
+        this.playerTable.reset(players);
         this.dealer.reset();
         status = GameStatus.PRE_FLOP;
         distributeHands();
+    }
+
+    private void removeNoMoneyPlayer() {
+        players.removeIf(player -> player.getMoney() < pot.getBigBlind());
     }
 
     public void playAction(Action action, int betSize) {
@@ -137,14 +142,6 @@ public class Game {
 
     public boolean isEnd() {
         return status == GameStatus.END;
-    }
-
-    public List<Card> getBoard() {
-        return dealer.getBoard();
-    }
-
-    public int getSizeOfPlayers() {
-        return players.size();
     }
 
     public String getGameId() {

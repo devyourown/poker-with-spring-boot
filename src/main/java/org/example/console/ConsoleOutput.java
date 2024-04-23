@@ -3,6 +3,7 @@ package org.example.console;
 import org.example.domain.card.Card;
 import org.example.domain.game.Action;
 import org.example.domain.game.Game;
+import org.example.domain.game.helper.Dealer;
 import org.example.domain.game.helper.Pot;
 import org.example.domain.player.Player;
 
@@ -44,9 +45,9 @@ public class ConsoleOutput {
         System.out.println("현재 갖고 있는 돈 : " + money);
     }
 
-    public static void printForAction(Game game, Pot pot) {
-        if (!game.getBoard().isEmpty())
-            ConsoleOutput.printBoard(game.getBoard());
+    public static void printForAction(Game game, Pot pot, Dealer dealer) {
+        if (dealer.isAfterPreFlop())
+            ConsoleOutput.printBoard(dealer.getBoard());
         ConsoleOutput.printPotSize(pot);
         ConsoleOutput.printMoney(game.getCurrentPlayerMoney());
         ConsoleOutput.printHands(game.getCurrentPlayerHands());
