@@ -21,6 +21,7 @@ public class Game {
     private GameStatus status;
     private final Pot pot;
     private final String gameId;
+    private int numOfAllin;
 
     public Game(List<Player> players, int smallBlind, int bigBlind, Deck deck) {
         this.gameId = UUID.randomUUID().toString();
@@ -32,6 +33,7 @@ public class Game {
     }
 
     public GameResult play() {
+        numOfAllin = 0;
         for (GameStatus gameStatus : GameStatus.values()) {
             if (gameStatus == GameStatus.END || isEnd())
                 break;
@@ -58,7 +60,7 @@ public class Game {
     private void playUntilTurnOver() {
         int numOfResponseToTurnOver = playerTable.getSize();
         List<Player> foldPlayers = new ArrayList<>();
-        while (!turnOver(numOfResponseToTurnOver)) {
+        while (!turnOver(numOfResponseToTurnOver) && !allIn()) {
             ConsoleOutput.printForAction(pot, dealer, playerTable.getCurrentPlayer());
             UserAction userAction = ConsoleInput.getUserAction(
                     playerTable.getCurrentPlayer(),
@@ -99,6 +101,11 @@ public class Game {
             actCall();
         else if (action == Action.BET)
             actBet(betSize);
+        if (action != Action.FOLD) {
+            if (playerTable.getCurrentPlayer().hasAllin() ||
+                    (action == Action.CALL && numOfAllin + 1 == playerTable.getSize()))
+                numOfAllin += 1;
+        }
     }
 
     private void actFold() {
@@ -111,12 +118,14 @@ public class Game {
         return playerTable.getSize() < 2;
     }
 
-    private void actCall() {
-        pot.call(playerTable.getCurrentPlayer());
-    }
+    private void actCall() { pot.call(playerTable.getCurrentPlayer()); }
 
     private void actBet(int betSize) {
         pot.bet(playerTable.getCurrentPlayer(), betSize);
+    }
+
+    private boolean allIn() {
+        return playerTable.getSize() == numOfAllin;
     }
 
     private void setEnd() {

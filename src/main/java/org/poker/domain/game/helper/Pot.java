@@ -37,7 +37,7 @@ public class Pot {
     public void refresh(List<Player> foldPlayers) {
         for (Player player : foldPlayers) {
             playerBetLog.remove(player);
-            player.giveUpMoney();
+            player.gameOver();
         }
         calculatePossibleMoney();
         playerBetLog.clear();
@@ -57,56 +57,48 @@ public class Pot {
     }
 
     public void splitMoney(List<Player> winners, List<Player> losers) {
-        winners.sort(Comparator.comparingInt(Player::getPossibleTakingAmountOfMoney).reversed());
+        winners.sort(Comparator.comparingInt(Player::getPossibleTakingAmountOfMoney));
         getMoneyTogether(new LinkedList<>(winners));
         if (getTotalAmount() >= 100 && losers.size() >= 1) {
+            int bestBet = winners.stream().mapToInt(Player::getBeforeBetMoney)
+                    .max().orElse(0);
             List<Player> chopped = getChopped(losers);
-            chopped.sort(Comparator.comparingInt(Player::getPossibleTakingAmountOfMoney));
-            int split = getTotalAmount() / chopped.size();
              for (Player player : chopped) {
-                int money = player.getPossibleTakingAmountOfMoney();
-                if (money < split)
-                    money = split;
-                int possibleMoney = takeOutMoney(money);
+                int possibleMoney = takeOutMoney(player.getBeforeBetMoney() - bestBet);
                 player.raiseMoney(possibleMoney);
             }
+             if (getTotalAmount() == 0) return;
+             int split = getTotalAmount() / chopped.size();
+             for (Player player : chopped)
+                 player.raiseMoney(split);
+             takeOutMoney(getTotalAmount());
         }
     }
 
     private List<Player> getChopped(List<Player> players) {
-        List<Player> result = new ArrayList<>();
-        for (Player player : players) {
-            if (player.getRanks() == players.get(0).getRanks())
-                result.add(player);
-            else
-                break;
-        }
-        return result;
+        return players.stream()
+                .filter(player -> player.getRanks() ==
+                        players.get(0).getRanks())
+                .sorted(Comparator.comparingLong(Player::getBeforeBetMoney))
+                .collect(Collectors.toList());
     }
 
     private void getMoneyTogether(Queue<Player> players) {
         if (players.size() > 1) {
-            int totalMoney = players.stream()
-                    .mapToInt(Player::getPossibleTakingAmountOfMoney)
-                    .reduce(Integer::sum).orElse(0);
             for (Player player : players) {
-                if (totalMoney / players.size() == getTotalAmount()) {
-                    for (Player allPlayer : players) {
-                        allPlayer.raiseMoney(totalMoney/players.size());
-                    }
-                    takeOutMoney(totalMoney);
-                    return;
-                } else {
-                    player.raiseMoney(player.getPossibleTakingAmountOfMoney());
-                    takeOutMoney(player.getPossibleTakingAmountOfMoney());
-                    players.poll();
-                }
+                player.raiseMoney(player.getBeforeBetMoney());
+                takeOutMoney(player.getBeforeBetMoney());
+            }
+            while (!players.isEmpty()) {
+                int size = players.size();
+                Player player = players.poll();
+                int money = takeOutMoney(player.getBeforeBetMoney()/size);
+                player.raiseMoney(money);
             }
         } else {
             Player player = players.poll();
             int money = player.getPossibleTakingAmountOfMoney();
             int possibleMoney = takeOutMoney(money);
-            System.out.println("Money : " + money +" possible : " + possibleMoney);
             player.raiseMoney(possibleMoney);
         }
     }

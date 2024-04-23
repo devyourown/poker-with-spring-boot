@@ -10,15 +10,24 @@ public class Player {
     private int money;
     private List<Card> hands;
     private long ranks;
-    private RoomStatus roomStatus;
     private int possibleTakingAmountOfMoney;
+    private int beforeBetMoney;
 
     public Player(String id, int money) {
         this.id = id;
         this.money = money;
+        this.beforeBetMoney = money;
         this.ranks = 0;
-        this.roomStatus = RoomStatus.WAITING;
         this.possibleTakingAmountOfMoney = 0;
+    }
+
+    public void gameOver() {
+        beforeBetMoney = money;
+        possibleTakingAmountOfMoney = 0;
+    }
+
+    public int getBeforeBetMoney() {
+        return beforeBetMoney;
     }
 
     public void bet(int betAmount) {
@@ -45,24 +54,16 @@ public class Player {
         return id;
     }
 
-    public boolean isRoomReady() {
-        return this.roomStatus == RoomStatus.READY;
-    }
-
-    public void changeRoomStatus() {
-        this.roomStatus = this.roomStatus == RoomStatus.WAITING ? RoomStatus.READY : RoomStatus.WAITING;
-    }
-
     public void plusPossibleTakingAmountOfMoney(int money) {
         this.possibleTakingAmountOfMoney += money;
     }
 
-    public void giveUpMoney() {
-        this.possibleTakingAmountOfMoney = 0;
-    }
-
     public int getPossibleTakingAmountOfMoney() {
         return this.possibleTakingAmountOfMoney;
+    }
+
+    public boolean hasAllin() {
+        return money == 0;
     }
 
     public void setRanks(long ranks) {
@@ -73,8 +74,4 @@ public class Player {
         return this.ranks;
     }
 
-    public enum RoomStatus {
-        WAITING,
-        READY
-    }
 }

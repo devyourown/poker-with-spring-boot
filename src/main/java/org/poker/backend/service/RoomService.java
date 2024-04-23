@@ -35,7 +35,6 @@ public class RoomService {
 
     public Room readyPlayer(String playerId) throws Exception {
         Room room = playerIdRoomMap.get(playerId);
-        playerIdMap.get(playerId).changeRoomStatus();
         if (room.isReadToPlay())
             room.setPlayersToPlay();
         return room;
