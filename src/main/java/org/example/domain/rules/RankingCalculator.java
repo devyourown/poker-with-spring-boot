@@ -58,11 +58,11 @@ public class RankingCalculator {
         if (sorted.size() < 5)
             return 0;
         List<Integer> numbers = convertToNumber(sorted);
-        for (int i=sorted.size()-5; i>=0; i--) {
+        for (int i=numbers.size()-5; i>=0; i--) {
             if (isStraight(numbers, i, i+5))
-                return Ranking.STRAIGHT_FLUSH.getValue() + sorted.get(i+4).getValue();
+                return Ranking.STRAIGHT_FLUSH.getValue() + numbers.get(i+4);
         }
-        if (cards.get(cards.size()-1).getValue() == 14) {
+        if (numbers.get(numbers.size()-1) == 14) {
             if (isLowAceStraight(numbers))
                 return Ranking.STRAIGHT_FLUSH.getValue() + 5;
         }
@@ -86,7 +86,9 @@ public class RankingCalculator {
         int count = sameCountAsExpected(cardNumbers, 4);
         if (count == 0)
             return 0;
-        return Ranking.FOUR_CARDS.getValue() + sameCountAsExpected(cardNumbers, 4);
+        int highCard = getListWithoutSame(cardNumbers, 4).stream()
+                .mapToInt(a -> a).max().orElse(0);
+        return Ranking.FOUR_CARDS.getValue() + sameCountAsExpected(cardNumbers, 4) * 2L + highCard;
     }
 
     private static int sameCountAsExpected(List<Integer> cardNumbers, int expected) {
@@ -101,26 +103,47 @@ public class RankingCalculator {
     }
 
     private static long getFullHouse(List<Integer> cardNumbers) {
-        List<Integer> leftWithoutTriple = getListWithoutTriple(cardNumbers);
+        List<Integer> leftWithoutTriple = getListWithoutSame(cardNumbers, 3);
         if (leftWithoutTriple.isEmpty())
             return 0;
-        if ((getOnePair(leftWithoutTriple) > 0))
-            return Ranking.FULL_HOUSE.getValue() + getTriple(cardNumbers) + getOnePair(leftWithoutTriple);
-        if (getTriple(leftWithoutTriple) > 0) {
-            if (getTriple(leftWithoutTriple) > getTriple(cardNumbers))
-                return Ranking.FULL_HOUSE.getValue() + getTriple(leftWithoutTriple) + getOnePair(cardNumbers);
-            return Ranking.FULL_HOUSE.getValue() + getTriple(cardNumbers) + getOnePair(leftWithoutTriple);
-        }
+        List<Integer> triple = getHighestTriple(cardNumbers);
+        int pairValue = getValueOfSamePair(leftWithoutTriple);
+        if (pairValue > 0)
+            return Ranking.FULL_HOUSE.getValue() + triple.get(0) * 3L + pairValue * 2L;
         return 0;
     }
 
-    private static List<Integer> getListWithoutTriple(List<Integer> numbers) {
+    private static int getValueOfSamePair(List<Integer> numbers) {
+        int result = 0;
+        for (int number : numbers) {
+            int count = (int) numbers.stream().filter(n -> n == number).count();
+            if (count >= 2)
+                result = Math.max(result, number);
+        }
+        return result;
+    }
+
+    private static List<Integer> getHighestTriple(List<Integer> numbers) {
         List<Integer> result = Collections.emptyList();
         for (int number : numbers) {
             int count = (int) numbers.stream()
                     .filter(cardNumber -> cardNumber == number)
                     .count();
             if (count == 3)
+                result = numbers.stream()
+                        .filter(cardNumber -> cardNumber == number)
+                        .collect(Collectors.toList());
+        }
+        return result;
+    }
+
+    private static List<Integer> getListWithoutSame(List<Integer> numbers, int sameCount) {
+        List<Integer> result = Collections.emptyList();
+        for (int number : numbers) {
+            int count = (int) numbers.stream()
+                    .filter(cardNumber -> cardNumber == number)
+                    .count();
+            if (count == sameCount)
                 result = numbers.stream()
                         .filter(cardNumber -> cardNumber != number)
                         .collect(Collectors.toList());
@@ -183,7 +206,10 @@ public class RankingCalculator {
         int count = sameCountAsExpected(cardNumbers, 3);
         if (count == 0)
             return 0;
-        return Ranking.TRIPLE.getValue() + sameCountAsExpected(cardNumbers, 3);
+        List<Integer> sorted = cardNumbers.stream().filter(c -> c != count)
+                .sorted(Collections.reverseOrder()).collect(Collectors.toList());
+        return Ranking.TRIPLE.getValue() + sameCountAsExpected(cardNumbers, 3) * 3L
+                + sorted.get(0) * 2 + sorted.get(1);
     }
 
     private static long getTwoPair(List<Integer> cardNumbers) {
@@ -202,8 +228,9 @@ public class RankingCalculator {
         }
         if (result.size() < 4)
             return 0;
-        List<Integer> sorted = result.stream().sorted().collect(Collectors.toList());
-        return Ranking.TWO_PAIR.getValue() + (long) sorted.get(sorted.size()-1) * 3 + sorted.get(sorted.size()-3) * 2 + highCard;
+        List<Integer> sorted = result.stream().sorted(Collections.reverseOrder()).collect(Collectors.toList());
+        return Ranking.TWO_PAIR.getValue() + sorted.get(0) * 3L
+                + sorted.get(2) * 2 + highCard;
     }
 
     private static long getOnePair(List<Integer> cardNumbers) {
@@ -221,7 +248,7 @@ public class RankingCalculator {
                     }
                     if (numOfLeft == 3) break;
                 }
-                return Ranking.ONE_PAIR.getValue() + (long) number * 3 + leftOver;
+                return Ranking.ONE_PAIR.getValue() + number * 3L + leftOver;
             }
         }
         return 0;
