@@ -1,5 +1,6 @@
 package org.example.domain.game;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.poker.domain.card.Card;
 import org.poker.domain.card.Suit;
 import org.poker.domain.deck.Deck;

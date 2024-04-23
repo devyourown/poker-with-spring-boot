@@ -49,30 +49,36 @@ public class Pot {
         for (Map.Entry<Player, Integer> entry : playerBetLog.entrySet()) {
             int canTakeMoney = entry.getValue() * playerBetLog.size();
             Player player = entry.getKey();
-            if (canTakeMoney > turnAmount)
-                player.plusPossibleTakingAmountOfMoney(turnAmount);
-            else
-                player.plusPossibleTakingAmountOfMoney(canTakeMoney);
+            player.plusPossibleTakingAmountOfMoney(Math.min(turnAmount, canTakeMoney));
         }
     }
 
     public void splitMoney(List<Player> winners, List<Player> losers) {
         winners.sort(Comparator.comparingInt(Player::getPossibleTakingAmountOfMoney));
         getMoneyTogether(new LinkedList<>(winners));
-        if (getTotalAmount() >= 100 && losers.size() >= 1) {
+        if (hasMoneyLeftOver()) {
             int bestBet = winners.stream().mapToInt(Player::getBeforeBetMoney)
                     .max().orElse(0);
-            List<Player> chopped = getChopped(losers);
-             for (Player player : chopped) {
-                int possibleMoney = takeOutMoney(player.getBeforeBetMoney() - bestBet);
-                player.raiseMoney(possibleMoney);
-            }
-             if (getTotalAmount() == 0) return;
-             int split = getTotalAmount() / chopped.size();
-             for (Player player : chopped)
-                 player.raiseMoney(split);
-             takeOutMoney(getTotalAmount());
+            payBack(losers, bestBet);
+             if (hasMoneyLeftOver())
+                 splitLeftOver(losers);
         }
+    }
+
+    private void splitLeftOver(List<Player> losers) {
+        List<Player> chopped = getChopped(losers);
+        int split = getTotalAmount() / chopped.size();
+        chopped.forEach(player -> player.raiseMoney(split));
+        takeOutMoney(getTotalAmount());
+    }
+
+    private void payBack(List<Player> loser, int bestBet) {
+        for (Player player : getChopped(loser))
+            player.raiseMoney(takeOutMoney(player.getBeforeBetMoney() - bestBet));
+    }
+
+    private boolean hasMoneyLeftOver() {
+        return getTotalAmount() > 0;
     }
 
     private List<Player> getChopped(List<Player> players) {
