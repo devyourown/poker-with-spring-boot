@@ -67,8 +67,8 @@ public class ConsoleInput {
         return !answer.equals("N") && !answer.equals("n");
     }
 
-    public static UserAction getUserAction(Player player, int betSize, boolean isStart) {
-        Action action = getAction(betSize, isStart);
+    public static UserAction getUserAction(Player player, int betSize) {
+        Action action = getAction(betSize);
         if (shouldGetMoney(action))
             return new UserAction(action, getBetSize(player, betSize));
         return new UserAction(action, 0);
@@ -78,19 +78,19 @@ public class ConsoleInput {
         return action == Action.BET;
     }
 
-    private static Action getAction(int betSize, boolean isStart) {
+    private static Action getAction(int betSize) {
         System.out.print("ACTION : ");
         String action = scanner.next();
         try {
-            validateActionInput(action, betSize, isStart);
+            validateActionInput(action, betSize);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return getAction(betSize, isStart);
+            return getAction(betSize);
         }
         return Action.valueOf(action);
     }
 
-    private static void validateActionInput(String input, int betSize, boolean isStart) {
+    private static void validateActionInput(String input, int betSize) {
         Action action;
         try {
             action = Action.valueOf(input);
@@ -99,10 +99,6 @@ public class ConsoleInput {
         }
         if (betSize > 0) {
             if (isCheck(action))
-                throw new IllegalArgumentException("[ERROR] The Action is impossible.");
-        }
-        else if (isStart) {
-            if (isCall(action))
                 throw new IllegalArgumentException("[ERROR] The Action is impossible.");
         }
         else {

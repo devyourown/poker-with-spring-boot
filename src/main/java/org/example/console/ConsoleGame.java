@@ -1,5 +1,6 @@
 package org.example.console;
 
+import org.example.domain.deck.RandomDeck;
 import org.example.domain.game.Action;
 import org.example.domain.game.Game;
 import org.example.domain.game.GameStatus;
@@ -16,7 +17,7 @@ public class ConsoleGame {
         System.out.println("---------Game start----------");
         System.out.println();
         players = ConsoleInput.initUserFromInput();
-        Game game = new Game(players, 100, 200);
+        Game game = new Game(players, 100, 200, new RandomDeck(players.size()));
         startGame(game);
     }
 

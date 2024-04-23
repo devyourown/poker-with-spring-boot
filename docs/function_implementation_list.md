@@ -1,23 +1,4 @@
-### 기능 구현 목록
+### Implementation list
 
-~~-올인 액션 넣기~~
-  - ~~AllInTestCase~~
-  - ~~레이즈 액션 지우기~~
-  - ~~레이즈와 올인 액션을 뷰에서 표현하기~~
-  - ~~Room 기능~~
-  - 멤버 생성 기능
-    - ~~데이터베이스에 멤버 만들기~~
-    - OAuth를 통해 멤버 생성하기
-  - ~~랜덤으로 방 입장하기~~
-  - 특정 방 만들기
-  - 특정 방 입장하기
-  - 방 채팅 기능
-  - 플레이 시간 제한 기능
-  - 플레이어가 게임 중 방을 나갈 때 처리
-  - ~~REST API 서버 입력 받기~~
-    - ~~GameController 만들기~~
-    - ~~RoomController 만들기~~
-    - ~~MemberController 만들기~~
-  - ~~보안 설정하기~~
-    - ~~본인만 자신의 패를 볼 수 있음.~~
-  - 이메일이 유효한지 확인하는 SMTP 만들기
+- create TestCase
+- create Deck Interface to test

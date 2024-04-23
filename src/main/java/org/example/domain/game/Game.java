@@ -4,6 +4,7 @@ import org.example.console.ConsoleInput;
 import org.example.console.ConsoleOutput;
 import org.example.console.UserAction;
 import org.example.domain.card.Card;
+import org.example.domain.deck.Deck;
 import org.example.domain.game.helper.Dealer;
 import org.example.domain.game.helper.GameResult;
 import org.example.domain.game.helper.Pot;
@@ -21,14 +22,13 @@ public class Game {
     private final Pot pot;
     private final String gameId;
 
-    public Game(List<Player> players, int smallBlind, int bigBlind) {
+    public Game(List<Player> players, int smallBlind, int bigBlind, Deck deck) {
         this.gameId = UUID.randomUUID().toString();
         this.players = new ArrayList<>(players);
         this.playerTable = new PlayerTable(players);
         this.pot = new Pot(players, smallBlind, bigBlind);
         status = GameStatus.PRE_FLOP;
-        this.dealer = new Dealer(players.size());
-        distributeHands();
+        this.dealer = new Dealer(players, deck);
     }
 
     public GameResult play() {
@@ -56,23 +56,22 @@ public class Game {
     }
 
     private void playUntilTurnOver() {
-        boolean isStart = true;
         int numOfResponseToTurnOver = playerTable.getSize();
         List<Player> foldPlayers = new ArrayList<>();
         while (!turnOver(numOfResponseToTurnOver)) {
             ConsoleOutput.printForAction(pot, dealer, playerTable.getCurrentPlayer());
-            UserAction userAction = ConsoleInput.getUserAction(playerTable.getCurrentPlayer(),
-                    pot.getCurrentBet(), isStart);
+            UserAction userAction = ConsoleInput.getUserAction(
+                    playerTable.getCurrentPlayer(),
+                    pot.getCurrentBet());
             if (userAction.action == Action.BET)
                 numOfResponseToTurnOver = playerTable.getSize();
             if (userAction.action == Action.FOLD)
                 foldPlayers.add(playerTable.getCurrentPlayer());
             playAction(userAction.action, userAction.betSize);
             playerTable.moveNext();
-            isStart = false;
             numOfResponseToTurnOver--;
         }
-        dealer.setBoard();
+        dealer.nextStatus();
         pot.refresh(foldPlayers);
     }
 
@@ -81,19 +80,12 @@ public class Game {
         return leftNumOfResponse <= 0;
     }
 
-    private void distributeHands() {
-        for (Player player : players) {
-            player.setHands(dealer.handoutCards());
-        }
-    }
-
     public void resetGame() {
         removeNoMoneyPlayer();
         this.playerTable.reset(players);
-        this.dealer.reset();
+        this.dealer.reset(players);
         this.pot.reset(convertTableToList(playerTable));
         status = GameStatus.PRE_FLOP;
-        distributeHands();
     }
 
     private void removeNoMoneyPlayer() {
@@ -121,12 +113,10 @@ public class Game {
 
     private void actCall() {
         pot.call(playerTable.getCurrentPlayer());
-        playerTable.getCurrentPlayer().setPlayingStatus(Player.PlayingStatus.CALL);
     }
 
     private void actBet(int betSize) {
         pot.bet(playerTable.getCurrentPlayer(), betSize);
-        playerTable.getCurrentPlayer().setPlayingStatus(Player.PlayingStatus.BET);
     }
 
     private void setEnd() {

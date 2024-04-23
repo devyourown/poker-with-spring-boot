@@ -1,5 +1,8 @@
 package org.example.domain.game;
 
+import org.example.domain.card.Card;
+import org.example.domain.card.Suit;
+import org.example.domain.deck.DeterminedDeck;
 import org.example.domain.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,13 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GameTest {
     List<Player> players;
     Game game;
-
-    @BeforeEach
-    void setup() {
-        players = List.of(new Player("1", 1000),
-                new Player("2", 2000), new Player("3", 3000));
-        game = new Game(players, 100, 200);
-    }
 
     @Test
     void testCall() throws Exception {
@@ -34,7 +30,8 @@ public class GameTest {
             players1.add(new Player("4", 1000));
         }
 
-        Game game = new Game(players1, 100, 200);
+        List<Card> cards = List.of(Card.of(1, Suit.SPADES));
+        Game game = new Game(players1, 100, 200, new DeterminedDeck(cards));
         game.playAction(Action.CALL, 0);
         game.playAction(Action.CALL, 0);
         game.playAction(Action.BET, 300);

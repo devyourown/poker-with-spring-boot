@@ -1,27 +1,22 @@
 package org.example.domain.player;
 
 import org.example.domain.card.Card;
-import org.example.domain.game.helper.Pot;
-import org.example.domain.rules.RankingCalculator;
-import org.example.domain.rules.Ranking;
 
 import java.util.Collections;
 import java.util.List;
 
 public class Player {
-    private String id;
+    private final String id;
     private int money;
     private List<Card> hands;
-    private int ranks;
+    private long ranks;
     private RoomStatus roomStatus;
-    private PlayingStatus playingStatus;
     private int possibleTakingAmountOfMoney;
 
     public Player(String id, int money) {
         this.id = id;
         this.money = money;
         this.roomStatus = RoomStatus.WAITING;
-        setPlayingStatus(PlayingStatus.PLAYING);
     }
 
     public void bet(int betAmount) {
@@ -44,11 +39,6 @@ public class Player {
         return Collections.unmodifiableList(hands);
     }
 
-
-    public boolean isAllIn() {
-        return playingStatus == PlayingStatus.ALLIN;
-    }
-
     public String getId() {
         return id;
     }
@@ -59,13 +49,6 @@ public class Player {
 
     public void changeRoomStatus() {
         this.roomStatus = this.roomStatus == RoomStatus.WAITING ? RoomStatus.READY : RoomStatus.WAITING;
-    }
-
-    public void setPlayingStatus(PlayingStatus status) {
-        if (money == 0)
-            playingStatus = PlayingStatus.ALLIN;
-        else
-            playingStatus = status;
     }
 
     public void plusPossibleTakingAmountOfMoney(int money) {
@@ -80,27 +63,16 @@ public class Player {
         return this.possibleTakingAmountOfMoney;
     }
 
-    public PlayingStatus getPlayingStatus() {
-        return playingStatus;
-    }
-
-    public void setRanks(int ranks) {
+    public void setRanks(long ranks) {
         this.ranks = ranks;
     }
 
-    public int getRanks() {
+    public long getRanks() {
         return this.ranks;
     }
 
     public enum RoomStatus {
         WAITING,
         READY
-    }
-
-    public enum PlayingStatus {
-        PLAYING,
-        ALLIN,
-        CALL,
-        BET
     }
 }

@@ -1,5 +1,6 @@
 package org.example.backend.service;
 
+import org.example.domain.deck.RandomDeck;
 import org.example.domain.error.RoomException;
 import org.example.domain.game.Game;
 import org.example.domain.player.Player;
@@ -22,7 +23,7 @@ public class RoomService {
         validateRoomExist(roomId);
         validateRoomCanPlay(roomId);
         Room room = occupiedRooms.get(roomId);
-        return new Game(room.getPlayers(), 100, 200);
+        return new Game(room.getPlayers(), 100, 200, new RandomDeck(room.getNumOfPlayer()));
     }
 
     private void validateRoomCanPlay(String roomId) throws RoomException {

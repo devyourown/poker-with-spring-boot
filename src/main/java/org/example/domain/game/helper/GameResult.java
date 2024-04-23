@@ -1,20 +1,18 @@
 package org.example.domain.game.helper;
 
 import org.example.domain.player.Player;
-import org.example.domain.player.PlayerTable;
 import org.example.domain.rules.Ranking;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class GameResult {
-    private List<Player> winner;
-    private List<Player> players;
+    private final List<Player> winner;
+    private final List<Player> players;
 
     public GameResult(List<Player> survivor, List<Player> wholePlayer, Pot pot) {
-        survivor.sort(Comparator.comparingInt(Player::getRanks).reversed());
+        survivor.sort(Comparator.comparingLong(Player::getRanks).reversed());
         this.winner = getWinners(survivor);
         pot.splitMoney(this.winner, getRest(survivor));
         this.players = wholePlayer;

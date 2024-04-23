@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class RankingCalculator {
 
-    public static int calculateCards(List<Card> cards) {
+    public static long calculateCards(List<Card> cards) {
         List<Integer> numbersOfCards = convertToNumber(cards);
         Collections.sort(numbersOfCards);
         if (getStraightFlush(cards) > 0)
@@ -50,51 +50,39 @@ public class RankingCalculator {
         return result;
     }
 
-    private static List<Suit> convertToSuit(List<Card> cards) {
-        List<Suit> result = new ArrayList<>();
-        for (Card card : cards) {
-            result.add(card.getSuit());
-        }
-        return result;
-    }
-
-    private static int getStraightFlush(List<Card> cards) {
-        List<Card> sorted = cards.stream().sorted(Comparator.comparingInt(Card::getValue))
+    private static long getStraightFlush(List<Card> cards) {
+        Suit mostSuit = getMostSuited(cards);
+        List<Card> sorted = cards.stream().filter(card -> card.getSuit() == mostSuit)
+                .sorted(Comparator.comparingInt(Card::getValue))
                 .collect(Collectors.toList());
-        for (int i=2; i>=0; i--) {
-            if (isStraightFlush(sorted, i, i+5))
+        if (sorted.size() < 5)
+            return 0;
+        List<Integer> numbers = convertToNumber(sorted);
+        for (int i=sorted.size()-5; i>=0; i--) {
+            if (isStraight(numbers, i, i+5))
                 return Ranking.STRAIGHT_FLUSH.getValue() + sorted.get(i+4).getValue();
         }
         if (cards.get(cards.size()-1).getValue() == 14) {
-            if (isLowAceStraightFlush(cards))
+            if (isLowAceStraight(numbers))
                 return Ranking.STRAIGHT_FLUSH.getValue() + 5;
         }
         return 0;
     }
 
-    private static boolean isLowAceStraightFlush(List<Card> cards) {
-        if (cards.get(0).getValue() != 2 || cards.get(0).getSuit() != cards.get(cards.size()-1).getSuit())
-            return false;
-        for (int i=1; i<4; i++) {
-            if (cards.get(i-1).getValue() + 1 != cards.get(i).getValue())
-                return false;
-            if (cards.get(i-1).getSuit() != cards.get(i).getSuit())
-                return false;
+    private static Suit getMostSuited(List<Card> cards) {
+        Suit result = Suit.CLUBS;
+        int most = 0;
+        for (Card card : cards) {
+            int count = (int) cards.stream().filter(c -> c.getSuit() == card.getSuit()).count();
+            if (most < count) {
+                most = count;
+                result = card.getSuit();
+            }
         }
-        return true;
+        return result;
     }
 
-    private static boolean isStraightFlush(List<Card> cards, int start, int end) {
-        for (int i=start+1; i<end; i++) {
-            if (cards.get(i-1).getValue() + 1 != cards.get(i).getValue())
-                return false;
-            if (cards.get(i-1).getSuit() != cards.get(i).getSuit())
-                return false;
-        }
-        return true;
-    }
-
-    private static int getFourCards(List<Integer> cardNumbers) {
+    private static long getFourCards(List<Integer> cardNumbers) {
         int count = sameCountAsExpected(cardNumbers, 4);
         if (count == 0)
             return 0;
@@ -112,13 +100,13 @@ public class RankingCalculator {
         return 0;
     }
 
-    private static int getFullHouse(List<Integer> cardNumbers) {
+    private static long getFullHouse(List<Integer> cardNumbers) {
         List<Integer> leftWithoutTriple = getListWithoutTriple(cardNumbers);
         if (leftWithoutTriple.isEmpty())
             return 0;
-        if ((getOnePair(leftWithoutTriple) > 0 && getTriple(cardNumbers) > 0))
+        if ((getOnePair(leftWithoutTriple) > 0))
             return Ranking.FULL_HOUSE.getValue() + getTriple(cardNumbers) + getOnePair(leftWithoutTriple);
-        if (getTriple(leftWithoutTriple) > 0 && getTriple(cardNumbers) > 0) {
+        if (getTriple(leftWithoutTriple) > 0) {
             if (getTriple(leftWithoutTriple) > getTriple(cardNumbers))
                 return Ranking.FULL_HOUSE.getValue() + getTriple(leftWithoutTriple) + getOnePair(cardNumbers);
             return Ranking.FULL_HOUSE.getValue() + getTriple(cardNumbers) + getOnePair(leftWithoutTriple);
@@ -140,28 +128,29 @@ public class RankingCalculator {
         return result;
     }
 
-    private static int getFlush(List<Card> cards) {
-        List<Card> sorted = cards.stream().sorted(Comparator.comparingInt(Card::getValue))
-                .collect(Collectors.toList());
-        for (int i=2; i>=0; i--) {
-            if (isFlush(sorted, i, i+5))
-                return Ranking.FLUSH.getValue() + sorted.get(i+4).getValue();
+    private static long getFlush(List<Card> cards) {
+        if (isFlush(cards)) {
+            Suit mostSuit = getMostSuited(cards);
+            int highValue = cards.stream().filter(card -> card.getSuit().equals(mostSuit))
+                    .mapToInt(Card::getValue)
+                    .max().orElse(0);
+            return Ranking.FLUSH.getValue() + highValue;
         }
         return 0;
     }
 
-    private static boolean isFlush(List<Card> cards, int start, int end) {
-        int suited = 0;
-        for (int i=start; i<end; i++) {
-            Card card = cards.get(i);
-            if (card.getSuit() == cards.get(0).getSuit())
-                suited += 1;
+    private static boolean isFlush(List<Card> cards) {
+        for (Card card : cards) {
+            int count = (int) cards.stream().filter(c -> c.getSuit() == card.getSuit()).count();
+            if (count >= 5)
+                return true;
         }
-        return suited == 5;
+        return false;
     }
 
-    private static int getStraight(List<Integer> cardNumbers) {
-        for (int i=2; i>=0; i--) {
+    private static long getStraight(List<Integer> cardNumbers) {
+        cardNumbers = cardNumbers.stream().distinct().collect(Collectors.toList());
+        for (int i=cardNumbers.size()-5; i>=0; i--) {
             if (isStraight(cardNumbers, i, i+5))
                 return Ranking.STRAIGHT.getValue() + cardNumbers.get(i+4);
         }
@@ -190,14 +179,14 @@ public class RankingCalculator {
         return true;
     }
 
-    private static int getTriple(List<Integer> cardNumbers) {
+    private static long getTriple(List<Integer> cardNumbers) {
         int count = sameCountAsExpected(cardNumbers, 3);
         if (count == 0)
             return 0;
         return Ranking.TRIPLE.getValue() + sameCountAsExpected(cardNumbers, 3);
     }
 
-    private static int getTwoPair(List<Integer> cardNumbers) {
+    private static long getTwoPair(List<Integer> cardNumbers) {
         List<Integer> result = new ArrayList<>();
         int highCard = 0;
         for (int number : cardNumbers) {
@@ -214,10 +203,10 @@ public class RankingCalculator {
         if (result.size() < 4)
             return 0;
         List<Integer> sorted = result.stream().sorted().collect(Collectors.toList());
-        return Ranking.TWO_PAIR.getValue() + sorted.get(sorted.size()-1) + sorted.get(sorted.size()-2) + highCard;
+        return Ranking.TWO_PAIR.getValue() + (long) sorted.get(sorted.size()-1) * 3 + sorted.get(sorted.size()-3) * 2 + highCard;
     }
 
-    private static int getOnePair(List<Integer> cardNumbers) {
+    private static long getOnePair(List<Integer> cardNumbers) {
         for (int number : cardNumbers) {
             int count = (int) cardNumbers.stream()
                     .filter(cardNumber -> cardNumber == number)
@@ -232,7 +221,7 @@ public class RankingCalculator {
                     }
                     if (numOfLeft == 3) break;
                 }
-                return Ranking.ONE_PAIR.getValue() + leftOver;
+                return Ranking.ONE_PAIR.getValue() + (long) number * 3 + leftOver;
             }
         }
         return 0;
