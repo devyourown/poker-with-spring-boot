@@ -70,10 +70,7 @@ public class Pot {
 
     public void splitMoney(List<Player> winners, List<Player> losers) {
         winners.sort(Comparator.comparingInt(Player::getPossibleTakingAmountOfMoney).reversed());
-        if (canGetMoneyOneAnother(winners))
-            getMoneyOneAnother(winners);
-        else
-            getMoneyTogether(winners);
+        getMoneyTogether(winners);
         if (getTotalAmount() >= 100 && losers.size() >= 1) {
             List<Player> chopped = getChopped(losers);
             chopped.sort(Comparator.comparingInt(Player::getPossibleTakingAmountOfMoney));
@@ -99,13 +96,6 @@ public class Pot {
         return result;
     }
 
-    private boolean canGetMoneyOneAnother(List<Player> players) {
-        if (players.size() > 1)
-            return players.stream().filter(player -> players.get(0).getPossibleTakingAmountOfMoney()
-                    != player.getPossibleTakingAmountOfMoney()).count() > 1;
-        return false;
-    }
-
     private void getMoneyTogether(List<Player> players) {
         if (players.size() > 1) {
             for (Player player : players) {
@@ -117,15 +107,6 @@ public class Pot {
             int money = players.get(0).getPossibleTakingAmountOfMoney();
             int possibleMoney = takeOutMoney(money);
             players.get(0).raiseMoney(possibleMoney);
-        }
-    }
-
-    private void getMoneyOneAnother(List<Player> players) {
-        players.sort(Comparator.comparingInt(Player::getPossibleTakingAmountOfMoney));
-        for (Player player : players) {
-            int money = player.getPossibleTakingAmountOfMoney();
-            int possibleMoney = takeOutMoney(money);
-            player.raiseMoney(possibleMoney);
         }
     }
 

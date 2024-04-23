@@ -214,7 +214,7 @@ public class RankingCalculator {
         if (result.size() < 4)
             return 0;
         List<Integer> sorted = result.stream().sorted().collect(Collectors.toList());
-        return Ranking.TWO_PAIR.getValue() + sorted.get(sorted.size()-1);
+        return Ranking.TWO_PAIR.getValue() + sorted.get(sorted.size()-1) + sorted.get(sorted.size()-2) + highCard;
     }
 
     private static int getOnePair(List<Integer> cardNumbers) {
