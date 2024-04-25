@@ -12,6 +12,7 @@ public class Player {
     private long ranks;
     private int possibleTakingAmountOfMoney;
     private int beforeBetMoney;
+    private int betSize;
 
     public Player(String id, int money) {
         this.id = id;
@@ -19,11 +20,13 @@ public class Player {
         this.beforeBetMoney = money;
         this.ranks = 0;
         this.possibleTakingAmountOfMoney = 0;
+        this.betSize = 0;
     }
 
     public void gameOver() {
         beforeBetMoney = money;
         possibleTakingAmountOfMoney = 0;
+        betSize = 0;
     }
 
     public int getBeforeBetMoney() {
@@ -32,6 +35,7 @@ public class Player {
 
     public void bet(int betAmount) {
         this.money -= betAmount;
+        betSize += betAmount;
     }
 
     public int getMoney() {
@@ -61,6 +65,8 @@ public class Player {
     public int getPossibleTakingAmountOfMoney() {
         return this.possibleTakingAmountOfMoney;
     }
+
+    public int getBetSize() { return this.betSize; }
 
     public boolean hasAllin() {
         return money == 0;

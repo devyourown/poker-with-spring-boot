@@ -1,7 +1,6 @@
 package org.example.domain;
 
 import org.example.domain.card.CardTest;
-import org.example.domain.game.GameResultTest;
 import org.example.domain.game.GameTest;
 import org.example.domain.player.PlayerTest;
 import org.example.domain.room.RoomTest;
@@ -11,7 +10,7 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({RankingCalculatorTest.class, RoomTest.class,
-        PlayerTest.class, GameTest.class, GameResultTest.class,
+        PlayerTest.class, GameTest.class,
         CardTest.class})
 public class GroupTest {
 }

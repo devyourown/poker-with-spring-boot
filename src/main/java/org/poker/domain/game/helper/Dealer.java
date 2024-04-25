@@ -27,6 +27,10 @@ public class Dealer {
         players.forEach(player -> player.setHands(handoutCards()));
     }
 
+    public void showDown() {
+        while (gameStatus != GameStatus.END) nextStatus();
+    }
+
     public void nextStatus() {
         gameStatus = gameStatus.nextStatus();
         if (gameStatus == GameStatus.FLOP)

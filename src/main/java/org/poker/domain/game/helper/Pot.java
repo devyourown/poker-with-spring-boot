@@ -12,6 +12,7 @@ public class Pot {
     private int currentBet;
     private int totalAmount;
     private int turnAmount;
+    private int foldAmount;
 
     public Pot(List<Player> players, int smallBlind, int bigBlind) {
         this.smallBlind = smallBlind;
@@ -24,6 +25,7 @@ public class Pot {
         this.currentBet = bigBlind;
         this.totalAmount = smallBlind + bigBlind;
         this.turnAmount = smallBlind + bigBlind;
+        this.foldAmount = 0;
         paySmallBig(players.get(players.size()-2), players.get(players.size()-1));
     }
 
@@ -36,6 +38,7 @@ public class Pot {
 
     public void refresh(List<Player> foldPlayers) {
         for (Player player : foldPlayers) {
+            foldAmount += playerBetLog.getOrDefault(player, 0);
             playerBetLog.remove(player);
             player.gameOver();
         }
@@ -43,11 +46,12 @@ public class Pot {
         playerBetLog.clear();
         this.currentBet = 0;
         this.turnAmount = 0;
+        this.foldAmount = 0;
     }
 
     private void calculatePossibleMoney() {
         for (Map.Entry<Player, Integer> entry : playerBetLog.entrySet()) {
-            int canTakeMoney = entry.getValue() * playerBetLog.size();
+            int canTakeMoney = entry.getValue() * playerBetLog.size() + foldAmount;
             Player player = entry.getKey();
             player.plusPossibleTakingAmountOfMoney(Math.min(turnAmount, canTakeMoney));
         }
@@ -56,7 +60,7 @@ public class Pot {
     public void splitMoney(List<Player> winners, List<Player> losers) {
         winners.sort(Comparator.comparingInt(Player::getPossibleTakingAmountOfMoney));
         giveMoneyTo(winners);
-        if (hasMoneyLeftOver()) {
+        if (hasMoneyLeftOver() && losers.size() > 0) {
             List<Player> chopped = getChopped(losers);
             int bestBet = winners.stream().mapToInt(Player::getBeforeBetMoney)
                     .max().orElse(0);
@@ -74,7 +78,7 @@ public class Pot {
 
     private void payBack(List<Player> players, int alreadyTaken) {
         for (Player player : players)
-            player.raiseMoney(takeOutMoney(player.getBeforeBetMoney() - alreadyTaken));
+            player.raiseMoney(takeOutMoney(player.getBetSize() - alreadyTaken));
     }
 
     private boolean hasMoneyLeftOver() {
@@ -101,8 +105,10 @@ public class Pot {
     private void takeMoneyWhenChopped(List<Player> players) {
         int size = players.size();
         for (Player player : players) {
-            int money = takeOutMoney(player.getBeforeBetMoney()/size);
-            player.raiseMoney(money);
+            int possibleMoney = player.getBetSize()/size;
+            if (possibleMoney > getTotalAmount()/size)
+                possibleMoney = getTotalAmount()/size;
+            player.raiseMoney(takeOutMoney(possibleMoney));
             size -= 1;
         }
     }

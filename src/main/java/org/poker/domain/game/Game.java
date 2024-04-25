@@ -13,16 +13,16 @@ import org.poker.domain.player.PlayerTable;
 import org.poker.domain.rules.RankingCalculator;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Game {
     private final List<Player> players;
     private final PlayerTable playerTable;
-    private List<Player> foldPlayers;
+    private final List<Player> foldPlayers;
     private final Dealer dealer;
-    private GameStatus status;
     private final Pot pot;
     private final String gameId;
-    private int numOfAllin;
+    private final List<Player> allinPlayers;
     private int leftNumOfResponse;
 
     public Game(List<Player> players, int smallBlind, int bigBlind, Deck deck) {
@@ -30,20 +30,22 @@ public class Game {
         this.players = new ArrayList<>(players);
         this.playerTable = new PlayerTable(players);
         this.pot = new Pot(players, smallBlind, bigBlind);
-        status = GameStatus.PRE_FLOP;
         this.dealer = new Dealer(players, deck);
         this.foldPlayers = new ArrayList<>();
+        this.allinPlayers = new ArrayList<>();
     }
 
     public GameResult play() {
-        numOfAllin = 0;
         for (GameStatus gameStatus : GameStatus.values()) {
             if (gameStatus == GameStatus.END || isEnd())
                 break;
             leftNumOfResponse = playerTable.getSize();
             playUntilTurnOver();
         }
+        dealer.showDown();
         List<Player> lastPlayers = convertTableToList(playerTable);
+        lastPlayers.addAll(allinPlayers);
+        lastPlayers = lastPlayers.stream().distinct().collect(Collectors.toList());
         setPlayersRanking(lastPlayers, dealer.getBoard());
         return new GameResult(lastPlayers, players, pot);
     }
@@ -73,7 +75,6 @@ public class Game {
     }
 
     private boolean isTurnOver() {
-        if (isEnd()) return true;
         return leftNumOfResponse <= 0;
     }
 
@@ -82,8 +83,8 @@ public class Game {
         this.playerTable.reset(players);
         this.dealer.reset(players);
         this.pot.reset(convertTableToList(playerTable));
+        this.allinPlayers.clear();
         players.forEach(Player::gameOver);
-        status = GameStatus.PRE_FLOP;
     }
 
     private void removeNoMoneyPlayer() {
@@ -97,10 +98,9 @@ public class Game {
             actCall();
         else if (action == Action.BET)
             actBet(betSize);
-        if (action != Action.FOLD) {
-            if (playerTable.getCurrentPlayer().hasAllin() ||
-                    (action == Action.CALL && numOfAllin + 1 == playerTable.getSize()))
-                numOfAllin += 1;
+        if (playerTable.getCurrentPlayer().hasAllin()) {
+            allinPlayers.add(playerTable.getCurrentPlayer());
+            playerTable.removeSelf();
         }
         playerTable.moveNext();
         leftNumOfResponse--;
@@ -109,12 +109,6 @@ public class Game {
     private void actFold() {
         foldPlayers.add(playerTable.getCurrentPlayer());
         playerTable.removeSelf();
-        if (impossibleToPlay())
-            setEnd();
-    }
-
-    private boolean impossibleToPlay() {
-        return playerTable.getSize() < 2;
     }
 
     private void actCall() { pot.call(playerTable.getCurrentPlayer()); }
@@ -125,11 +119,7 @@ public class Game {
     }
 
     private boolean isAllPlayerAllIn() {
-        return playerTable.getSize() == numOfAllin;
-    }
-
-    private void setEnd() {
-        status = GameStatus.END;
+        return playerTable.getSize() == 0;
     }
 
     private void setPlayersRanking(List<Player> players, List<Card> cards) {
@@ -141,7 +131,7 @@ public class Game {
     }
 
     public boolean isEnd() {
-        return status == GameStatus.END;
+        return playerTable.getSize() < 2;
     }
 
     public String getGameId() {
