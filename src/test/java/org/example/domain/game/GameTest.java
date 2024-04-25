@@ -378,4 +378,68 @@ public class GameTest {
         assertTrue(resultInString.contains("ID: Cacke, money: 3900"));
         assertTrue(resultInString.contains("ID: loser, money: 3800"));
     }
+
+    @Test
+    void testOneAllinTwoPlay() {
+        players = List.of(
+                new Player("Good", 2000),
+                new Player("Jake", 3000),
+                new Player("Cacke", 4000),
+                new Player("loser", 4000));
+        ArrayList<Card> cards = new ArrayList<>(List.of(Card.of(1, Suit.SPADES),
+                Card.of(3, Suit.SPADES), Card.of(7, Suit.DIAMONDS),
+                Card.of(10, Suit.CLUBS), Card.of(9, Suit.HEARTS),
+                Card.of(4, Suit.HEARTS), Card.of(5, Suit.SPADES),/*loser*/
+                Card.of(3, Suit.SPADES), Card.of(3, Suit.SPADES),/*Cacke*/
+                Card.of(3, Suit.HEARTS), Card.of(3, Suit.SPADES),/*Jake*/
+                Card.of(1, Suit.SPADES), Card.of(1, Suit.HEARTS)));/*Good*/
+        Deck deck = new DeterminedDeck(cards);
+        game = new Game(players, 100, 200, deck);
+        InputStream in = generateUserInputs(
+                "BET\n/2000\n/CALL\n/CALL\n/FOLD\n" +
+                        "BET\n/500\n/CALL\n" +
+                "CHECK\n/CHECK\n" +
+                "CHECK\n/CHECK\n");
+        System.setIn(in);
+        scanner = new Scanner(System.in);
+        GameResult result = game.play();
+        String resultInString = result.toString();
+        System.out.println(resultInString);
+        assertTrue(resultInString.contains("ID: Good, money: 6200"));
+        assertTrue(resultInString.contains("ID: Jake, money: 1000"));
+        assertTrue(resultInString.contains("ID: Cacke, money: 2000"));
+        assertTrue(resultInString.contains("ID: loser, money: 3800"));
+    }
+
+    @Test
+    void testOneAllinThreePlay() {
+        players = List.of(
+                new Player("Good", 2000),
+                new Player("Jake", 3000),
+                new Player("Cacke", 4000),
+                new Player("loser", 4000));
+        ArrayList<Card> cards = new ArrayList<>(List.of(Card.of(1, Suit.SPADES),
+                Card.of(3, Suit.SPADES), Card.of(7, Suit.DIAMONDS),
+                Card.of(10, Suit.CLUBS), Card.of(9, Suit.HEARTS),
+                Card.of(4, Suit.HEARTS), Card.of(5, Suit.SPADES),/*loser*/
+                Card.of(3, Suit.SPADES), Card.of(3, Suit.SPADES),/*Cacke*/
+                Card.of(3, Suit.HEARTS), Card.of(3, Suit.SPADES),/*Jake*/
+                Card.of(1, Suit.SPADES), Card.of(1, Suit.HEARTS)));/*Good*/
+        Deck deck = new DeterminedDeck(cards);
+        game = new Game(players, 100, 200, deck);
+        InputStream in = generateUserInputs(
+                "BET\n/2000\n/CALL\n/CALL\n/CALL\n" +
+                        "BET\n/500\n/CALL\n/CALL\n" +
+                        "CHECK\n/CHECK\n/CHECK\n" +
+                        "CHECK\n/CHECK\n/CHECK\n");
+        System.setIn(in);
+        scanner = new Scanner(System.in);
+        GameResult result = game.play();
+        String resultInString = result.toString();
+        System.out.println(resultInString);
+        assertTrue(resultInString.contains("ID: Good, money: 8000"));
+        assertTrue(resultInString.contains("ID: Jake, money: 1250"));
+        assertTrue(resultInString.contains("ID: Cacke, money: 2250"));
+        assertTrue(resultInString.contains("ID: loser, money: 1500"));
+    }
 }
