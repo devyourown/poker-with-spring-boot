@@ -1,6 +1,9 @@
 package org.example.domain.game;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.poker.console.ConsoleInput;
+import org.poker.console.ConsoleOutput;
 import org.poker.domain.card.Card;
 import org.poker.domain.card.Suit;
 import org.poker.domain.deck.Deck;
@@ -21,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GameTest {
     List<Player> players;
     Game game;
-    Scanner scanner;
 
     private static InputStream generateUserInput(String input) {
         return new ByteArrayInputStream(input.getBytes());
@@ -48,12 +50,14 @@ public class GameTest {
                 Card.of(7, Suit.HEARTS), Card.of(11, Suit.SPADES),/*Jake*/
                 Card.of(3, Suit.SPADES), Card.of(13, Suit.HEARTS)));/*Good*/
         Deck deck = new DeterminedDeck(cards);
-        game = new Game(players, 100, 200, deck);
         InputStream in = generateUserInputs(
                 "CALL\n/CALL\n/CALL\n/CHECK\n/CHECK\n/CHECK\n/" +
                         "CHECK\n/CHECK\n/CHECK\n/CHECK\n/CHECK\n/CHECK\n");
         System.setIn(in);
-        scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
+        game = new Game(players, 100, 200, deck, 
+                new ConsoleInput(scanner),
+                new ConsoleOutput());
         GameResult result = game.play();
         String resultInString = result.toString();
         System.out.println(resultInString);
@@ -73,11 +77,13 @@ public class GameTest {
                 Card.of(10, Suit.HEARTS), Card.of(10, Suit.SPADES),/*Jake*/
                 Card.of(3, Suit.SPADES), Card.of(3, Suit.HEARTS)));/*Good*/
         Deck deck = new DeterminedDeck(cards);
-        game = new Game(players, 100, 200, deck);
         InputStream in = generateUserInputs(
-                        "BET\n/2000\n/BET\n/2900\n/CALL\n/");
+                        "BET\n/2000\n/BET\n/2900\n/CALL\n");
         System.setIn(in);
-        scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
+        game = new Game(players, 100, 200, deck,
+                new ConsoleInput(scanner),
+                new ConsoleOutput());
         GameResult result = game.play();
         String resultInString = result.toString();
         System.out.println(resultInString);
@@ -97,11 +103,13 @@ public class GameTest {
                 Card.of(10, Suit.HEARTS), Card.of(10, Suit.SPADES),/*Jake*/
                 Card.of(1, Suit.SPADES), Card.of(1, Suit.HEARTS)));/*Good*/
         Deck deck = new DeterminedDeck(cards);
-        game = new Game(players, 100, 200, deck);
         InputStream in = generateUserInputs(
                 "BET\n/2000\n/BET\n/2900\n/CALL\n/");
         System.setIn(in);
-        scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
+        game = new Game(players, 100, 200, deck,
+                new ConsoleInput(scanner),
+                new ConsoleOutput());
         GameResult result = game.play();
         String resultInString = result.toString();
         System.out.println(resultInString);
@@ -123,11 +131,13 @@ public class GameTest {
                 Card.of(1, Suit.HEARTS), Card.of(1, Suit.SPADES),/*Jake*/
                 Card.of(10, Suit.SPADES), Card.of(10, Suit.HEARTS)));/*Good*/
         Deck deck = new DeterminedDeck(cards);
-        game = new Game(players, 100, 200, deck);
         InputStream in = generateUserInputs(
                 "BET\n/2000\n/BET\n/2900\n/CALL\n/");
         System.setIn(in);
-        scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
+        game = new Game(players, 100, 200, deck,
+                new ConsoleInput(scanner),
+                new ConsoleOutput());
         GameResult result = game.play();
         String resultInString = result.toString();
         System.out.println(resultInString);
@@ -149,11 +159,13 @@ public class GameTest {
                 Card.of(3, Suit.HEARTS), Card.of(3, Suit.SPADES),/*Jake*/
                 Card.of(2, Suit.SPADES), Card.of(2, Suit.HEARTS)));/*Good*/
         Deck deck = new DeterminedDeck(cards);
-        game = new Game(players, 100, 200, deck);
         InputStream in = generateUserInputs(
                 "BET\n/2000\n/BET\n/2900\n/CALL\n/");
         System.setIn(in);
-        scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
+        game = new Game(players, 100, 200, deck,
+                new ConsoleInput(scanner),
+                new ConsoleOutput());
         GameResult result = game.play();
         String resultInString = result.toString();
         System.out.println(resultInString);
@@ -175,11 +187,13 @@ public class GameTest {
                 Card.of(3, Suit.HEARTS), Card.of(3, Suit.SPADES),/*Jake*/
                 Card.of(3, Suit.SPADES), Card.of(3, Suit.HEARTS)));/*Good*/
         Deck deck = new DeterminedDeck(cards);
-        game = new Game(players, 100, 200, deck);
         InputStream in = generateUserInputs(
                 "BET\n/400\n/BET\n/500\n/CALL\n/");
         System.setIn(in);
-        scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
+        game = new Game(players, 100, 200, deck,
+                new ConsoleInput(scanner),
+                new ConsoleOutput());
         GameResult result = game.play();
         String resultInString = result.toString();
         System.out.println(resultInString);
@@ -201,11 +215,13 @@ public class GameTest {
                 Card.of(3, Suit.HEARTS), Card.of(3, Suit.SPADES),/*Jake*/
                 Card.of(2, Suit.SPADES), Card.of(2, Suit.HEARTS)));/*Good*/
         Deck deck = new DeterminedDeck(cards);
-        game = new Game(players, 100, 200, deck);
         InputStream in = generateUserInputs(
                 "BET\n/2000\n/BET\n/2900\n/CALL\n/");
         System.setIn(in);
-        scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
+        game = new Game(players, 100, 200, deck,
+                new ConsoleInput(scanner),
+                new ConsoleOutput());
         GameResult result = game.play();
         String resultInString = result.toString();
         System.out.println(resultInString);
@@ -227,11 +243,13 @@ public class GameTest {
                 Card.of(3, Suit.HEARTS), Card.of(3, Suit.SPADES),/*Jake*/
                 Card.of(3, Suit.SPADES), Card.of(3, Suit.HEARTS)));/*Good*/
         Deck deck = new DeterminedDeck(cards);
-        game = new Game(players, 100, 200, deck);
         InputStream in = generateUserInputs(
                 "BET\n/2000\n/BET\n/2900\n/CALL\n/");
         System.setIn(in);
-        scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
+        game = new Game(players, 100, 200, deck,
+                new ConsoleInput(scanner),
+                new ConsoleOutput());
         GameResult result = game.play();
         String resultInString = result.toString();
         System.out.println(resultInString);
@@ -253,11 +271,13 @@ public class GameTest {
                 Card.of(2, Suit.HEARTS), Card.of(2, Suit.SPADES),/*Jake*/
                 Card.of(3, Suit.SPADES), Card.of(3, Suit.HEARTS)));/*Good*/
         Deck deck = new DeterminedDeck(cards);
-        game = new Game(players, 100, 200, deck);
         InputStream in = generateUserInputs(
                 "BET\n/2000\n/BET\n/2900\n/CALL\n/");
         System.setIn(in);
-        scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
+        game = new Game(players, 100, 200, deck,
+                new ConsoleInput(scanner),
+                new ConsoleOutput());
         GameResult result = game.play();
         String resultInString = result.toString();
         System.out.println(resultInString);
@@ -279,11 +299,13 @@ public class GameTest {
                 Card.of(3, Suit.HEARTS), Card.of(3, Suit.SPADES),/*Jake*/
                 Card.of(1, Suit.SPADES), Card.of(1, Suit.HEARTS)));/*Good*/
         Deck deck = new DeterminedDeck(cards);
-        game = new Game(players, 100, 200, deck);
         InputStream in = generateUserInputs(
                 "BET\n/2000\n/BET\n/2900\n/CALL\n/");
         System.setIn(in);
-        scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
+        game = new Game(players, 100, 200, deck,
+                new ConsoleInput(scanner),
+                new ConsoleOutput());
         GameResult result = game.play();
         String resultInString = result.toString();
         System.out.println(resultInString);
@@ -307,11 +329,13 @@ public class GameTest {
                 Card.of(3, Suit.HEARTS), Card.of(3, Suit.SPADES),/*Jake*/
                 Card.of(1, Suit.SPADES), Card.of(1, Suit.HEARTS)));/*Good*/
         Deck deck = new DeterminedDeck(cards);
-        game = new Game(players, 100, 200, deck);
         InputStream in = generateUserInputs(
                 "BET\n/2000\n/BET\n/3000\n/BET\n/3900\n/CALL\n/");
         System.setIn(in);
-        scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
+        game = new Game(players, 100, 200, deck,
+                new ConsoleInput(scanner),
+                new ConsoleOutput());
         GameResult result = game.play();
         String resultInString = result.toString();
         System.out.println(resultInString);
@@ -336,11 +360,13 @@ public class GameTest {
                 Card.of(3, Suit.HEARTS), Card.of(3, Suit.SPADES),/*Jake*/
                 Card.of(1, Suit.SPADES), Card.of(1, Suit.HEARTS)));/*Good*/
         Deck deck = new DeterminedDeck(cards);
-        game = new Game(players, 100, 200, deck);
         InputStream in = generateUserInputs(
                 "BET\n/2000\n/FOLD\n/FOLD\n/FOLD\n");
         System.setIn(in);
-        scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
+        game = new Game(players, 100, 200, deck,
+                new ConsoleInput(scanner),
+                new ConsoleOutput());
         GameResult result = game.play();
         String resultInString = result.toString();
         System.out.println(resultInString);
@@ -365,11 +391,13 @@ public class GameTest {
                 Card.of(3, Suit.HEARTS), Card.of(3, Suit.SPADES),/*Jake*/
                 Card.of(1, Suit.SPADES), Card.of(1, Suit.HEARTS)));/*Good*/
         Deck deck = new DeterminedDeck(cards);
-        game = new Game(players, 100, 200, deck);
         InputStream in = generateUserInputs(
                 "BET\n/2000\n/CALL\n/FOLD\n/FOLD\n");
         System.setIn(in);
-        scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
+        game = new Game(players, 100, 200, deck,
+                new ConsoleInput(scanner),
+                new ConsoleOutput());
         GameResult result = game.play();
         String resultInString = result.toString();
         System.out.println(resultInString);
@@ -394,14 +422,16 @@ public class GameTest {
                 Card.of(3, Suit.HEARTS), Card.of(3, Suit.SPADES),/*Jake*/
                 Card.of(1, Suit.SPADES), Card.of(1, Suit.HEARTS)));/*Good*/
         Deck deck = new DeterminedDeck(cards);
-        game = new Game(players, 100, 200, deck);
         InputStream in = generateUserInputs(
                 "BET\n/2000\n/CALL\n/CALL\n/FOLD\n" +
                         "BET\n/500\n/CALL\n" +
                 "CHECK\n/CHECK\n" +
                 "CHECK\n/CHECK\n");
         System.setIn(in);
-        scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
+        game = new Game(players, 100, 200, deck,
+                new ConsoleInput(scanner),
+                new ConsoleOutput());
         GameResult result = game.play();
         String resultInString = result.toString();
         System.out.println(resultInString);
@@ -426,14 +456,16 @@ public class GameTest {
                 Card.of(3, Suit.HEARTS), Card.of(3, Suit.SPADES),/*Jake*/
                 Card.of(1, Suit.SPADES), Card.of(1, Suit.HEARTS)));/*Good*/
         Deck deck = new DeterminedDeck(cards);
-        game = new Game(players, 100, 200, deck);
         InputStream in = generateUserInputs(
                 "BET\n/2000\n/CALL\n/CALL\n/CALL\n" +
                         "BET\n/500\n/CALL\n/CALL\n" +
                         "CHECK\n/CHECK\n/CHECK\n" +
                         "CHECK\n/CHECK\n/CHECK\n");
         System.setIn(in);
-        scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
+        game = new Game(players, 100, 200, deck,
+                new ConsoleInput(scanner),
+                new ConsoleOutput());
         GameResult result = game.play();
         String resultInString = result.toString();
         System.out.println(resultInString);

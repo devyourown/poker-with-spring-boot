@@ -1,7 +1,5 @@
 package org.poker.domain.game;
 
-import org.poker.console.ConsoleInput;
-import org.poker.console.ConsoleOutput;
 import org.poker.console.UserAction;
 import org.poker.domain.card.Card;
 import org.poker.domain.deck.Deck;
@@ -24,8 +22,11 @@ public class Game {
     private final String gameId;
     private final List<Player> allinPlayers;
     private int leftNumOfResponse;
+    private final Input input;
+    private final Output output;
 
-    public Game(List<Player> players, int smallBlind, int bigBlind, Deck deck) {
+    public Game(List<Player> players, int smallBlind, int bigBlind, Deck deck,
+                Input input, Output output) {
         this.gameId = UUID.randomUUID().toString();
         this.players = new ArrayList<>(players);
         this.playerTable = new PlayerTable(players);
@@ -33,6 +34,8 @@ public class Game {
         this.dealer = new Dealer(players, deck);
         this.foldPlayers = new ArrayList<>();
         this.allinPlayers = new ArrayList<>();
+        this.input = input;
+        this.output = output;
     }
 
     public GameResult play() {
@@ -65,8 +68,8 @@ public class Game {
 
     private void playUntilTurnOver() {
         while (!isTurnOver() && !isAllPlayerAllIn()) {
-            ConsoleOutput.printForAction(pot, dealer, playerTable.getCurrentPlayer());
-            UserAction userAction = ConsoleInput.getUserAction(playerTable.getCurrentPlayer(), pot);
+            output.printForAction(pot, dealer, playerTable.getCurrentPlayer());
+            UserAction userAction = input.getUserAction(playerTable.getCurrentPlayer(), pot);
             playAction(userAction.action, userAction.betSize);
         }
         dealer.nextStatus();

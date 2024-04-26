@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.FileInputStream;
 import java.util.Properties;
+import java.util.Scanner;
 
 @SpringBootApplication
 public class Main {
@@ -15,7 +16,7 @@ public class Main {
         properties.load(new FileInputStream(propertiesPath));
         String method = (String) properties.get("METHOD");
         if (method.equals("CLI")) {
-            ConsoleGame.start();
+            new ConsoleGame().start(new Scanner(System.in));
         } else if (method.equals("BACKEND")) {
             SpringApplication.run(Main.class, args);
         }

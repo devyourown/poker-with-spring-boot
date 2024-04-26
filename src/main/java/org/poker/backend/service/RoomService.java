@@ -1,5 +1,7 @@
 package org.poker.backend.service;
 
+import org.poker.console.ConsoleInput;
+import org.poker.console.ConsoleOutput;
 import org.poker.domain.deck.RandomDeck;
 import org.poker.domain.error.RoomException;
 import org.poker.domain.game.Game;
@@ -23,7 +25,9 @@ public class RoomService {
         validateRoomExist(roomId);
         validateRoomCanPlay(roomId);
         Room room = occupiedRooms.get(roomId);
-        return new Game(room.getPlayers(), 100, 200, new RandomDeck(room.getNumOfPlayer()));
+        return new Game(room.getPlayers(), 100, 200, new RandomDeck(room.getNumOfPlayer()),
+                new ConsoleInput(new Scanner(System.in)),
+                new ConsoleOutput());
     }
 
     private void validateRoomCanPlay(String roomId) throws RoomException {

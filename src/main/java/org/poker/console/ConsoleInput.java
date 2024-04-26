@@ -2,16 +2,22 @@ package org.poker.console;
 
 import org.poker.domain.error.BetException;
 import org.poker.domain.game.Action;
+import org.poker.domain.game.Input;
 import org.poker.domain.game.helper.Pot;
 import org.poker.domain.player.Player;
 
 import java.util.*;
 
-public class ConsoleInput {
-    private static Scanner scanner = new Scanner(System.in);
-    private static Set<String> idSet = new HashSet<>();
+public class ConsoleInput implements Input {
+    private final Scanner scanner;
+    private final Set<String> idSet;
 
-    public static ArrayList<Player> initUserFromInput() {
+    public ConsoleInput(Scanner scanner) {
+        this.scanner = scanner;
+        this.idSet = new HashSet<>();
+    }
+
+    public ArrayList<Player> initUserFromInput() {
         ArrayList<Player> result = new ArrayList<>();
         int numOfPlayers = getNumberFromInput("How Many Players: ");
         for (int i=0; i<numOfPlayers; i++) {
@@ -20,7 +26,7 @@ public class ConsoleInput {
         return result;
     }
 
-    private static int getNumberFromInput(String inputText) {
+    private int getNumberFromInput(String inputText) {
         System.out.print(inputText);
         String numOfPlayers = scanner.next();
         if (!isNumber(numOfPlayers))
@@ -28,13 +34,13 @@ public class ConsoleInput {
         return Integer.parseInt(numOfPlayers);
     }
 
-    private static Player getPlayerFromInput() {
+    private Player getPlayerFromInput() {
         String id = getIdFromInput();
         int moneyAmount = getNumberFromInput("How much money the player has : ");
         return new Player(id, moneyAmount);
     }
 
-    private static String getIdFromInput() {
+    private String getIdFromInput() {
         System.out.print("Current Player ID : ");
         String id = scanner.next();
         if (!isPossibleId(id)) {
@@ -44,7 +50,7 @@ public class ConsoleInput {
         return id;
     }
 
-    private static boolean isPossibleId(String id) {
+    private boolean isPossibleId(String id) {
         if (idSet.contains(id)) {
             System.out.println("[ERROR] ID Should be unique.");
             return false;
@@ -52,7 +58,7 @@ public class ConsoleInput {
         return true;
     }
 
-    private static boolean isNumber(String number) {
+    private boolean isNumber(String number) {
         try {
             Integer.parseInt(number);
         } catch (Exception e) {
@@ -62,24 +68,24 @@ public class ConsoleInput {
         return true;
     }
 
-    public static boolean askPlayAgain() {
+    public boolean askPlayAgain() {
         System.out.print("Do you want to stop game?(Y/N): ");
         String answer = scanner.next();
         return !answer.equals("N") && !answer.equals("n");
     }
 
-    public static UserAction getUserAction(Player player, Pot pot) {
+    public UserAction getUserAction(Player player, Pot pot) {
         Action action = getAction(pot.getCurrentBet());
         if (shouldGetMoney(action))
             return new UserAction(action, getBetSize(player, pot.getCurrentBet()));
         return new UserAction(action, 0);
     }
 
-    private static boolean shouldGetMoney(Action action) {
+    private boolean shouldGetMoney(Action action) {
         return action == Action.BET;
     }
 
-    private static Action getAction(int betSize) {
+    private Action getAction(int betSize) {
         System.out.print("ACTION : ");
         String action = scanner.next();
         try {
@@ -91,7 +97,7 @@ public class ConsoleInput {
         return Action.valueOf(action);
     }
 
-    private static void validateActionInput(String input, int betSize) {
+    private void validateActionInput(String input, int betSize) {
         Action action;
         try {
             action = Action.valueOf(input);
@@ -108,15 +114,15 @@ public class ConsoleInput {
         }
     }
 
-    private static boolean isCheck(Action action) {
+    private boolean isCheck(Action action) {
         return action == Action.CHECK;
     }
 
-    private static boolean isCall(Action action) {
+    private boolean isCall(Action action) {
         return action == Action.CALL;
     }
 
-    private static int getBetSize(Player player, int prevBetSize) {
+    private int getBetSize(Player player, int prevBetSize) {
         System.out.print("Betting : ");
         String betSize = scanner.next();
         try {
