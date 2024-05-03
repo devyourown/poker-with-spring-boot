@@ -38,6 +38,32 @@ public class GameTest {
     }
 
     @Test
+    void testWhenEveryoneFold() {
+        players = List.of(
+                new Player("Good", 100000),
+                new Player("Jake", 100000),
+                new Player("Cacke", 1000000));
+        ArrayList<Card> cards = new ArrayList<>(List.of(Card.of(1, Suit.SPADES),
+                Card.of(3, Suit.SPADES), Card.of(7, Suit.DIAMONDS),
+                Card.of(10, Suit.CLUBS), Card.of(9, Suit.HEARTS),
+                Card.of(13, Suit.SPADES), Card.of(1, Suit.SPADES),/*Cacke*/
+                Card.of(7, Suit.HEARTS), Card.of(11, Suit.SPADES),/*Jake*/
+                Card.of(3, Suit.SPADES), Card.of(13, Suit.HEARTS)));/*Good*/
+        Deck deck = new DeterminedDeck(cards);
+        InputStream in = generateUserInputs(
+                "FOLD\n/FOLD\n");
+        System.setIn(in);
+        Scanner scanner = new Scanner(System.in);
+        game = new Game(players, 100, 200, deck,
+                new ConsoleInput(scanner),
+                new ConsoleOutput());
+        GameResult result = game.play();
+        String resultInString = result.toString();
+        System.out.println(resultInString);
+        assertTrue(resultInString.contains("Winner : Cacke"));
+    }
+
+    @Test
     void testNormalEnd() {
         players = List.of(
                 new Player("Good", 100000),

@@ -24,6 +24,7 @@ public class Game {
     private int leftNumOfResponse;
     private final Input input;
     private final Output output;
+    private boolean currentTurnAllin;
 
     public Game(List<Player> players, int smallBlind, int bigBlind, Deck deck,
                 Input input, Output output) {
@@ -36,6 +37,7 @@ public class Game {
         this.allinPlayers = new ArrayList<>();
         this.input = input;
         this.output = output;
+        this.currentTurnAllin = false;
     }
 
     public GameResult play() {
@@ -67,7 +69,7 @@ public class Game {
     }
 
     private void playUntilTurnOver() {
-        while (!isTurnOver() && !isAllPlayerAllIn()) {
+        while (!isTurnOver() && !isAllPlayerAllIn() && !isEveryoneFold()) {
             output.printForAction(pot, dealer, playerTable.getCurrentPlayer());
             UserAction userAction = input.getUserAction(playerTable.getCurrentPlayer(), pot);
             playAction(userAction.action, userAction.betSize);
@@ -75,11 +77,14 @@ public class Game {
         dealer.nextStatus();
         pot.refresh(foldPlayers);
         foldPlayers.clear();
+        currentTurnAllin = false;
     }
 
     private boolean isTurnOver() {
         return leftNumOfResponse <= 0;
     }
+
+    private boolean isEveryoneFold() { return playerTable.getSize() == 1 && !currentTurnAllin;}
 
     public void resetGame() {
         removeNoMoneyPlayer();
@@ -104,6 +109,7 @@ public class Game {
         if (playerTable.getCurrentPlayer().hasAllin()) {
             allinPlayers.add(playerTable.getCurrentPlayer());
             playerTable.removeSelf();
+            currentTurnAllin = true;
         }
         playerTable.moveNext();
         leftNumOfResponse--;
